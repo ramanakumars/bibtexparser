@@ -3,8 +3,61 @@ import re, unicodedata
 bold_author_short = "Sankar, R."
 
 journal_macros = {
-    "\mnras": "Monthly Notices of the Royal Astronomical Society",
-    "\icarus": "Icarus"
+   "\\aj":"Astronomical Journal",
+   "\\actaa":"Acta Astronomica",
+   "\\araa":"Annual Review of Astron and Astrophys",
+   "\\apj":"Astrophysical Journal",
+   "\\apjl":"Astrophysical Journal, Letters",
+   "\\apjs":"Astrophysical Journal, Supplement",
+   "\\ao":"Applied Optics",
+   "\\apss":"Astrophysics and Space Science",
+   "\\aap":"Astronomy and Astrophysics",
+   "\\aapr":"Astronomy and Astrophysics Reviews",
+   "\\aaps":"Astronomy and Astrophysics, Supplement",
+   "\\azh":"Astronomicheskii Zhurnal",
+   "\\baas":"Bulletin of the AAS",
+   "\caa":"Chinese Astronomy and Astrophysics",
+   "\cjaa":"Chinese Journal of Astronomy and Astrophysics",
+   "\icarus":"Icarus",
+   "\jcap":"Journal of Cosmology and Astroparticle Physics",
+   "\jrasc":"Journal of the RAS of Canada",
+   "\memras":"Memoirs of the RAS",
+   "\mnras":"Monthly Notices of the RAS",
+   "\\na":"New Astronomy",
+   "\\nar":"New Astronomy Review",
+   "\pra":"Physical Review A: General Physics",
+   "\prb":"Physical Review B: Solid State",
+   "\prc":"Physical Review C",
+   "\prd":"Physical Review D",
+   "\pre":"Physical Review E",
+   "\prl":"Physical Review Letters",
+   "\pasa":"Publications of the Astron. Soc. of Australia",
+   "\pasp":"Publications of the ASP",
+   "\pasj":"Publications of the ASJ",
+   "\rmxaa":"Revista Mexicana de Astronomia y Astrofisica",
+   "\qjras":"Quarterly Journal of the RAS",
+   "\skytel":"Sky and Telescope",
+   "\solphys":"Solar Physics",
+   "\sovast":"Soviet Astronomy",
+   "\ssr":"Space Science Reviews",
+   "\zap":"Zeitschrift fuer Astrophysik",
+   "\\nat":"Nature",
+   "\iaucirc":"IAU Cirulars",
+   "\\aplett":"Astrophysics Letters",
+   "\\apspr":"Astrophysics Space Physics Research",
+   "\\bain":"Bulletin Astronomical Institute of the Netherlands",
+   "\fcp":"Fundamental Cosmic Physics",
+   "\gca":"Geochimica Cosmochimica Acta",
+   "\grl":"Geophysics Research Letters",
+   "\jcp":"Journal of Chemical Physics",
+   "\jgr":"Journal of Geophysics Research",
+   "\jqsrt":"Journal of Quantitiative Spectroscopy and Radiative Transfer",
+   "\memsai":"Mem. Societa Astronomica Italiana",
+   "\\nphysa":"Nuclear Physics A",
+   "\physrep":"Physics Reports",
+   "\physscr":"Physica Scripta",
+   "\planss":"Planetary Space Science",
+   "\procspie":"Proceedings of the SPIE"
 }
 
 accent2combining = {
@@ -46,9 +99,14 @@ class Author:
     ## author structure which parses an author's
     ## first and last name from the bibtex entry
     def __init__(self, bib_entry):
+        bib_entry = bib_entry.replace("~"," ")
         nnames = bib_entry.split(', ')
-        self.firstname = nnames[1]
-        self.lastname  = nnames[0]
+        try:
+            self.firstname = nnames[1]
+            self.lastname  = nnames[0]
+        except:
+            self.lastname = nnames[0]
+            self.firstname = ""
 
 
         if(self.lastname[0]=="{"):
@@ -78,8 +136,12 @@ class Author:
 class Records:
     def __init__(self, rec_type, entry_name):
         self.authors = []
+        self.rec_type   = rec_type
+        self.entry_name = entry_name
 
     def parse_text(self, text):
+        self.text = text
+
         keywords = []
         entry    = []
 
@@ -88,9 +150,9 @@ class Records:
         index = 0
 
         ## the entry pattern is [key] = [entry], 
-        key_text_pattern = r"([a-zA-Z]+) \= (.*?),\s?$"
+        key_text_pattern = r"([a-zA-Z]+)\s?\=\s?(.*?),\s?$"
         ## except for the last entry which is [key] = [entry]
-        key_text_last    = r"([a-zA-Z]+) \= (.*?)\s?$"
+        key_text_last    = r"([a-zA-Z]+)\s?\=\s?(.*?)\s?$"
 
         ## loop through all the lines and find all keys
         ## and matching entries 
@@ -120,7 +182,7 @@ class Records:
         ## the entry could be of the form
         ## { ... } or 
         ## "{ ... }" so retrieve the text within
-        search_pattern = r"^\"?\{?(.*?)\}?\"?$"
+        search_pattern = r"^\{?\"?(.*?)\"?\}?,?$"
         for i, key in enumerate(keywords):
             line = entry[i]
 
@@ -148,7 +210,10 @@ class Records:
             ## year and volume are numbers
             elif(key == "year"):
                 match = re.search(search_pattern, line)
-                self.year = int(match.group(1))
+                try:
+                    self.year = int(match.group(1))
+                except ValueError:
+                    self.year = match.group(1)
             
             elif(key == "volume"):
                 match = re.search(search_pattern, line)
@@ -288,4 +353,27 @@ class bibtexParser():
             out = out + "(%d)"%record.year
 
             outfile.write(out + "\n")
-            
+
+    def cleanup(self, outname):
+        recs     = []
+        rec_list = []
+        for record in self.records:
+            reci = [record.authors[0].short_name(), record.title, record.year]
+
+            ## find duplicates 
+            if(reci not in rec_list):
+                recs.append([record, record.entry_name])
+                rec_list.append(reci)
+            else:
+                print("Duplicate entry {0}: {1}".format(record.entry_name, reci))
+
+        recs = sorted(recs, key=lambda x: (x[1]))
+
+        outfile = open(outname, "w")
+        for rec in recs:
+            outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
+            for text in rec[0].text:
+                outfile.write("%s"%text)
+            outfile.write("}\n\n")
+
+        outfile.close()
