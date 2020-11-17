@@ -120,8 +120,9 @@ class Author:
         ## e.g. Sankar, R. or Sankar, R. G.
         first = self.firstname.split(' ')
         short_first = ""
-        for name in first:
-            short_first = short_first + name[0] + ". "
+        if(first[0] != ''):
+            for name in first:
+                short_first = short_first + name[0] + ". "
         return "%s, %s"%(self.lastname, short_first[:-1])
     
     def long_name(self):
