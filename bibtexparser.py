@@ -1,4 +1,5 @@
 import re, unicodedata
+import numpy as np
 
 bold_author_short = "Sankar, R."
 
@@ -64,6 +65,8 @@ accent2combining = {
     "`": u"\u0300", "'": u"\u0301", "^": u"\u0302", "~": u"\u0303", ":": u"\u0308", "v": u"\u030C"
 }
 
+months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
 def tex2unicode(text):
     ## function to replace all latex accented characters
     ## with their unicode equivalent
@@ -95,18 +98,39 @@ def tex2unicode(text):
     else:
         return text
 
+
+def get_month_num(month):
+    try:
+        monthnum = int(month)
+    except:
+        monthnum = months.index(month[:3].lower())
+    return monthnum
+
 class Author:
     ## author structure which parses an author's
     ## first and last name from the bibtex entry
     def __init__(self, bib_entry):
         bib_entry = bib_entry.replace("~"," ")
-        nnames = bib_entry.split(', ')
-        try:
-            self.firstname = nnames[1]
-            self.lastname  = nnames[0]
-        except:
-            self.lastname = nnames[0]
-            self.firstname = ""
+        ## figure out if it is lastname, firstname 
+        ## or firstname lastname
+
+        if("," in bib_entry):
+            nnames = bib_entry.split(', ')
+            try:
+                self.firstname = nnames[1]
+                self.lastname  = nnames[0]
+            except:
+                self.lastname = nnames[0]
+                self.firstname = ""
+        else:
+            nnames = bib_entry.split(' ')
+            if(len(nnames) > 1):
+                self.firstname = nnames[0]
+                self.lastname  = nnames[-1]
+            else:
+                self.lastname = nnames[0]
+                self.firstname = ""
+
 
 
         if(self.lastname[0]=="{"):
@@ -183,7 +207,7 @@ class Records:
         ## the entry could be of the form
         ## { ... } or 
         ## "{ ... }" so retrieve the text within
-        search_pattern = r"^\{?\"?(.*?)\"?\}?,?$"
+        search_pattern = r"^\"?\{?\"?(.*?)\"?\}?\"?,?$"
         for i, key in enumerate(keywords):
             line = entry[i]
 
@@ -215,6 +239,13 @@ class Records:
                     self.year = int(match.group(1))
                 except ValueError:
                     self.year = match.group(1)
+            
+            elif(key == "month"):
+                match = re.search(search_pattern, line)
+                try:
+                    self.month = int(match.group(1))
+                except ValueError:
+                    self.month = match.group(1)
             
             elif(key == "volume"):
                 match = re.search(search_pattern, line)
@@ -294,13 +325,26 @@ class bibtexParser():
 
         print("Found %d records from %s"%(len(self.records), self.fname))
 
-    def to_html(self, outname):
+    def to_html(self, outname, sort= False):
         ## for use as an <li> element of the form:
         ## for papers:
         ## [author list]. [title]. <i>[journal]. [volume],</i> [pages] ([year]) (DOI: <a href="[url]">[doi]</a>
         ## for abstracts:
         ## [author list]. [title]. <i>[booktitle].</i> ([year]) (DOI: <a href="[url]">[doi]</a>
         outfile = open(outname, "w", encoding='utf-8')
+        names = []
+        if sort:
+            for record in self.records:
+                if(hasattr(record, "month")):
+                    monthnum = get_month_num(record.month)
+                else:
+                    monthnum = 0
+                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+            namesort = sorted(names)
+            records = [self.records[names.index(name)] for name in namesort]
+        else:
+            records = self.records
+
         for record in self.records:
             out = "<li>"
 
@@ -313,6 +357,7 @@ class bibtexParser():
                 else:
                     out = out + short_name
 
+            out = out + " %d."%record.year
 
             out = out + " %s. "%tex2unicode(record.title)
             if(hasattr(record,"journal")):
@@ -322,14 +367,27 @@ class bibtexParser():
             elif(hasattr(record,"booktitle")):
                 out = out + "<i>%s</i>. "%record.booktitle.replace("\#","#")
             
-            out = out + "(%d)"%record.year
 
             if(hasattr(record,"doiurl")):
                 out = out + " (DOI: <a href='%s'>%s</a>)"%(record.doiurl, record.doi)
             outfile.write(out + "</li>\n")
     
-    def to_latex_item(self, outname):
+    def to_latex_item(self, outname, sort=False):
         outfile = open(outname, "w")
+        names = []
+
+        if sort:
+            for record in self.records:
+                if(hasattr(record, "month")):
+                    monthnum = get_month_num(record.month)
+                else:
+                    monthnum = 0
+                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+            namesort = sorted(names)
+            records = [self.records[names.index(name)] for name in namesort]
+        else:
+            records = self.records
+
         for record in self.records:
             out = "\item "
 
@@ -342,6 +400,7 @@ class bibtexParser():
                 else:
                     out = out + short_name
 
+            out = out + " %d."%record.year
 
             out = out + " %s. "%record.title
             if(hasattr(record,"journal")):
@@ -351,9 +410,67 @@ class bibtexParser():
             elif(hasattr(record,"booktitle")):
                 out = out + "{\\it %s}. "%record.booktitle
             
-            out = out + "(%d)"%record.year
 
             outfile.write(out + "\n")
+
+    def to_text(self, outname, sort=True, short=False):
+        ## for use as a plain text:
+        ## for papers:
+        ## [author list]. [title]. <i>[journal]. [volume],</i> [pages] ([year]) (DOI: <a href="[url]">[doi]</a>
+        ## for abstracts:
+        ## [author list]. [title]. <i>[booktitle].</i> ([year]) (DOI: <a href="[url]">[doi]</a>
+        ## use short to only have the first author (or first two)
+        outfile = open(outname, "w", encoding='utf-8')
+
+        names = []
+        if sort:
+            for record in self.records:
+                if(hasattr(record, "month")):
+                    monthnum = get_month_num(record.month)
+                else:
+                    monthnum = 0
+                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+            namesort = sorted(names)
+            records = [self.records[names.index(name)] for name in namesort]
+        else:
+            records = self.records
+    
+        for record in records:
+            out = ""
+
+            if(short):
+                if(len(record.authors) > 2):
+                    author = record.authors[0]
+                    short_name = tex2unicode(author.short_name())
+                    out = out + short_name + " et al."
+                else:
+                    author0 = record.authors[0]
+                    short_name = tex2unicode(author0.short_name())
+                    out = out + short_name + " and "
+                    
+                    author1 = record.authors[1]
+                    short_name = tex2unicode(author1.short_name())
+                    out = out + short_name
+            else:
+                for i, author in enumerate(record.authors):
+                    short_name = tex2unicode(author.short_name())
+                    if(i != len(record.authors)-1):
+                        out = out + short_name + ", "
+                    else:
+                        out = out + short_name
+            out = out + " %d."%record.year
+
+
+            out = out + " %s. "%tex2unicode(record.title)
+            if(hasattr(record,"journal")):
+                out = out + "%s. "%record.journal
+                out = out + "%s, "%record.volume
+                out = out + "%s. "%(record.pages)
+            elif(hasattr(record,"booktitle")):
+                out = out + "%s. "%record.booktitle.replace("\#","#")
+            
+
+            outfile.write(out+"\n")
 
     def cleanup(self, outname):
         recs     = []
