@@ -1,7 +1,5 @@
 import re, unicodedata
-import numpy as np
-
-bold_author_short = "Sankar, R."
+from string import Template
 
 journal_macros = {
    "\\aj":"Astronomical Journal",
@@ -62,16 +60,20 @@ journal_macros = {
 }
 
 accent2combining = {
-    "`": u"\u0300", "'": u"\u0301", "^": u"\u0302", "~": u"\u0303", ":": u"\u0308", "v": u"\u030C"
+    "`": u"\u0300", "'": u"\u0301", "^": u"\u0302", "~": u"\u0303", ":": u"\u0308", "v": u"\u030C", "c": u"\u0327"
 }
 
 months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
 def tex2unicode(text):
+    ## do the obvious ones
+    text = text.replace('\\&','&')
+    text = text.replace('\\#','#')
+
     ## function to replace all latex accented characters
     ## with their unicode equivalent
-    pattern   = r"\{?\\(['\":v]?)\{?\\?([a-zA-Z])\}?\}?"
-    p_replace = r"(\{?\\['\":v]?\{?\\?[a-zA-Z]\}?\}?)"
+    pattern   = r"\{?\\(['\":cv\~]?)\{?\\?([a-zA-Z])\}?\}?"
+    p_replace = r"(\{?\\['\":cv\~]?\{?\\?[a-zA-Z]\}?\}?)"
 
     match        = re.findall(pattern, text)
     replace_text = re.findall(p_replace, text)
@@ -83,6 +85,12 @@ def tex2unicode(text):
         for matchi in range(nmatches):
             accent = match[matchi][0]
             letter = match[matchi][1]
+
+            if(accent==''):
+                continue
+
+            if(accent=='"'):
+                accent = ':'
 
             ## find the new accented character in the unicode database
             accent_name = unicodedata.name(accent2combining[accent]).replace("COMBINING", "WITH")
@@ -110,7 +118,9 @@ class Author:
     ## author structure which parses an author's
     ## first and last name from the bibtex entry
     def __init__(self, bib_entry):
-        bib_entry = bib_entry.replace("~"," ")
+        #bib_entry = bib_entry.replace("~"," ")
+        bib_entry  = re.sub(r'[^\\]~',' ', bib_entry)
+
         ## figure out if it is lastname, firstname 
         ## or firstname lastname
 
@@ -123,16 +133,10 @@ class Author:
                 self.lastname = nnames[0]
                 self.firstname = ""
         else:
-            nnames = bib_entry.split(' ')
-            if(len(nnames) > 1):
-                self.firstname = nnames[0]
-                self.lastname  = nnames[-1]
-            else:
-                self.lastname = nnames[0]
-                self.firstname = ""
-
-
-
+            nnames  = re.findall('[{]?(.*)[}]?', bib_entry)
+            self.lastname = nnames[0]
+            self.firstname = ""
+        
         if(self.lastname[0]=="{"):
             self.lastname = self.lastname.replace("{", "")
             self.lastname = self.lastname.replace("}", "")
@@ -146,7 +150,12 @@ class Author:
         short_first = ""
         if(first[0] != ''):
             for name in first:
-                short_first = short_first + name[0] + ". "
+                ## account for first letter unicodes
+                if(name[0] == "{"):
+                    fname = re.findall(r'(\{.+\})', name)[0]
+                else:
+                    fname = name[0]
+                short_first = short_first + fname + ". "
         return "%s, %s"%(self.lastname, short_first[:-1])
     
     def long_name(self):
@@ -264,7 +273,37 @@ class Records:
 
 
 class bibtexParser():
+    ''' 
+        Parses bibtex entries from a file and creates
+        a Record object of each entry
+
+        Attributes
+        ----------
+        records : list
+            array of ``records`` objects
+
+        Methods
+        -------
+        get_records()
+            Gets the records from input filename (run automatically)
+        to_html()
+            Parse the entries as HTML output with each entry as an <li> element
+        to_latex_item()
+            Parse the entries to a .text file with each entry as an \item
+        to_text()
+            Parse all entries as a plain text (.txt) file with each entry separated by a newline
+
+    '''
     def __init__(self, fname):
+        '''
+            Initialize
+            
+            Pareters
+            ------
+            fname : str
+                Input filename (.bib)
+
+        '''
         self.fname = fname
         
         self.get_records()
@@ -325,159 +364,181 @@ class bibtexParser():
 
         print("Found %d records from %s"%(len(self.records), self.fname))
 
-    def to_html(self, outname, sort= False):
-        ## for use as an <li> element of the form:
-        ## for papers:
-        ## [author list]. [title]. <i>[journal]. [volume],</i> [pages] ([year]) (DOI: <a href="[url]">[doi]</a>
-        ## for abstracts:
-        ## [author list]. [title]. <i>[booktitle].</i> ([year]) (DOI: <a href="[url]">[doi]</a>
-        outfile = open(outname, "w", encoding='utf-8')
-        names = []
-        if sort:
-            for record in self.records:
-                if(hasattr(record, "month")):
-                    monthnum = get_month_num(record.month)
-                else:
-                    monthnum = 0
-                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
-            namesort = sorted(names)
-            records = [self.records[names.index(name)] for name in namesort]
-        else:
-            records = self.records
+    def to_out(self, outname, templatefile, convunicode=True, clean=False, sort=False):
+        ## output to [outname] using the template given
 
-        for record in self.records:
-            out = "<li>"
-
-            for i, author in enumerate(record.authors):
-                short_name = tex2unicode(author.short_name())
-                if(short_name == bold_author_short):
-                    short_name = "<b>%s</b>"%short_name
-                if(i != len(record.authors)-1):
-                    out = out + short_name + ", "
-                else:
-                    out = out + short_name
-
-            out = out + " %d."%record.year
-
-            out = out + " %s. "%tex2unicode(record.title)
-            if(hasattr(record,"journal")):
-                out = out + "<i>%s</i>. "%record.journal
-                out = out + "<i>%s</i>, "%record.volume
-                out = out + "%s. "%(record.pages)
-            elif(hasattr(record,"booktitle")):
-                out = out + "<i>%s</i>. "%record.booktitle.replace("\#","#")
-            
-
-            if(hasattr(record,"doiurl")):
-                out = out + " (DOI: <a href='%s'>%s</a>)"%(record.doiurl, record.doi)
-            outfile.write(out + "</li>\n")
-    
-    def to_latex_item(self, outname, sort=False):
-        outfile = open(outname, "w")
-        names = []
-
-        if sort:
-            for record in self.records:
-                if(hasattr(record, "month")):
-                    monthnum = get_month_num(record.month)
-                else:
-                    monthnum = 0
-                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
-            namesort = sorted(names)
-            records = [self.records[names.index(name)] for name in namesort]
-        else:
-            records = self.records
-
-        for record in self.records:
-            out = "\item "
-
-            for i, author in enumerate(record.authors):
-                short_name = author.short_name()
-                if(short_name == bold_author_short):
-                    short_name = "{\\bf %s}"%short_name
-                if(i != len(record.authors)-1):
-                    out = out + short_name + ", "
-                else:
-                    out = out + short_name
-
-            out = out + " %d."%record.year
-
-            out = out + " %s. "%record.title
-            if(hasattr(record,"journal")):
-                out = out + "{\\it %s}. "%record.journal
-                out = out + "{\\it %s}, "%record.volume
-                out = out + "%s. "%(record.pages)
-            elif(hasattr(record,"booktitle")):
-                out = out + "{\\it %s}. "%record.booktitle
-            
-
-            outfile.write(out + "\n")
-
-    def to_text(self, outname, sort=True, short=False):
-        ## for use as a plain text:
-        ## for papers:
-        ## [author list]. [title]. <i>[journal]. [volume],</i> [pages] ([year]) (DOI: <a href="[url]">[doi]</a>
-        ## for abstracts:
-        ## [author list]. [title]. <i>[booktitle].</i> ([year]) (DOI: <a href="[url]">[doi]</a>
-        ## use short to only have the first author (or first two)
+        ## open the output file
         outfile = open(outname, "w", encoding='utf-8')
 
-        names = []
-        if sort:
-            for record in self.records:
-                if(hasattr(record, "month")):
-                    monthnum = get_month_num(record.month)
-                else:
-                    monthnum = 0
-                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
-            namesort = sorted(names)
-            records = [self.records[names.index(name)] for name in namesort]
+        ## no unicode output for .tex files
+        if('tex' in outname):
+            encodeunicode = False
         else:
-            records = self.records
-    
-        for record in records:
-            out = ""
+            encodeunicode = True
 
-            if(short):
-                if(len(record.authors) > 2):
-                    author = record.authors[0]
-                    short_name = tex2unicode(author.short_name())
-                    out = out + short_name + " et al."
-                else:
-                    author0 = record.authors[0]
-                    short_name = tex2unicode(author0.short_name())
-                    out = out + short_name + " and "
-                    
-                    author1 = record.authors[1]
-                    short_name = tex2unicode(author1.short_name())
-                    out = out + short_name
-            else:
-                for i, author in enumerate(record.authors):
-                    short_name = tex2unicode(author.short_name())
-                    if(i != len(record.authors)-1):
-                        out = out + short_name + ", "
+        ## check if we want to clean or sort
+        if(clean):
+            recs = self.cleanup()
+            records = [reci[0] for reci in recs]
+        else:
+            if sort:
+                names = []
+                for record in self.records:
+                    if(hasattr(record, "month")):
+                        monthnum = get_month_num(record.month)
                     else:
-                        out = out + short_name
-            out = out + " %d."%record.year
+                        monthnum = 0
+                    names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+                namesort = sorted(names)
+                records = [self.records[names.index(name)] for name in namesort]
+            else:
+                records = self.records
 
+        ## get the template string -- we will replace this for 
+        ## each entry
+        templatelines = open(templatefile, 'r').readlines()
 
-            out = out + " %s. "%tex2unicode(record.title)
-            if(hasattr(record,"journal")):
-                out = out + "%s. "%record.journal
-                out = out + "%s, "%record.volume
-                out = out + "%s. "%(record.pages)
-            elif(hasattr(record,"booktitle")):
-                out = out + "%s. "%record.booktitle.replace("\#","#")
+        templates = []
+        for linei in templatelines:
+            if(linei[0] == '@'):
+                temptype = re.findall(r'@([A-Za-z]*?):', linei)[0]
+                templates.append([temptype.lower(), linei.replace('@%s:'%temptype, '')])
+            else:
+                templates.append(['all', linei])
+        nalls = 0
+        for template in templates:
+            print(template)
+            if(template[0] == 'all'):
+                generictempstring = template[1]
+                nalls += 1
+
+        if(nalls > 1):
+            print("Error! Can only have one general template")
+            return
+
+        ## loop through all the records
+        for record in records:
+            rectype = record.rec_type
+
+            templatestring = generictempstring
+            for template in templates:
+                if(rectype.lower() == template[0]):
+                    templatestring = template[1]
+
+            ## first, find the author template because this is going to 
+            ## be common to all
+            authtemplate   = re.findall(r'auth([sf])([0-9]?)', templatestring);
+            if(len(authtemplate) != 1):
+                print("Error! Only one entry for author is allowed!")
+                return
+            authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
+            authstyle = authtemplate[0][0]
+
+            ## find if the author list is short or long
+            if(authstyle not in ['s', 'f']):
+                print("Error! Author style must be s=>short or f=>full")
+                return
             
+            if(authstyle == 's'):
+                authnum   = int(authtemplate[0][1])
+            else:
+                authnum   = 1
 
-            outfile.write(out+"\n")
+            ## then find the groups 
+            groups = re.findall(r"(?<!\\)([\{]{1}.*?(?<!\\)[\}]{1})", templatestring)
 
-    def cleanup(self, outname):
+            ## then find all the templates
+            kws = re.findall(r'(\$[a-z0-9]+)', templatestring)
+            ## copy the template string to replace later
+            tempstring = templatestring
+
+            ## this will hold all the attribute values
+            tempdict   = {}
+            for tempi in kws:
+
+                ## get the variable name
+                tempstr = tempi.replace('$','')
+
+                ## special case -- authors
+                if("auth" in tempi):
+                    authtext = ''
+                    if(authstyle=='s'): ## short author style (lastname firstinitials)
+                        if(len(record.authors) > authnum):
+                            author = record.authors[0]
+                            if(encodeunicode):
+                                short_name = tex2unicode(author.short_name())
+                            else:
+                                short_name = author.short_name()
+
+                            authtext = authtext + short_name + " et al."
+                        else:
+                            nauths = min([len(record.authors), authnum])
+                            for authi in range(nauths):
+                                author0 = record.authors[authi]
+                                if(encodeunicode):
+                                    short_name = tex2unicode(author0.short_name())
+                                else:
+                                    short_name = author0.short_name()
+
+                                authtext = authtext + short_name
+                                if(authi==nauths-2):
+                                    authtext = authtext + " and "
+                                elif(authi==nauths-1):
+                                    authtext = authtext + " "
+                                else:
+                                    authtext = authtext + ", "
+                    elif(authstyle=='f'):
+                        for i, author in enumerate(record.authors):
+                            if(encodeunicode):
+                                short_name = tex2unicode(author.short_name())
+                            else:
+                                short_name = author.short_name()
+
+                            if(i != len(record.authors)-1):
+                                authtext = authtext + short_name + ", "
+                            else:
+                                authtext = authtext + short_name
+                    ## save the author string to the output dictionary
+                    tempdict[tempstr] = authtext
+                else:  ## for everything else
+                    if(hasattr(record, tempstr)):
+                        if(encodeunicode):
+                            try:
+                                tempdict[tempstr] = tex2unicode(record.__getattribute__(tempstr))
+                            except AttributeError:
+                                tempdict[tempstr] = record.__getattribute__(tempstr)
+                        else:
+                            tempdict[tempstr] = record.__getattribute__(tempstr)
+
+                    else:
+                        ## if the record does not have this attribute
+                        ## find the group that this attribute is in
+                        for groupi in groups:
+                            if tempstr in groupi:
+                                remgroup = groupi
+
+                        ## remove the group
+                        tempstring = tempstring.replace(remgroup, '')
+                        tempdict[tempstr] = ''
+
+            ## finally, remove all the group {}'s and replace the string
+            for groupi in groups:
+                repgroup = re.sub(r'{(.*?)}',r'\1', groupi)
+                tempstring = tempstring.replace(groupi, repgroup)
+
+            ## and also replace all the actual escaped \{ to {
+            tempstring = tempstring.replace('\\{', '{')
+            tempstring = tempstring.replace('\\}', '}')
+            ## and then substitute
+            newtemplate = Template(tempstring)
+            outfile.write(newtemplate.safe_substitute(tempdict))
+    
+    def cleanup(self):
+        outname = self.fname.replace(".bib", "_clean.bib")
         recs     = []
         rec_list = []
         for record in self.records:
             reci = [record.authors[0].short_name(), record.title, record.year]
-
             ## find duplicates 
             if(reci not in rec_list):
                 recs.append([record, record.entry_name])
@@ -495,3 +556,5 @@ class bibtexParser():
             outfile.write("}\n\n")
 
         outfile.close()
+
+        return recs
