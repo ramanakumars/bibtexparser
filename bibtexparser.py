@@ -164,8 +164,8 @@ class Author:
         first = self.firstname.split(' ')
         long_first = ""
         for name in first:
-            long_first = long_first + name + ". "
-        return "%s, %s"%(self.lastname, long_first[:-1])
+            long_first = long_first + name + " "
+        return "%s %s"%(long_first[:-1], self.lastname)
 
 class Records:
     def __init__(self, rec_type, entry_name):
@@ -426,7 +426,7 @@ class bibtexParser():
 
             ## first, find the author template because this is going to 
             ## be common to all
-            authtemplate   = re.findall(r'auth([sf])([0-9]?)', templatestring);
+            authtemplate   = re.findall(r'auth([sf])([0-9a]?)', templatestring);
             if(len(authtemplate) != 1):
                 print("Error! Only one entry for author is allowed!")
                 return
@@ -439,7 +439,10 @@ class bibtexParser():
                 return
             
             if(authstyle == 's'):
-                authnum   = int(authtemplate[0][1])
+                if(authtemplate[0][1] != 'a'):
+                    authnum = int(authtemplate[0][1])
+                else:
+                    authnum = int(1e10)
             else:
                 authnum   = 1
 
@@ -489,14 +492,14 @@ class bibtexParser():
                     elif(authstyle=='f'):
                         for i, author in enumerate(record.authors):
                             if(encodeunicode):
-                                short_name = tex2unicode(author.short_name())
+                                long_name = tex2unicode(author.long_name())
                             else:
-                                short_name = author.short_name()
+                                long_name = author.long_name()
 
                             if(i != len(record.authors)-1):
-                                authtext = authtext + short_name + ", "
+                                authtext = authtext + long_name + ", "
                             else:
-                                authtext = authtext + short_name
+                                authtext = authtext + long_name
                     ## save the author string to the output dictionary
                     tempdict[tempstr] = authtext
                 else:  ## for everything else
