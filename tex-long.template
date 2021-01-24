@@ -1,0 +1,4 @@
+\item $authf $year. $title. {\{\it $journal. $volume, $pages.\}}{\{\it $booktitle. $pages\}}{\{\it $publisher\}} DOI: \href\{$doiurl\}\{$doi\} 
+@inbook:\item $authf $year. $title. {\{\it $publisher, $pages\}}
+@book:\item $authf $year. $title. {\{\it $publisher\}}
+@inproceedings:\item $authf $year. $title. {\{\it $booktitle. $pages\}}

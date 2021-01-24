@@ -407,7 +407,6 @@ class bibtexParser():
                 templates.append(['all', linei])
         nalls = 0
         for template in templates:
-            print(template)
             if(template[0] == 'all'):
                 generictempstring = template[1]
                 nalls += 1
