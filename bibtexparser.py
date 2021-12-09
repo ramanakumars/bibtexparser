@@ -548,7 +548,7 @@ class bibtexParser():
             else:
                 print("Duplicate entry {0}: {1}".format(record.entry_name, reci))
 
-        recs = sorted(recs, key=lambda x: (x[1]))
+        recs = sorted(recs, key=lambda x: (type2index(x[0].rec_type), x[1]), reverse=True)
 
         outfile = open(outname, "w")
         for rec in recs:
@@ -560,3 +560,14 @@ class bibtexParser():
         outfile.close()
 
         return recs
+
+
+def type2index(type):
+    if type.lower()=='article':
+        return 100
+    elif type.lower()=='inproceedings':
+        return 10
+    elif type.lower()=='book':
+        return 1
+    else:
+        return 0

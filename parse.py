@@ -10,7 +10,7 @@ argparser.add_argument('input', nargs=1, help='input file (.bib)')
 #argparser.add_argument('--short', help="short form -- only one or two authors", action="store_true")
 argparser.add_argument('--sort', help="do not sort author list by name and year before saving (used for text option)", action="store_true")
 argparser.add_argument('--clean', help='parse into a new .bib file after removing duplicated items and sorting by author', action="store_true")
-argparser.add_argument('--template', help='template file to format records', nargs=1, default='html.template')
+argparser.add_argument('--template', help='template file to format records', nargs=1, default=['html.template'])
 argparser.add_argument('-output', nargs=1, help='output file (.html, .tex)')
 
 args = argparser.parse_args()
