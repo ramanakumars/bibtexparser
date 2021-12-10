@@ -1,0 +1,4 @@
+<li>$authsa $year. $title. {<i>$journal. $volume, $pages</i>.} {(DOI: <a href='$doiurl'>$doi</a>)}</li>
+@inbook:<li>$authsa $year. $title. {<i>$publisher, $pages</i>} {(DOI: <a href='$doiurl'>$doi</a>)}</li>
+@inproceedings:<li>$authsa $year. $title. {<i>$booktitle, $pages</i>} {(DOI: <a href='$doiurl'>$doi</a>)}</li>
+@book:<li>$authsa $year. $title. {<i>$publisher.</i>} {(DOI: <a href='$doiurl'>$doi</a>)}</li>
