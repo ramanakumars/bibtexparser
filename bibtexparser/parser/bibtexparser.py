@@ -1,5 +1,6 @@
 import re, unicodedata
 from string import Template
+import io
 
 journal_macros = {
    "\\aj":"Astronomical Journal",
@@ -272,7 +273,7 @@ class Records:
                 setattr(self, key, match.group(1))
 
 
-class bibtexParser():
+class bibtexParser:
     ''' 
         Parses bibtex entries from a file and creates
         a Record object of each entry
@@ -294,7 +295,7 @@ class bibtexParser():
             Parse all entries as a plain text (.txt) file with each entry separated by a newline
 
     '''
-    def __init__(self, fname):
+    def __init__(self, fname, fileIO=None):
         '''
             Initialize
             
@@ -305,14 +306,19 @@ class bibtexParser():
 
         '''
         self.fname = fname
+
+        if (fileIO is not None) and isinstance(fileIO, io.StringIO):
+            self.lines = fileIO.readlines()
+            # print(self.lines)
+            fileIO.close()
+        else:
+            file = open(self.fname, "r")
+            self.lines = file.readlines()
+            file.close()
         
         self.get_records()
 
     def get_records(self):
-        file = open(self.fname, "r")
-        self.lines = file.readlines()
-        file.close()
-
         self.records = []
 
         ## start pattern is @[type]{[name],
@@ -368,7 +374,11 @@ class bibtexParser():
         ## output to [outname] using the template given
 
         ## open the output file
-        outfile = open(outname, "w", encoding='utf-8')
+        if isinstance(outname, io.StringIO):
+            outfile = outname
+            outfile.seek(0)
+        else:
+            outfile = open(outname, "w", encoding='utf-8')
 
         ## no unicode output for .tex files
         if('tex' in outname):
@@ -396,7 +406,10 @@ class bibtexParser():
 
         ## get the template string -- we will replace this for 
         ## each entry
-        templatelines = open(templatefile, 'r').readlines()
+        if isinstance(templatefile, io.StringIO):
+            templatelines = templatefile.readlines()
+        else:
+            templatelines = open(templatefile, 'r').readlines()
 
         templates = []
         for linei in templatelines:
@@ -428,15 +441,13 @@ class bibtexParser():
             ## be common to all
             authtemplate   = re.findall(r'auth([sf])([0-9a]?)', templatestring);
             if(len(authtemplate) != 1):
-                print("Error! Only one entry for author is allowed!")
-                return
+                raise ValueError("Error! Only one entry for author is allowed!")
             authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
             authstyle = authtemplate[0][0]
 
             ## find if the author list is short or long
             if(authstyle not in ['s', 'f']):
-                print("Error! Author style must be s=>short or f=>full")
-                return
+                raise ValueError("Error! Author style must be s=>short or f=>full")
             
             if(authstyle == 's'):
                 if(authtemplate[0][1] != 'a'):

@@ -1,0 +1,53 @@
+body {
+    width: 100%;
+    font-size: 15pt;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format('woff2');
+}
+
+body *{
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 1.4em;
+}
+
+form {
+    max-width: 400px;
+    display: block;
+}
+
+input {
+    margin: 5px;
+    max-width: 400px;
+}
+
+input[type=file] {
+    width: 400px;
+}
+
+#templatetest {
+    max-width: 1000px;
+    width: 1000px;
+}
+
+#templatetest textarea {
+    min-width: 1000px;
+    font-size: 1.1em;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#test_template div {
+    width: 80%;
+    max-width: 1200;
+}
+
+pre, code{
+    white-space: pre-line;
+    font-family: 'Courier New', Courier, monospace;
+}
