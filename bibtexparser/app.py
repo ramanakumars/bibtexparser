@@ -53,17 +53,18 @@ def parse():
 
     output = strfile.read()
 
-    return render_template('show_output.html', output=output)
+    return output #render_template('show_output.html', output=output)
 
 @app.route('/test/', methods=['GET', 'POST'])
 def test_template():
     if request.method=='POST':
         template = io.StringIO()
         template.write(request.form['template'])
+
+        if request.form['template'] == '':
+            return ""
+
         template.seek(0)
-
-
-
     
     strfile = io.StringIO()
     

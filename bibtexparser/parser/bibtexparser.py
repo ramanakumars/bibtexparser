@@ -332,10 +332,8 @@ class bibtexParser:
 
         ## loop over the entire file and find entries 
         while not done:
-            line = self.lines[index]
-
+            line = self.lines[index].strip()
             matches = re.match(start_pattern, line)
-
             ## if start pattern has been found, loop and 
             ## find the end }
             if(matches):
@@ -347,7 +345,7 @@ class bibtexParser:
                 end  = False
                 ind2 = 1
                 while not end:
-                    line2 = self.lines[index+ind2]
+                    line2 = self.lines[index+ind2].strip()
                     endmatch = re.match(end_pattern, line2)
 
                     if(endmatch):

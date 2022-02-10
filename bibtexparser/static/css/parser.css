@@ -1,0 +1,80 @@
+section#parser {
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: baseline;
+    align-content: space-around;
+    flex-wrap: wrap;
+}
+
+section#parser h1 {
+    width: 100%;
+    display: block;
+}
+
+form#parse {
+    width: 30%;
+    display: block;
+    float: left;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+div#parse-output-container {
+    width: 70%;
+    display: block;
+    float: left;
+    padding: 5px;
+    font-size: 0.8em;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 5px;
+    max-height: 800px;
+    overflow-y: scroll;
+    -webkit-transition: max-height 1s ease-in-out;
+    transition: max-height 1s ease-in-out;
+}
+
+div#parse-output-container h2{
+    margin: 2px;
+    font-size: 1.1em;
+}
+
+div#parse-output-container code {
+    padding: 5px;
+}
+
+form#parse input[type=submit] {
+    width: 6em;
+    height: 2em;
+    line-height: 2em;
+    background-color: var(--sec-color);
+    color: var(--light-color);
+    border: 0px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form#parse input[type=submit]:hover {
+    background-color: var(--link-color);
+}
+
+
+input[type=file] {
+    display: none;
+    /* width: 400px;*/
+}
+
+label.file-upload {
+    display: block;
+    width: 100%;
+    border: 1px solid #ccc;
+    height: 2em;
+    padding: 0.25em 1.25em;
+    box-sizing: border-box;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #555;
+}

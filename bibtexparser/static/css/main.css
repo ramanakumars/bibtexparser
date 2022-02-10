@@ -1,6 +1,13 @@
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     width: 100%;
-    font-size: 15pt;
+    font-size: 12pt;
+    box-sizing: border-box;
+    margin: 0; 
+    padding: 0;
 }
 
 @font-face {
@@ -20,34 +27,27 @@ h1 {
 form {
     max-width: 400px;
     display: block;
+    margin: 5px;
 }
 
 input {
     margin: 5px;
     max-width: 400px;
-}
-
-input[type=file] {
-    width: 400px;
-}
-
-#templatetest {
-    max-width: 1000px;
-    width: 1000px;
-}
-
-#templatetest textarea {
-    min-width: 1000px;
-    font-size: 1.1em;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-#test_template div {
-    width: 80%;
-    max-width: 1200;
+    font-size: 0.9em;
 }
 
 pre, code{
     white-space: pre-line;
     font-family: 'Courier New', Courier, monospace;
+}
+
+section {
+    padding: 5px;
+}
+
+:root {
+    --main-color:#166971;
+    --sec-color: #1B1B1E;
+    --link-color:#A30015;
+    --light-color: #EDE7E3;
 }
