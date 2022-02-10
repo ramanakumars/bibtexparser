@@ -175,6 +175,37 @@ section.upload-text textarea {
     line-height: 1.1em;
 }
 
+textarea#templatetext {
+    height: 15em;
+}
+
+h2 {
+    font-size: 1.1em;
+    margin: 0.25em;
+    width: 100%;
+    display: block;
+}
+
+section.parse-options {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: baseline;
+    align-items: center;
+}
+
+form#parse-options label {
+    padding: 0em 1em;
+    line-height: 1.2em;
+}
+
+form#parse-options input[type="checkbox"] {
+    display: block;
+    height: 1.2em;
+    width: 1.2em;
+}
+
+
 @media screen and (max-width: 1200px) {
 	label.file-upload {
 		width: 100%;

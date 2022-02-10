@@ -2,13 +2,17 @@ $(function() {
     $('textarea.upload-text').on('keyup paste change', function() {
         parse_text();
     });
+    $('input[type=checkbox]').on('change', function() {
+        parse_text();
+    });
 });
 
 function parse_text() {
     $.ajax({
         url: '/parse/',
         type: 'post',
-        data: {'bibdata': $("#bibtext").val(), 'template': $("#templatetext").val()},
+        data: {'bibdata': $("#bibtext").val(), 'template': $("#templatetext").val(), 
+            "sort": $("#sort").is(":checked"), "clean": $("#clean").is(":checked")},
         success: function(response){
             $("code#output-text").text(response);
         }

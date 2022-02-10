@@ -1,6 +1,7 @@
 import re, unicodedata
 from string import Template
 import io
+from xml.dom.minidom import Attr
 
 journal_macros = {
    "\\aj":"Astronomical Journal",
@@ -113,7 +114,7 @@ def get_month_num(month):
         monthnum = int(month)
     except:
         monthnum = months.index(month[:3].lower())
-    return monthnum
+    return int(monthnum)
 
 class Author:
     ## author structure which parses an author's
@@ -168,7 +169,7 @@ class Author:
             long_first = long_first + name + " "
         return "%s %s"%(long_first[:-1], self.lastname)
 
-class Records:
+class Records(object):
     def __init__(self, rec_type, entry_name):
         self.authors = []
         self.rec_type   = rec_type
@@ -272,6 +273,19 @@ class Records:
                 match = re.search(search_pattern, line)
                 setattr(self, key, match.group(1))
 
+    def __getattribute__(self, __name):
+        try:
+            value = object.__getattribute__(self, __name)
+        except AttributeError:
+            raise AttributeError(f"{self.entry_name} has no keyword {__name}")
+
+        if __name=='year':
+            try:
+                return int(value)
+            except Exception as e: 
+                raise ValueError(f"Year entry '{value}' cannot be converted to integer for {self.entry_name}")
+        else:
+            return value
 
 class bibtexParser:
     ''' 
@@ -311,10 +325,12 @@ class bibtexParser:
             self.lines = fileIO.readlines()
             # print(self.lines)
             fileIO.close()
+            self.filetype = 'buffer'
         else:
             file = open(self.fname, "r")
             self.lines = file.readlines()
             file.close()
+            self.filetype = 'file'
         
         self.get_records()
 
@@ -387,20 +403,20 @@ class bibtexParser:
         ## check if we want to clean or sort
         if(clean):
             recs = self.cleanup()
-            records = [reci[0] for reci in recs]
+            self.records = [reci[0] for reci in recs]
+
+        if sort:
+            names = []
+            for record in self.records:
+                if(hasattr(record, "month")):
+                    monthnum = get_month_num(record.month)
+                else:
+                    monthnum = 0
+                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+            namesort = sorted(names)
+            records = [self.records[names.index(name)] for name in namesort]
         else:
-            if sort:
-                names = []
-                for record in self.records:
-                    if(hasattr(record, "month")):
-                        monthnum = get_month_num(record.month)
-                    else:
-                        monthnum = 0
-                    names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
-                namesort = sorted(names)
-                records = [self.records[names.index(name)] for name in namesort]
-            else:
-                records = self.records
+            records = self.records
 
         ## get the template string -- we will replace this for 
         ## each entry
@@ -558,20 +574,18 @@ class bibtexParser:
             if(reci not in rec_list):
                 recs.append([record, record.entry_name])
                 rec_list.append(reci)
-            else:
-                print("Duplicate entry {0}: {1}".format(record.entry_name, reci))
+            # else:
+                # print("Duplicate entry {0}: {1}".format(record.entry_name, reci))
 
-        recs = sorted(recs, key=lambda x: (type2index(x[0].rec_type), x[1]), reverse=True)
+        # recs = sorted(recs, key=lambda x: (type2index(x[0].rec_type), x[1]), reverse=False)
 
-        outfile = open(outname, "w")
-        for rec in recs:
-            outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
-            for text in rec[0].text:
-                outfile.write("%s"%text)
-            outfile.write("}\n\n")
-
-        outfile.close()
-
+        if self.filetype=='file':
+            with open(outname, "w") as outfile:
+                for rec in recs:
+                    outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
+                    for text in rec[0].text:
+                        outfile.write("%s"%text)
+                    outfile.write("}\n\n")
         return recs
 
 

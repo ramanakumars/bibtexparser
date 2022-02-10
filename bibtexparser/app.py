@@ -35,11 +35,23 @@ def parse():
     if request.method=='POST':
         bib  = request.form['bibdata']
         bibdata  = io.StringIO()
-        bibdata.write(bib)#.save(bibstr)
+        bibdata.write(bib)
         temp_raw = request.form['template']
         template = io.StringIO()
-        template.write(temp_raw)#.save(temstr)
+        template.write(temp_raw)
 
+        sort  = request.form['sort']
+        clean = request.form['clean']
+
+        if sort=="true":
+            sort = True
+        else:
+            sort = False
+
+        if clean=="true":
+            clean = True
+        else:
+            clean = False
         bibdata.seek(0); template.seek(0)
     elif request.method=='GET':
         return 0
@@ -57,8 +69,9 @@ def parse():
         if len(parser.records)==0:
             return "No records found in bibtex!"
 
-        parser.to_out(strfile, template, sort=True, clean=False)
+        parser.to_out(strfile, template, sort=sort, clean=clean)
     except Exception as e:
+        raise e
         return f"Please enter a valid bibtex entry and template! Error: {e}"
 
     strfile.seek(0)
