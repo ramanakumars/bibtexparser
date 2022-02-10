@@ -1,72 +1,8 @@
-section#template-tester {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    box-sizing: border-box;
-}
-
-section#template-tester h1 {
-    width: 100%; 
-    display: block;
-}
-
-section#template-test-form {
-    width: 55%;
-    display: block;
-    float: left;
-}
-
-form#template-test {
-    width: 100%;
-    max-width: 100%;
-    display: block;
-    margin: 0px;
-    box-sizing: border-box;
-}
-
-#template-test label {
-    width: 100%;
-    display: block;
-}
-
-#template-test textarea {
-    max-width: 1200px;
-    width: 100%;
-    font-size: 1.1em;
-    font-family: 'Courier New', Courier, monospace;
-    margin: 2px;
-    box-sizing: border-box;
-}
-
-div#template-output-container {
-    width: 100%;
-    max-width: 1200px;
-    display: block;
-    float: left;
-    padding: 5px;
-    font-size: 0.8em;
-    box-sizing: border-box;
-    border-radius: 5px;
-    border: 1px solid black;
-    min-height: 200px;
-    max-height: 800px;
-    overflow-y: scroll;
-    margin: 2px;
-}
-
-div#template-output-container h2{
-    margin: 2px;
-    font-size: 1.1em;
-}
-
 section.template-helper {
-    width: 44%;
-    margin: 0px;
-    padding: 5px;
-    box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .template-helper h2 {
@@ -75,22 +11,23 @@ section.template-helper {
 }
 
 .template-helper code {
-    font-size: 1em; 
     color: var(--main-color);
     font-weight: bold;
+    font-size: 1.1em;
 }
 
 p.template-tag-desc {
     display: flex;
     flex-wrap: wrap;
-    width: 48%;
+    width: 50%;
     justify-content: flex-start;
     align-content: flex-start;
-    margin: 2px 5px;
+    box-sizing: border-box;
+    padding: 0.25em 0.75em;
+    margin: 0;
 }
 
 p.template-tag-desc span {
-    margin: 2px 15px;
     width: 100%;
     text-align: left;
 }

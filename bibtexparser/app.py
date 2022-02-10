@@ -1,3 +1,4 @@
+from shutil import ExecError
 from django.shortcuts import render
 from flask import Flask, render_template, request
 from .parser import bibtexParser
@@ -32,11 +33,12 @@ def index():
 @app.route('/parse/', methods=['GET', 'POST'])
 def parse():
     if request.method=='POST':
-        bibfile  = request.files['bibfile']
+        bib  = request.form['bibdata']
         bibdata  = io.StringIO()
-        bibdata.write(str(bibfile.stream.read(), encoding='utf-8'))#.save(bibstr)
+        bibdata.write(bib)#.save(bibstr)
+        temp_raw = request.form['template']
         template = io.StringIO()
-        template.write(str(request.files['template'].stream.read(), encoding='utf-8'))#.save(temstr)
+        template.write(temp_raw)#.save(temstr)
 
         bibdata.seek(0); template.seek(0)
     elif request.method=='GET':
@@ -44,39 +46,42 @@ def parse():
     else:
         return 0
 
+    if (bib=="") or (temp_raw==""):
+        return "Please enter/upload both the bibtex entries and a template!"
+
     strfile = io.StringIO()
 
-    parser = bibtexParser(bibfile.filename, bibdata)
-    parser.to_out(strfile, template, sort=True, clean=False)
-
-    strfile.seek(0)
-
-    output = strfile.read()
-
-    return output #render_template('show_output.html', output=output)
-
-@app.route('/test/', methods=['GET', 'POST'])
-def test_template():
-    if request.method=='POST':
-        template = io.StringIO()
-        template.write(request.form['template'])
-
-        if request.form['template'] == '':
-            return ""
-
-        template.seek(0)
-    
-    strfile = io.StringIO()
-    
     try:
-        testparser.to_out(strfile, template, sort=True, clean=False)
-    except:
-        return "Please check your template!"
-    strfile.seek(0)
+        parser = bibtexParser('test', bibdata)
 
+        if len(parser.records)==0:
+            return "No records found in bibtex!"
+
+        parser.to_out(strfile, template, sort=True, clean=False)
+    except Exception as e:
+        return f"Please enter a valid bibtex entry and template! Error: {e}"
+
+    strfile.seek(0)
     output = strfile.read()
 
     return output
+
+@app.route('/upload/', methods=['POST'])
+def upload():
+    if request.method=='POST':
+        try:
+            file  = request.files['bibfile']
+        except KeyError:
+            file  = request.files['templatefile']
+        except Exception as e:
+            raise e
+    elif request.method=='GET':
+        return ""
+    else:
+        return ""
+    data = str(file.stream.read(), encoding='utf-8')
+    
+    return data #render_template('show_output.html', output=output)
 
 if __name__=='__main__':
     app.run(port=5000, debug=True)

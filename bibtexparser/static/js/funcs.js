@@ -1,48 +1,51 @@
 $(function() {
-    $('textarea#template').on('keyup paste', function() {
-        $.ajax({
-            url: '/test/',
-            type: 'post',
-            data: $('form#template-test').serialize(),
-            success: function(response){
-                $("code#template-output").text(response);
-            }
-        });
+    $('textarea.upload-text').on('keyup paste change', function() {
+        parse_text();
     });
 });
 
+function parse_text() {
+    $.ajax({
+        url: '/parse/',
+        type: 'post',
+        data: {'bibdata': $("#bibtext").val(), 'template': $("#templatetext").val()},
+        success: function(response){
+            $("code#output-text").text(response);
+        }
+    });
+}
+
 jQuery(document).ready(function ($) {
-    $('#parse').submit(function(event) {
+    $('form.file-upload').submit(function(event) {
         // alert("submitted!");
+        var form = $(this);
         $.ajax({
-            url: '/parse/',
+            url: '/upload/',
             type: 'post',
             data: new FormData(this),
             cache: false,
             contentType: false,
             processData: false,
             success: function(response) {
-                $("code#parse-output").text(response);
+                var textbox = form.parent().next().children();
+                $(textbox).val(response);
+                parse_text();
             }
         });
         return false;
     });
-    $.ajax({
-        url: '/test/',
-        type: 'post',
-        data: $('form#template-test').serialize(),
-        success: function(response){
-            $("code#template-output").text(response);
-        }
-    });
+
+    parse_text();
+
 });
 
 
 $(function() {
-    $('input#bibfile').change(function() {
-        var fname = $("input#bibfile")[0].files[0].name;
-        $('span#bibfilename').text(fname);
-        $('span#bibfilename').css("color", 'black');
+    $('input.file-upload').change(function() {
+        var fname = $(this)[0].files[0].name;
+        var span  = $(this).next();
+        span.text(fname);
+        span.css("color", 'black');
     });
 });
 

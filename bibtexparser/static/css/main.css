@@ -4,10 +4,10 @@ html {
 
 body {
     width: 100%;
-    font-size: 12pt;
+    font-size: 11pt;
     box-sizing: border-box;
-    margin: 0; 
     padding: 0;
+    margin: 0;
 }
 
 @font-face {
@@ -21,18 +21,20 @@ body *{
 }
 
 h1 {
-    font-size: 1.4em;
+    font-size: 1.3em;
+    margin: 0.25em 1em;
+    width: 100%;
+    display: block;
 }
 
 form {
-    max-width: 400px;
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
     margin: 5px;
 }
 
 input {
     margin: 5px;
-    max-width: 400px;
     font-size: 0.9em;
 }
 
@@ -50,4 +52,140 @@ section {
     --sec-color: #1B1B1E;
     --link-color:#A30015;
     --light-color: #EDE7E3;
+}
+
+input[type=file] {
+    display: none;
+}
+
+form input[type=submit] {
+    width: 8em;
+    height: 2.5em;
+    line-height: 2.5em;
+    background-color: var(--sec-color);
+    color: var(--light-color);
+    border: 0px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form input[type=submit]:hover {
+    background-color: var(--link-color);
+}
+
+article#main {
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    padding: 1em;
+}
+
+section.main-container {
+    width: 50%;
+    display: block;
+    box-sizing: border-box;
+}
+
+form.file-upload {
+    width: 100%;
+}
+
+label.file-upload {
+    display: block;
+    width: 25em;
+    max-width: 100%;
+    border: 1px solid #ccc;
+    height: 2.5em;
+    line-height: 2.5em;
+    padding: 0em 2em;
+    box-sizing: border-box;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #555;
+}
+
+label.file-upload:hover {
+    color: #111;
+}
+
+textarea.upload-text {
+    font-size: 1em;
+}
+
+div#parse-output-container {
+    width: 100%;
+    display: block;
+    float: left;
+    padding: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 5px;
+    height: 100%;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+div#parse-output-container code {
+    width: 100%;
+    height: 40%;
+    font-size: 1.1em;
+    max-height: 50%;
+    line-height: 1.2em;
+    text-indent: 0;
+}
+
+section.upload {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+form.file-upload {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+label.file-desc {
+    width: 20%;
+}
+
+section.upload-text {
+    width: 100%;
+    display: block;
+}
+
+section.upload-text textarea {
+    width: 100%;
+    height: 20em;
+    max-height: 500px;
+    max-width: 100%;
+    padding: 0.5em;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.1em;
+}
+
+@media screen and (max-width: 1200px) {
+	label.file-upload {
+		width: 100%;
+	}
+    label.file-desc {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 900px) {
+	section.main-container {
+		width: 100%;
+	}
 }

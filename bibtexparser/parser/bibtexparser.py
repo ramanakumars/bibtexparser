@@ -524,9 +524,13 @@ class bibtexParser:
                     else:
                         ## if the record does not have this attribute
                         ## find the group that this attribute is in
+                        remgroup = None
                         for groupi in groups:
                             if tempstr in groupi:
                                 remgroup = groupi
+
+                        if remgroup is None:
+                            raise KeyError(f"entry '{tempstr}' is not available in record {record.entry_name}")
 
                         ## remove the group
                         tempstring = tempstring.replace(remgroup, '')
