@@ -2,6 +2,7 @@ from shutil import ExecError
 from django.shortcuts import render
 from flask import Flask, render_template, request
 from .parser import bibtexParser
+import json
 import io
 
 app = Flask('bibtexparser')
@@ -33,15 +34,15 @@ def index():
 @app.route('/parse/', methods=['GET', 'POST'])
 def parse():
     if request.method=='POST':
-        bib  = request.form['bibdata']
+        bib  = request.json['bibdata']
         bibdata  = io.StringIO()
         bibdata.write(bib)
-        temp_raw = request.form['template']
+        temp_raw = request.json['template']
         template = io.StringIO()
         template.write(temp_raw)
 
-        sort  = request.form['sort']
-        clean = request.form['clean']
+        sort  = request.json['sort']
+        clean = request.json['clean']
 
         if sort=="true":
             sort = True
@@ -59,7 +60,7 @@ def parse():
         return 0
 
     if (bib=="") or (temp_raw==""):
-        return "Please enter/upload both the bibtex entries and a template!"
+        return json.dumps({'data': "Please enter/upload both the bibtex entries and a template!"})
 
     strfile = io.StringIO()
 
@@ -72,20 +73,18 @@ def parse():
         parser.to_out(strfile, template, sort=sort, clean=clean)
     except Exception as e:
         raise e
-        return f"Please enter a valid bibtex entry and template! Error: {e}"
+        return json.dumps({'data': f"Please enter a valid bibtex entry and template! Error: {e}"})
 
     strfile.seek(0)
     output = strfile.read()
 
-    return output
+    return json.dumps({'data': output})
 
 @app.route('/upload/', methods=['POST'])
 def upload():
     if request.method=='POST':
         try:
-            file  = request.files['bibfile']
-        except KeyError:
-            file  = request.files['templatefile']
+            file  = request.files['file']
         except Exception as e:
             raise e
     elif request.method=='GET':
@@ -94,7 +93,7 @@ def upload():
         return ""
     data = str(file.stream.read(), encoding='utf-8')
     
-    return data #render_template('show_output.html', output=output)
+    return json.dumps({'data': data}) #render_template('show_output.html', output=output)
 
 if __name__=='__main__':
     app.run(port=5000, debug=True)

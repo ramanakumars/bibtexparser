@@ -1,9 +1,26 @@
 # bibtexparser
 Parses .bib file into plaintext/HTML entries or clean up the .bib file
 
+# Requirements
+The CLI version has no specific dependencies. The web version uses the Flask backend, and uses React for JS functionality. 
 
 # Usage:
-`python parse.py -h [--clean] input [--template templatefile] [-output outputfile]`
+
+## Web app
+Build the React App: 
+```bash 
+cd bibtextparser/static/js
+npm run build
+```
+
+Then, run the web app (from the main repo folder) via:
+
+`python3 -m bibtexparser.app`
+
+This will open a server on `localhost:5000`. 
+
+## CLI
+`python parse_cli.py -h [--clean] input [--template templatefile] [-output outputfile]`
 
 positional arguments:
   input       input file (.bib)
@@ -19,7 +36,7 @@ optional arguments:
   `--clean`     save to a ref_clean.bib file with entries sorted by entry name and duplicates removed
   
 
-# Defining a template
+### Defining a template
 Templates should be saved as a separate file (e.g. html.template), and each line should contain a string showing how the output should be formatted. Each keyword must be defined by a `$`, e.g. `$journal` is a placeholder for the journal name and `$year` is the placeholder for the year. 
 
 The exceptions are the author variables. These should be defined as `$auth[s/f][num/a]`. The `s` defines the short format (e.g. Ramanakumar Sankar will be formatted as Sankar, R.), while `f` is for the full format (e.g. Ramanakumar Sankar or R. Sankar -- if the bib entry does not have the full first name). The `num` is the number of authors to show (only used in the `s` mode) before collapsing to et al. For example `$auths3` will be formatted as "Author1, Author2 and Author3" for three authors or less, or "Author1 et al." for more than three authors. Alternatively use 'a' to print all authors (e.g. `$authsa`). In the full (`f`) mode, all authors will be displayed. 
