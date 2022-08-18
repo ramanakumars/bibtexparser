@@ -91,12 +91,14 @@ section.main-container {
     box-sizing: border-box;
 }
 
-form.file-upload {
+/* form.file-upload {
     width: 100%;
-}
+} */
 
 label.file-upload {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-content: center;
     width: 25em;
     max-width: 100%;
     border: 1px solid #ccc;
@@ -131,6 +133,15 @@ div#parse-output-container {
     height: 100%;
     max-height: 400px;
     overflow-y: scroll;
+    min-height: 1.5em;
+    margin: 1.5em 0px;
+}
+
+div#error-output-container {
+    color: red;
+    padding: 1.5em 0px;
+    font-size: 1.25em;
+    font-weight: bold;
 }
 
 div#parse-output-container code {
@@ -146,6 +157,23 @@ section.upload {
     width: 100%;
     display: flex;
     flex-wrap: nowrap;
+}
+
+div.bib-upload-container {
+    display: flex;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+div.bib-upload-container label {
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+}
+
+div.bib-upload-container span {
+    margin: auto;
 }
 
 form.file-upload {
@@ -173,10 +201,6 @@ section.upload-container textarea {
     overflow-y: scroll;
     font-family: 'Courier New', Courier, monospace;
     line-height: 1.1em;
-}
-
-textarea#templatetext {
-    height: 15em;
 }
 
 h2 {

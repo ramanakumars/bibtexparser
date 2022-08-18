@@ -72,8 +72,8 @@ def parse():
 
         parser.to_out(strfile, template, sort=sort, clean=clean)
     except Exception as e:
-        raise e
-        return json.dumps({'data': f"Please enter a valid bibtex entry and template! Error: {e}"})
+        # raise(e)
+        return json.dumps({'error': f"Error: {e}"})
 
     strfile.seek(0)
     output = strfile.read()

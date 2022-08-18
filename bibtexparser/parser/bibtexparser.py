@@ -454,20 +454,26 @@ class bibtexParser:
             ## first, find the author template because this is going to 
             ## be common to all
             authtemplate   = re.findall(r'auth([sf])([0-9a]?)', templatestring);
-            if(len(authtemplate) != 1):
-                raise ValueError("Error! Only one entry for author is allowed!")
-            authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
-            authstyle = authtemplate[0][0]
+            try:
+                if(len(authtemplate) > 1):
+                    raise ValueError("Error! Only one entry for author is allowed!")
+                # authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
+                authstyle = authtemplate[0][0]
+            except IndexError as e:
+                raise IndexError("Please enter an author template")
 
             ## find if the author list is short or long
             if(authstyle not in ['s', 'f']):
-                raise ValueError("Error! Author style must be s=>short or f=>full")
+                raise ValueError("Author style must be s=>short or f=>full")
             
             if(authstyle == 's'):
-                if(authtemplate[0][1] != 'a'):
-                    authnum = int(authtemplate[0][1])
-                else:
-                    authnum = int(1e10)
+                try:
+                    if(authtemplate[0][1] != 'a'):
+                        authnum = int(authtemplate[0][1])
+                    else:
+                        authnum = int(1e10)
+                except Exception as e:
+                    raise ValueError("Please use $authsa for all authors or enter a number after $auths")
             else:
                 authnum   = 1
 

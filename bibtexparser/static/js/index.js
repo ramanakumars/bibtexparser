@@ -6,9 +6,10 @@ import ReactDOM from 'react-dom';
 class UploadForm extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {filename: 'No file selected!', fileInput: null, type: props.type, text: ''};
+		this.state = {filename: 'No file selected!', fileInput: null, type: props.type, text: '', sort: false, clean: false};
         this.handleUpload     = this.handleUpload.bind(this);
         this.handleFileInput  = this.handleFileInput.bind(this);
+        this.handleCheckbox   = this.handleCheckbox.bind(this);
 	}
 
 	handleFileInput(event) {
@@ -36,8 +37,16 @@ class UploadForm extends React.Component {
         });
     }
 
+    handleCheckbox(event) {
+        if (event.target.name==='sort') {
+            this.setState({sort: event.target.checked});
+        } else if(event.target.name==='clean') {
+            this.setState({clean: event.target.checked});
+        }
+    }
+
 	render() {
-		const inputname = this.type + "file";
+		const inputname = this.state.type + "file";
 
 		if(this.state.type=='bib') {
 			var labeltext = "Upload your bibfile";
@@ -45,16 +54,43 @@ class UploadForm extends React.Component {
 			var labeltext = "Upload your template";
 		}
 		
-		return (
-			<form action="#" className="file-upload" method="POST" onSubmit={this.handleUpload}>
-				<label htmlFor={inputname} className="file-desc">{labeltext}: </label>
-				<label className="file-upload">
-					<input name={inputname} id={inputname} type="file" className="file-upload" onChange={this.handleFileInput}/>
-					<span>{this.state.filename}</span>
-				</label>
-				<input type="submit" value="Upload!" />
-			</form>
-		)
+        if (this.state.type=='bib') {
+            return (
+                <div className='bib-upload-container'>
+                    <form action="#" className="file-upload" method="POST" onSubmit={this.handleUpload}>
+                        <label htmlFor={inputname} className="file-desc">{labeltext}: </label>
+                        <label className="file-upload">
+                            <input name={inputname} id={inputname} type="file" className="file-upload" onChange={this.handleFileInput}/>
+                            <span>{this.state.filename}</span>
+                        </label>
+
+                        <input type="submit" value="Upload!" />
+                    </form>
+                    
+                    <label className="checkbox-container">
+                        <input name="sort" id={this.state.type+"sort"} type="checkbox" className="checkbox" onChange={this.handleCheckbox}/>
+                        <span>Sort</span>
+                    </label>
+
+                    <label className="checkbox-container">
+                        <input name="clean" id={this.state.type+"clean"} type="checkbox" className="checkbox" onChange={this.handleCheckbox}/>
+                        <span>Clean</span>
+                    </label>
+                </div>
+
+            )
+        } else {
+            return (
+                <form action="#" className="file-upload" method="POST" onSubmit={this.handleUpload}>
+                    <label htmlFor={inputname} className="file-desc">{labeltext}: </label>
+                    <label className="file-upload">
+                        <input name={inputname} id={inputname} type="file" className="file-upload" onChange={this.handleFileInput}/>
+                        <span>{this.state.filename}</span>
+                    </label>
+                    <input type="submit" value="Upload!" />
+                </form>
+            )
+        }
 	}
 }
 
@@ -76,8 +112,9 @@ class Input extends React.Component {
 	}
 
     handleChangeText(event) {
-        this.setState({text: event.target.value});
-		this.props.onChange();
+        this.setState({text: event.target.value}, () => {
+		    this.props.onChange()
+        });
     }
 
     render() {
@@ -102,20 +139,39 @@ class Input extends React.Component {
 class Output extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {output: 'Please enter/upload both the bibtex entries and a template!'};
+		this.state = {output: '', error: 'Please enter/upload both the bibtex entries and a template!'};
 	}
 
 	render() {
-		return (
-            <section id="output" className="main-container">
-                <h1>Output: </h1>
-                <div id="parse-output-container">
-                    <code id="output-text">
-						{this.state.output}
-                    </code>
-                </div>
-            </section>
-		);
+
+        if (this.state.error !== '') {
+            return (
+                <section id="output" className="main-container">
+                    <h1>Output: </h1>
+                    <div id="parse-output-container">
+                        <code id="output-text">
+                            {this.state.output}
+                        </code>
+                    </div>
+                    <div id="error-output-container">
+                        <code id="error-output-text">
+                            {this.state.error}
+                        </code>
+                    </div>
+                </section>
+            );
+        } else {
+            return (
+                <section id="output" className="main-container">
+                    <h1>Output: </h1>
+                    <div id="parse-output-container">
+                        <code id="output-text">
+                            {this.state.output}
+                        </code>
+                    </div>
+                </section>
+            );
+        }
 	}
 
 }
@@ -138,7 +194,7 @@ class App extends React.Component {
 		const tempsec = this.tempsec.current;
 		const output  = this.output.current;
 
-		var formData = {bibdata: bibsec.state.text, template: tempsec.state.text, sort: false, clean: false};
+		var formData = {bibdata: bibsec.state.text, template: tempsec.state.text, sort: true, clean: true};
 
         fetch('/parse/', {
             method: 'POST',
@@ -149,8 +205,10 @@ class App extends React.Component {
             body: JSON.stringify(formData),
         }).then( result => result.json()).then( data => {
 			if(!data.error) {
-				output.setState({output: data.data});
-			}
+				output.setState({output: data.data, error: ''});
+			} else {
+                output.setState({output: '', error: data.error});
+            }
         })
         .catch((error) => {
 			console.log(error);
