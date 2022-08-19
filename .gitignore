@@ -133,3 +133,7 @@ dmypy.json
 *.html
 *.tex
 *.txt
+
+# react installs
+*node_modules/
+*dist/

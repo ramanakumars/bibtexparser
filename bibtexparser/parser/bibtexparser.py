@@ -1,5 +1,7 @@
 import re, unicodedata
 from string import Template
+import io
+from xml.dom.minidom import Attr
 
 journal_macros = {
    "\\aj":"Astronomical Journal",
@@ -112,7 +114,7 @@ def get_month_num(month):
         monthnum = int(month)
     except:
         monthnum = months.index(month[:3].lower())
-    return monthnum
+    return int(monthnum)
 
 class Author:
     ## author structure which parses an author's
@@ -167,7 +169,7 @@ class Author:
             long_first = long_first + name + " "
         return "%s %s"%(long_first[:-1], self.lastname)
 
-class Records:
+class Records(object):
     def __init__(self, rec_type, entry_name):
         self.authors = []
         self.rec_type   = rec_type
@@ -271,8 +273,21 @@ class Records:
                 match = re.search(search_pattern, line)
                 setattr(self, key, match.group(1))
 
+    def __getattribute__(self, __name):
+        try:
+            value = object.__getattribute__(self, __name)
+        except AttributeError:
+            raise AttributeError(f"{self.entry_name} has no keyword {__name}")
 
-class bibtexParser():
+        if __name=='year':
+            try:
+                return int(value)
+            except Exception as e: 
+                raise ValueError(f"Year entry '{value}' cannot be converted to integer for {self.entry_name}")
+        else:
+            return value
+
+class bibtexParser:
     ''' 
         Parses bibtex entries from a file and creates
         a Record object of each entry
@@ -294,7 +309,7 @@ class bibtexParser():
             Parse all entries as a plain text (.txt) file with each entry separated by a newline
 
     '''
-    def __init__(self, fname):
+    def __init__(self, fname, fileIO=None):
         '''
             Initialize
             
@@ -305,14 +320,21 @@ class bibtexParser():
 
         '''
         self.fname = fname
+
+        if (fileIO is not None) and isinstance(fileIO, io.StringIO):
+            self.lines = fileIO.readlines()
+            # print(self.lines)
+            fileIO.close()
+            self.filetype = 'buffer'
+        else:
+            file = open(self.fname, "r")
+            self.lines = file.readlines()
+            file.close()
+            self.filetype = 'file'
         
         self.get_records()
 
     def get_records(self):
-        file = open(self.fname, "r")
-        self.lines = file.readlines()
-        file.close()
-
         self.records = []
 
         ## start pattern is @[type]{[name],
@@ -326,10 +348,8 @@ class bibtexParser():
 
         ## loop over the entire file and find entries 
         while not done:
-            line = self.lines[index]
-
+            line = self.lines[index].strip()
             matches = re.match(start_pattern, line)
-
             ## if start pattern has been found, loop and 
             ## find the end }
             if(matches):
@@ -341,7 +361,7 @@ class bibtexParser():
                 end  = False
                 ind2 = 1
                 while not end:
-                    line2 = self.lines[index+ind2]
+                    line2 = self.lines[index+ind2].strip()
                     endmatch = re.match(end_pattern, line2)
 
                     if(endmatch):
@@ -368,7 +388,11 @@ class bibtexParser():
         ## output to [outname] using the template given
 
         ## open the output file
-        outfile = open(outname, "w", encoding='utf-8')
+        if isinstance(outname, io.StringIO):
+            outfile = outname
+            outfile.seek(0)
+        else:
+            outfile = open(outname, "w", encoding='utf-8')
 
         ## no unicode output for .tex files
         if('tex' in outname):
@@ -378,25 +402,16 @@ class bibtexParser():
 
         ## check if we want to clean or sort
         if(clean):
-            recs = self.cleanup()
-            records = [reci[0] for reci in recs]
-        else:
-            if sort:
-                names = []
-                for record in self.records:
-                    if(hasattr(record, "month")):
-                        monthnum = get_month_num(record.month)
-                    else:
-                        monthnum = 0
-                    names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
-                namesort = sorted(names)
-                records = [self.records[names.index(name)] for name in namesort]
-            else:
-                records = self.records
+            recs = self.cleanup(sort=sort)
+            self.records = [reci[0] for reci in recs]
+
 
         ## get the template string -- we will replace this for 
         ## each entry
-        templatelines = open(templatefile, 'r').readlines()
+        if isinstance(templatefile, io.StringIO):
+            templatelines = templatefile.readlines()
+        else:
+            templatelines = open(templatefile, 'r').readlines()
 
         templates = []
         for linei in templatelines:
@@ -416,7 +431,7 @@ class bibtexParser():
             return
 
         ## loop through all the records
-        for record in records:
+        for record in self.records:
             rectype = record.rec_type
 
             templatestring = generictempstring
@@ -427,22 +442,26 @@ class bibtexParser():
             ## first, find the author template because this is going to 
             ## be common to all
             authtemplate   = re.findall(r'auth([sf])([0-9a]?)', templatestring);
-            if(len(authtemplate) != 1):
-                print("Error! Only one entry for author is allowed!")
-                return
-            authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
-            authstyle = authtemplate[0][0]
+            try:
+                if(len(authtemplate) > 1):
+                    raise ValueError("Error! Only one entry for author is allowed!")
+                # authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
+                authstyle = authtemplate[0][0]
+            except IndexError as e:
+                raise IndexError("Please enter an author template")
 
             ## find if the author list is short or long
             if(authstyle not in ['s', 'f']):
-                print("Error! Author style must be s=>short or f=>full")
-                return
+                raise ValueError("Author style must be s=>short or f=>full")
             
             if(authstyle == 's'):
-                if(authtemplate[0][1] != 'a'):
-                    authnum = int(authtemplate[0][1])
-                else:
-                    authnum = int(1e10)
+                try:
+                    if(authtemplate[0][1] != 'a'):
+                        authnum = int(authtemplate[0][1])
+                    else:
+                        authnum = int(1e10)
+                except Exception as e:
+                    raise ValueError("Please use $authsa for all authors or enter a number after $auths")
             else:
                 authnum   = 1
 
@@ -515,9 +534,13 @@ class bibtexParser():
                     else:
                         ## if the record does not have this attribute
                         ## find the group that this attribute is in
+                        remgroup = None
                         for groupi in groups:
                             if tempstr in groupi:
                                 remgroup = groupi
+
+                        if remgroup is None:
+                            raise KeyError(f"entry '{tempstr}' is not available in record {record.entry_name}")
 
                         ## remove the group
                         tempstring = tempstring.replace(remgroup, '')
@@ -535,29 +558,59 @@ class bibtexParser():
             newtemplate = Template(tempstring)
             outfile.write(newtemplate.safe_substitute(tempdict))
     
-    def cleanup(self):
-        outname = self.fname.replace(".bib", "_clean.bib")
+    def cleanup(self, sort=False, save=False, outfile=None):
+        if save:
+            if outfile is None:
+                if self.filetype=='file':
+                    outname = self.fname.replace(".bib", "_clean.bib")
+                else:
+                    raise RuntimeError("Please provide an output writer for non-file inputs")
+
+        # sort the data first 
+        if sort:
+            names = []
+
+            # create a list of author/year/month so that we can sort by this
+            # key later
+            for record in self.records:
+                if(hasattr(record, "month")):
+                    monthnum = get_month_num(record.month)
+                else:
+                    monthnum = 0
+                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+            namesort = sorted(names)
+            records = [self.records[names.index(name)] for name in namesort]
+        else:
+            # if we don't want to sort then just use the same list
+            records = self.records
+
         recs     = []
         rec_list = []
-        for record in self.records:
+
+        for record in records:
             reci = [record.authors[0].short_name(), record.title, record.year]
             ## find duplicates 
             if(reci not in rec_list):
                 recs.append([record, record.entry_name])
                 rec_list.append(reci)
+
+        # check if we want to save this out
+        if save:
+            # for a file input
+            if self.filetype=='file':
+                with open(outname, "w") as outfile:
+                    for rec in recs:
+                        outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
+                        for text in rec[0].text:
+                            outfile.write("%s"%text)
+                        outfile.write("}\n\n")
+            # for input from the web UI
             else:
-                print("Duplicate entry {0}: {1}".format(record.entry_name, reci))
-
-        recs = sorted(recs, key=lambda x: (type2index(x[0].rec_type), x[1]), reverse=True)
-
-        outfile = open(outname, "w")
-        for rec in recs:
-            outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
-            for text in rec[0].text:
-                outfile.write("%s"%text)
-            outfile.write("}\n\n")
-
-        outfile.close()
+                for rec in recs:
+                    outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
+                    for text in rec[0].text:
+                        outfile.write("%s"%text)
+                    outfile.write("}\n\n")
 
         return recs
 
