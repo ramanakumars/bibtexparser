@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 class UploadForm extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {filename: 'No file selected!', fileInput: null, type: props.type, text: '', sort: false, clean: false};
+		this.state = {filename: 'No file selected!', fileInput: null, type: props.type, text: '', clean: false};
         this.handleUpload     = this.handleUpload.bind(this);
         this.handleFileInput  = this.handleFileInput.bind(this);
         this.handleCheckbox   = this.handleCheckbox.bind(this);
@@ -22,6 +22,7 @@ class UploadForm extends React.Component {
 		const formData = new FormData();
 
 		formData.append('file', this.state.fileInput);
+        formData.append('clean', this.state.clean);
 
         fetch('/upload/', {
             method: 'POST',
@@ -38,11 +39,7 @@ class UploadForm extends React.Component {
     }
 
     handleCheckbox(event) {
-        if (event.target.name==='sort') {
-            this.setState({sort: event.target.checked});
-        } else if(event.target.name==='clean') {
-            this.setState({clean: event.target.checked});
-        }
+        this.setState({clean: event.target.checked});
     }
 
 	render() {
@@ -65,17 +62,13 @@ class UploadForm extends React.Component {
                         </label>
 
                         <input type="submit" value="Upload!" />
-                    </form>
-                    
-                    <label className="checkbox-container">
-                        <input name="sort" id={this.state.type+"sort"} type="checkbox" className="checkbox" onChange={this.handleCheckbox}/>
-                        <span>Sort</span>
-                    </label>
 
-                    <label className="checkbox-container">
-                        <input name="clean" id={this.state.type+"clean"} type="checkbox" className="checkbox" onChange={this.handleCheckbox}/>
-                        <span>Clean</span>
-                    </label>
+                        <label className="checkbox-container">
+                            <input name="clean" id={this.state.type+"clean"} type="checkbox" className="checkbox" onChange={this.handleCheckbox}/>
+                            <span>Clean</span>
+                        </label>
+                    </form>
+
                 </div>
 
             )
@@ -194,7 +187,7 @@ class App extends React.Component {
 		const tempsec = this.tempsec.current;
 		const output  = this.output.current;
 
-		var formData = {bibdata: bibsec.state.text, template: tempsec.state.text, sort: true, clean: true};
+		var formData = {bibdata: bibsec.state.text, template: tempsec.state.text};
 
         fetch('/parse/', {
             method: 'POST',

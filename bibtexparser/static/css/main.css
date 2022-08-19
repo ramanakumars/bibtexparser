@@ -172,6 +172,10 @@ div.bib-upload-container label {
     justify-content: center;
 }
 
+label.checkbox-container {
+    margin: 0em 1.5em;
+}
+
 div.bib-upload-container span {
     margin: auto;
 }
@@ -180,6 +184,7 @@ form.file-upload {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    width: 100%;
 }
 
 label.file-desc {
