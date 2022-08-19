@@ -40,19 +40,6 @@ def parse():
         temp_raw = request.json['template']
         template = io.StringIO()
         template.write(temp_raw)
-
-        sort  = request.json['sort']
-        clean = request.json['clean']
-
-        if sort=="true":
-            sort = True
-        else:
-            sort = False
-
-        if clean=="true":
-            clean = True
-        else:
-            clean = False
         bibdata.seek(0); template.seek(0)
     elif request.method=='GET':
         return 0
@@ -70,7 +57,7 @@ def parse():
         if len(parser.records)==0:
             return "No records found in bibtex!"
 
-        parser.to_out(strfile, template, sort=sort, clean=clean)
+        parser.to_out(strfile, template, sort=False, clean=False)
     except Exception as e:
         # raise(e)
         return json.dumps({'error': f"Error: {e}"})
@@ -87,11 +74,40 @@ def upload():
             file  = request.files['file']
         except Exception as e:
             raise e
+
+        try:
+            clean = request.values['clean']
+
+            if clean=='false':
+                clean = False
+            elif clean=='true':
+                clean = True
+            print(clean)
+        except Exception as e:
+            clean = False
+            pass
     elif request.method=='GET':
         return ""
     else:
         return ""
-    data = str(file.stream.read(), encoding='utf-8')
+
+    if clean:
+        bibdata  = io.StringIO()
+        bibdata.write(str(file.stream.read(), encoding='utf-8'))
+        bibdata.seek(0);
+
+        parser = bibtexParser('test', bibdata)
+        
+        clean_data = io.StringIO()
+
+        recs = parser.cleanup(sort=True, save=True, outfile=clean_data)
+        print([rec[1] for rec in recs])
+
+        # print(clean_data.getvalue())
+
+        data = clean_data.getvalue()
+    else:
+        data = str(file.stream.read(), encoding='utf-8')
     
     return json.dumps({'data': data}) #render_template('show_output.html', output=output)
 

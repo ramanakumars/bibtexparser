@@ -402,21 +402,9 @@ class bibtexParser:
 
         ## check if we want to clean or sort
         if(clean):
-            recs = self.cleanup()
+            recs = self.cleanup(sort=sort)
             self.records = [reci[0] for reci in recs]
 
-        if sort:
-            names = []
-            for record in self.records:
-                if(hasattr(record, "month")):
-                    monthnum = get_month_num(record.month)
-                else:
-                    monthnum = 0
-                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
-            namesort = sorted(names)
-            records = [self.records[names.index(name)] for name in namesort]
-        else:
-            records = self.records
 
         ## get the template string -- we will replace this for 
         ## each entry
@@ -443,7 +431,7 @@ class bibtexParser:
             return
 
         ## loop through all the records
-        for record in records:
+        for record in self.records:
             rectype = record.rec_type
 
             templatestring = generictempstring
@@ -570,28 +558,60 @@ class bibtexParser:
             newtemplate = Template(tempstring)
             outfile.write(newtemplate.safe_substitute(tempdict))
     
-    def cleanup(self):
-        outname = self.fname.replace(".bib", "_clean.bib")
+    def cleanup(self, sort=False, save=False, outfile=None):
+        if save:
+            if outfile is None:
+                if self.filetype=='file':
+                    outname = self.fname.replace(".bib", "_clean.bib")
+                else:
+                    raise RuntimeError("Please provide an output writer for non-file inputs")
+
+        # sort the data first 
+        if sort:
+            names = []
+
+            # create a list of author/year/month so that we can sort by this
+            # key later
+            for record in self.records:
+                if(hasattr(record, "month")):
+                    monthnum = get_month_num(record.month)
+                else:
+                    monthnum = 0
+                names.append("%s%d%02d"%(record.authors[0].lastname, record.year, monthnum))
+            namesort = sorted(names)
+            records = [self.records[names.index(name)] for name in namesort]
+        else:
+            # if we don't want to sort then just use the same list
+            records = self.records
+
         recs     = []
         rec_list = []
-        for record in self.records:
+
+        for record in records:
             reci = [record.authors[0].short_name(), record.title, record.year]
             ## find duplicates 
             if(reci not in rec_list):
                 recs.append([record, record.entry_name])
                 rec_list.append(reci)
-            # else:
-                # print("Duplicate entry {0}: {1}".format(record.entry_name, reci))
 
-        # recs = sorted(recs, key=lambda x: (type2index(x[0].rec_type), x[1]), reverse=False)
-
-        if self.filetype=='file':
-            with open(outname, "w") as outfile:
+        # check if we want to save this out
+        if save:
+            # for a file input
+            if self.filetype=='file':
+                with open(outname, "w") as outfile:
+                    for rec in recs:
+                        outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
+                        for text in rec[0].text:
+                            outfile.write("%s"%text)
+                        outfile.write("}\n\n")
+            # for input from the web UI
+            else:
                 for rec in recs:
                     outfile.write("@%s{%s,\n"%(rec[0].rec_type,rec[1]))
                     for text in rec[0].text:
                         outfile.write("%s"%text)
                     outfile.write("}\n\n")
+
         return recs
 
 
