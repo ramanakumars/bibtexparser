@@ -116,5 +116,5 @@ def get_month_num(month):
     try:
         monthnum = int(month)
     except Exception:
-        monthnum = months.index(month[:3].lower())
+        monthnum = months.index(month.replace('"', '')[:3].lower())
     return int(monthnum)

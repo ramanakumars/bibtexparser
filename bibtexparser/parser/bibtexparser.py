@@ -236,10 +236,10 @@ class bibtexParser:
             outfile = open(outname, "w", encoding='utf-8')
 
         # no unicode output for .tex files
-        if 'tex' in outname:
-            encodeunicode = False
-        else:
+        if convunicode:
             encodeunicode = True
+        else:
+            encodeunicode = False
 
         # check if we want to clean or sort
         if clean:
@@ -290,10 +290,6 @@ class bibtexParser:
                 authstyle = authtemplate[0][0]
             except IndexError:
                 raise IndexError("Please enter an author template")
-
-            # find if the author list is short or long
-            if authstyle not in ['s', 'f']:
-                raise ValueError("Author style must be s=>short or f=>full")
 
             if authstyle == 's':
                 try:
