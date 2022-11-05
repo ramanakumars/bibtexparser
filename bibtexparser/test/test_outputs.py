@@ -1,10 +1,7 @@
-from io import StringIO, BytesIO
-
-
-bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author3}, Peter}',
+bib_dict_check = [{'author': "{Peter Adams and PeterLastNameOnly and {van Author3}, P{\\'e}ter}",
                    'authors': [{'firstname': 'Peter', 'lastname': 'Adams'},
                                {'firstname': '', 'lastname': 'PeterLastNameOnly'},
-                               {'firstname': 'Peter', 'lastname': 'van Author3'}],
+                               {'firstname': "P\\'eter", 'lastname': 'van Author3'}],
                    'entry_name': 'article',
                    'journal': 'The name of the journal',
                    'month': 7,
@@ -13,7 +10,7 @@ bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author
                    'pages': '201-213',
                    'rec_type': 'article',
                    'text': '    author  = {Peter Adams and PeterLastNameOnly and {van Author3}, '
-                   'Peter},\n'
+                   "P{\\'e}ter},\n"
                    '    title   = {The title of the work},\n'
                    '    journal = {The name of the journal},\n'
                    '    year    = 1993,\n'
@@ -87,7 +84,7 @@ bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author
                    'doiurl': 'https://doi.org/10.01/someDOIURL',
                    'edition': '3',
                    'entry_name': 'inbook',
-                   'month': 7,
+                   'month': '"july"',
                    'pages': '201-213',
                    'publisher': 'The name of the publisher',
                    'rec_type': 'inbook',
@@ -102,7 +99,7 @@ bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author
                    '    series       = 5,\n'
                    '    address      = {The address of the publisher},\n'
                    '    edition      = 3,\n'
-                   '    month        = 7,\n'
+                   '    month        = "july",\n'
                    '    note         = {An optional note}\n'
                    '    doi          = {10.01/someDOIURL}\n',
                    'title': 'The title of the work',
@@ -116,7 +113,7 @@ bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author
                    'edition': '3',
                    'editor': 'The editor',
                    'entry_name': 'incollection',
-                   'month': 7,
+                   'month': '"jul"',
                    'note': 'An optional note',
                    'pages': '201-213',
                    'publisher': 'The name of the publisher',
@@ -133,9 +130,9 @@ bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author
                    '    chapter      = 8,\n'
                    '    pages        = {201-213},\n'
                    '    address      = {The address of the publisher},\n'
-                            '    edition      = 3,\n'
-                            '    month        = 7,\n'
-                            '    note         = {An optional note}\n',
+                   '    edition      = 3,\n'
+                   '    month        = "jul",\n'
+                   '    note         = {An optional note}\n',
                    'title': 'The title of the work',
                    'volume': 4,
                    'year': 1993},
@@ -157,29 +154,11 @@ bib_dict_check = [{'author': '{Peter Adams and PeterLastNameOnly and {van Author
                    'title': 'The title of the work',
                    'year': 1993}]
 
+tex_long_output = ['\\item Adams, P., PeterLastNameOnly,  and van Author3, P.  1993. The title of the work. {\\it The name of the journal. 4, 201-213.}  \n', '\\item Babington, P.  1993. The title of the work. {\\it The name of the publisher}\n', '\\item Draper, P.  1993. The title of the work. {\\it The title of the book. 213}{\\it The publisher}  \n',
+                   '\\item Eston, P.  1993. The title of the work. {\\it The name of the publisher, 201-213}\n', '\\item Farindon, P.  1993. The title of the work. {\\it The title of the book. 201-213}{\\it The name of the publisher}  \n', "\\item Su\\'arez, P.  1993. The title of the work.   \n"]
 
-tex_long_template = StringIO("""\item $authsa $year. $title. {\{\it $journal. $volume, $pages.\}}{\{\it $booktitle. $pages\}}{\{\it $publisher\}} {DOI: \href\{$doiurl\}\{$doi\}} 
-@inbook:\item $authsa $year. $title. {\{\it $publisher, $pages\}}
-@book:\item $authsa $year. $title. {\{\it $publisher\}}
-@inproceedings:\item $authsa $year. $title. {\{\it $booktitle. $pages\}}""")
+html_output = ['<li>Peter Adams,  PeterLastNameOnly, Péter van Author3 1993. The title of the work. <i>The name of the journal. 4, 201-213</i>.</li>\n', '<li>Peter Babington 1993. The title of the work. <i>The name of the publisher.</i></li>\n', '<li>Peter Draper 1993. The title of the work.</li>\n',
+               "<li>Peter Eston 1993. The title of the work. <i>The name of the publisher, 201-213</i> (DOI: <a href='https://doi.org/10.01/someDOIURL'>10.01/someDOIURL</a>)</li>\n", '<li>Peter Farindon 1993. The title of the work.</li>\n', '<li>Peter Suárez 1993. The title of the work.</li>\n']
 
-tex_long_output = ['\\item Adams, P., PeterLastNameOnly,  and van Author3, P.  1993. The title of the work. {\\it The name of the journal. 4, 201-213.}  \n',
-                   '\\item Babington, P.  1993. The title of the work. {\\it The name of the publisher}\n',
-                   '\\item Draper, P.  1993. The title of the work. {\\it The title of the book. 213}{\\it The publisher}  \n',
-                   '\\item Eston, P.  1993. The title of the work. {\\it The name of the publisher, 201-213}\n',
-                   '\\item Farindon, P.  1993. The title of the work. {\\it The title of the book. 201-213}{\\it The name of the publisher}  \n',
-                   '\\item Suárez, P.  1993. The title of the work.   \n']
-
-
-html_short_template = StringIO("""<li>$authf $year. $title.{ <i>$journal. $volume, $pages</i>.}{ (DOI: <a href='$doiurl'>$doi</a>)}</li>
-@inbook:<li>$authf $year. $title.{ <i>$publisher, $pages</i>}{ (DOI: <a href='$doiurl'>$doi</a>)}</li>
-@inproceedings:<li>$authf $year. $title.{ <i>$booktitle, $pages</i>}{ (DOI: <a href='$doiurl'>$doi</a>)}</li>
-@book:<li>$authf $year. $title.{ <i>$publisher.</i>}{ (DOI: <a href='$doiurl'>$doi</a>)}</li>
-""")
-
-html_output = ['<li>Peter Adams,  PeterLastNameOnly, Peter van Author3 1993. The title of the work. <i>The name of the journal. 4, 201-213</i>.</li>\n',
-               '<li>Peter Babington 1993. The title of the work. <i>The name of the publisher.</i></li>\n',
-               '<li>Peter Draper 1993. The title of the work.</li>\n',
-               "<li>Peter Eston 1993. The title of the work. <i>The name of the publisher, 201-213</i> (DOI: <a href='https://doi.org/10.01/someDOIURL'>10.01/someDOIURL</a>)</li>\n",
-               '<li>Peter Farindon 1993. The title of the work.</li>\n',
-               '<li>Peter Suárez 1993. The title of the work.</li>\n']
+html_short_output = ['<li>Adams, P. et al. 1993. The title of the work. <i>The name of the journal. 4, 201-213</i>.</li>\n', '<li>Babington, P.  1993. The title of the work.</li>\n', '<li>Draper, P.  1993. The title of the work.</li>\n',
+                     "<li>Eston, P.  1993. The title of the work. (DOI: <a href='https://doi.org/10.01/someDOIURL'>10.01/someDOIURL</a>)</li>\n", '<li>Farindon, P.  1993. The title of the work.</li>\n', '<li>Suárez, P.  1993. The title of the work.</li>\n']
