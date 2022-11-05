@@ -14,7 +14,7 @@ class Author:
         # figure out if it is lastname, firstname
         # or firstname lastname
 
-        if("," in bib_entry):
+        if "," in bib_entry:
             nnames = bib_entry.split(', ')
             self.firstname = nnames[1]
             self.lastname = nnames[0]
@@ -40,10 +40,10 @@ class Author:
         # e.g. Sankar, R. or Sankar, R. G.
         first = self.firstname.split(' ')
         short_first = ""
-        if(first[0] != ''):
+        if first[0] != '':
             for name in first:
                 # account for first letter unicodes
-                if(name[0] == "{"):
+                if name[0] == "{":
                     fname = re.findall(r'(\{.+\})', name)[0]
                 else:
                     fname = name[0]
@@ -92,15 +92,15 @@ class Records(object):
                     authi = Author(author.strip())
                     self.authors.append(authi)
             else:
-                entry = entry.replace("{","")
-                entry = entry.replace("}","")
+                entry = entry.replace("{", "")
+                entry = entry.replace("}", "")
 
             # if the journaly contains a macro,
             # parse it using the dictionary
-            if(key == "journal"):
+            if key == "journal":
                 self.journal = entry
 
-                if(self.journal[0] == '\\'):
+                if self.journal[0] == '\\':
                     try:
                         self.journal = journal_macros[self.journal]
                     except KeyError:
@@ -111,26 +111,26 @@ class Records(object):
                         self.journal = entry
 
             # year and volume are numbers
-            elif(key == "year"):
+            elif key == "year":
                 try:
                     self.year = int(entry)
                 except ValueError:
                     self.year = entry
 
-            elif(key == "month"):
+            elif key == "month":
                 try:
                     self.month = int(entry)
                 except ValueError:
                     self.month = entry
 
-            elif(key == "volume"):
+            elif key == "volume":
                 try:
                     self.volume = int(entry)
                 except ValueError:
                     self.volume = entry
 
             # parse the DOI into a URL
-            elif(key == "doi"):
+            elif key == "doi":
                 self.doi = entry
                 self.doiurl = "https://doi.org/%s" % self.doi
 
@@ -149,7 +149,8 @@ class Records(object):
                 return int(value)
             except Exception:
                 raise ValueError(
-                    f"Year entry '{value}' cannot be converted to integer for {self.entry_name}")
+                    f"Year entry '{value}' cannot be converted to integer for"
+                    f"{self.entry_name}")
         else:
             return value
 
@@ -223,7 +224,7 @@ class bibtexParser:
             self.records.append(reci)
 
         print("Found %d records from %s" % (len(self.records), self.fname))
-        
+
     def to_out(self, outname, templatefile,
                convunicode=True, clean=False, sort=False):
         # output to [outname] using the template given
@@ -236,13 +237,13 @@ class bibtexParser:
             outfile = open(outname, "w", encoding='utf-8')
 
         # no unicode output for .tex files
-        if('tex' in outname):
+        if 'tex' in outname:
             encodeunicode = False
         else:
             encodeunicode = True
 
         # check if we want to clean or sort
-        if(clean):
+        if clean:
             recs = self.cleanup(sort=sort)
             self.records = [reci[0] for reci in recs]
 
@@ -255,7 +256,7 @@ class bibtexParser:
 
         templates = []
         for linei in templatelines:
-            if(linei[0] == '@'):
+            if linei[0] == '@':
                 temptype = re.findall(r'@([A-Za-z]*?):', linei)[0]
                 templates.append(
                     [temptype.lower(), linei.replace('@%s:' % temptype, '')])
@@ -263,11 +264,11 @@ class bibtexParser:
                 templates.append(['all', linei])
         nalls = 0
         for template in templates:
-            if(template[0] == 'all'):
+            if template[0] == 'all':
                 generictempstring = template[1]
                 nalls += 1
 
-        if(nalls > 1):
+        if nalls > 1:
             print("Error! Can only have one general template")
             return
 
@@ -277,34 +278,34 @@ class bibtexParser:
 
             templatestring = generictempstring
             for template in templates:
-                if(rectype.lower() == template[0]):
+                if rectype.lower() == template[0]:
                     templatestring = template[1]
 
             # first, find the author template because this is going to
             # be common to all
             authtemplate = re.findall(r'auth([sf])([0-9a]?)', templatestring)
             try:
-                if(len(authtemplate) > 1):
+                if len(authtemplate) > 1:
                     raise ValueError(
                         "Error! Only one entry for author is allowed!")
-                # authstring     = "auth%s%s"%(authtemplate[0][0],authtemplate[0][1])
                 authstyle = authtemplate[0][0]
             except IndexError:
                 raise IndexError("Please enter an author template")
 
             # find if the author list is short or long
-            if(authstyle not in ['s', 'f']):
+            if authstyle not in ['s', 'f']:
                 raise ValueError("Author style must be s=>short or f=>full")
 
-            if(authstyle == 's'):
+            if authstyle == 's':
                 try:
-                    if(authtemplate[0][1] != 'a'):
+                    if authtemplate[0][1] != 'a':
                         authnum = int(authtemplate[0][1])
                     else:
                         authnum = int(1e10)
                 except Exception:
                     raise ValueError(
-                        "Please use $authsa for all authors or enter a number after $auths")
+                        "Please use $authsa for all authors or enter a number "
+                        "after $auths")
             else:
                 authnum = 1
 
@@ -325,12 +326,12 @@ class bibtexParser:
                 tempstr = tempi.replace('$', '')
 
                 # special case -- authors
-                if("auth" in tempi):
+                if "auth" in tempi:
                     authtext = ''
-                    if(authstyle == 's'):  # short author style (lastname firstinitials)
-                        if(len(record.authors) > authnum):
+                    if authstyle == 's':  # short author (lastname initials)
+                        if len(record.authors) > authnum:
                             author = record.authors[0]
-                            if(encodeunicode):
+                            if encodeunicode:
                                 short_name = tex2unicode(author.short_name())
                             else:
                                 short_name = author.short_name()
@@ -340,35 +341,35 @@ class bibtexParser:
                             nauths = min([len(record.authors), authnum])
                             for authi in range(nauths):
                                 author0 = record.authors[authi]
-                                if(encodeunicode):
+                                if encodeunicode:
                                     short_name = tex2unicode(
                                         author0.short_name())
                                 else:
                                     short_name = author0.short_name()
 
                                 authtext = authtext + short_name
-                                if(authi == nauths - 2):
+                                if authi == (nauths - 2):
                                     authtext = authtext + " and "
-                                elif(authi == nauths - 1):
+                                elif authi == (nauths - 1):
                                     authtext = authtext + " "
                                 else:
                                     authtext = authtext + ", "
-                    elif(authstyle == 'f'):
+                    elif authstyle == 'f':
                         for i, author in enumerate(record.authors):
-                            if(encodeunicode):
+                            if encodeunicode:
                                 long_name = tex2unicode(author.long_name())
                             else:
                                 long_name = author.long_name()
 
-                            if(i != len(record.authors) - 1):
+                            if i != (len(record.authors) - 1):
                                 authtext = authtext + long_name + ", "
                             else:
                                 authtext = authtext + long_name
                     # save the author string to the output dictionary
                     tempdict[tempstr] = authtext
                 else:  # for everything else
-                    if(hasattr(record, tempstr)):
-                        if(encodeunicode):
+                    if hasattr(record, tempstr):
+                        if encodeunicode:
                             try:
                                 tempdict[tempstr] = tex2unicode(
                                     record.__getattribute__(tempstr))
@@ -389,7 +390,8 @@ class bibtexParser:
 
                         if remgroup is None:
                             raise KeyError(
-                                f"entry '{tempstr}' is not available in record {record.entry_name}")
+                                f"entry '{tempstr}' is not available "
+                                f"in record {record.entry_name}")
 
                         # remove the group
                         tempstring = tempstring.replace(remgroup, '')
@@ -426,13 +428,14 @@ class bibtexParser:
             for record in self.records:
                 if 'Yoden' in record.entry_name:
                     print(record.entry_name)
-                if(hasattr(record, "month")):
+                if hasattr(record, "month"):
                     monthnum = get_month_num(record.month)
                 else:
                     monthnum = 0
                 try:
                     namei = "%s%d%02d_%s" % (
-                        record.authors[0].lastname, record.year, monthnum, record.title[:5])
+                        record.authors[0].lastname, record.year,
+                        monthnum, record.title[:5])
                 except IndexError:
                     try:
                         namei = "%d%02d" % (record.year, monthnum)
@@ -458,10 +461,12 @@ class bibtexParser:
         for record in records:
             try:
                 # [record.authors[0].short_name(), record.title, record.year]
-                reci = f"{record.authors[0].lastname}_{record.title[:5]}_{record.year}_{record.entry_name}"
+                reci = f"{record.authors[0].lastname}_{record.title[:5]}"
+                f"_{record.year}_{record.entry_name}"
             except IndexError:
                 try:
-                    reci = f"{record.title[:5]}_{record.year}_{record.entry_name}"
+                    reci = f"{record.title[:5]}_{record.year}"
+                    f"_{record.entry_name}"
                 except Exception as e:
                     print(f"failing on {record.entry_name}")
                     print(e)
