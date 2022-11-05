@@ -19,7 +19,7 @@ class Author:
             self.firstname = nnames[1]
             self.lastname = nnames[0]
         else:
-            nnames = re.findall('[{]?([\w]+)[}]?', bib_entry)
+            nnames = re.findall('[{]?([\S]+)[}]?', bib_entry)
             if len(nnames) > 1:
                 self.lastname = " ".join(nnames[1:])
                 self.firstname = nnames[0]
@@ -82,7 +82,7 @@ class Records(object):
         for i, (_, _, key, entry, _) in enumerate(matches):
             key = key.lower().strip()
             line = entry.strip()
-            line = line.replace('\"', '')
+            line = line.replace('"', '')
 
             # special case author list
             # break down individual authors
@@ -195,7 +195,6 @@ class bibtexParser:
 
         if (fileIO is not None) and isinstance(fileIO, io.StringIO):
             self.lines = fileIO.readlines()
-            # print(self.lines)
             fileIO.close()
             self.filetype = 'buffer'
         else:
