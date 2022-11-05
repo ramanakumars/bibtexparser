@@ -1,7 +1,6 @@
 import unittest
 from ..parser import bibtexParser
 from .test_file import test_file, bib_dict_check
-import pprint
 
 
 def todict(obj, classkey=None):
@@ -36,18 +35,8 @@ class TestBibReader(unittest.TestCase):
 
     def test_bib_records(self):
         bib_dict = todict(self.bib.records)
-        print("Returned:")
-        pprint.pprint(bib_dict)
         self.assertEqual(bib_dict, bib_dict_check)
 
-
-pprint.pprint(bib_dict_check)
-
-# if __name__ == '__main__':
-# suite = unittest.TestSuite()
-# suite.addTest(TestBibReader('test_bib_record_count'))
-# suite.addTest(TestBibReader('test_bib_records'))
-# unittest.TextTestRunner(verbosity=2).run(suite)
 
 if "__name__" == '__main__':
     unittest.main()
