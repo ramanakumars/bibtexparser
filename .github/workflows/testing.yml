@@ -21,7 +21,6 @@ jobs:
       run: |
         coverage run -m unittest bibtexparser.test.test
     - name: Publish to coveralls.io
-      uses: coverallsapp/github-action@v1.1.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run:
