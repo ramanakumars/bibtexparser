@@ -283,7 +283,7 @@ class bibtexParser:
 
             # first, find the author template because this is going to
             # be common to all
-            authtemplate = re.findall(r'auth([sf])([0-9a]?)', templatestring)
+            authtemplate = re.findall(r'auth([sf])([0-9]+|[a]{1})?', templatestring)
             try:
                 if len(authtemplate) > 1:
                     raise ValueError(
@@ -498,14 +498,3 @@ class bibtexParser:
                         outfile.write("\n}\n\n")
 
         return recs
-
-
-def type2index(type):
-    if type.lower() == 'article':
-        return 100
-    elif type.lower() == 'inproceedings':
-        return 10
-    elif type.lower() == 'book':
-        return 1
-    else:
-        return 0
