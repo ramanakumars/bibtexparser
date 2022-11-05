@@ -1,4 +1,6 @@
 # bibtexparser
+[![Coverage Status](https://coveralls.io/repos/github/ramanakumars/bibtexparser/badge.svg?branch=main)](https://coveralls.io/github/ramanakumars/bibtexparser?branch=main)
+
 Parses .bib file into plaintext/HTML entries or clean up the .bib file
 
 # Requirements

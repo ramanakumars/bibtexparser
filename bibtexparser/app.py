@@ -1,5 +1,3 @@
-from shutil import ExecError
-from django.shortcuts import render
 from flask import Flask, render_template, request
 from .parser import bibtexParser
 import json
@@ -27,26 +25,29 @@ bibdata.seek(0)
 
 testparser = bibtexParser('test', bibdata)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/parse/', methods=['GET', 'POST'])
 def parse():
-    if request.method=='POST':
-        bib  = request.json['bibdata']
-        bibdata  = io.StringIO()
+    if request.method == 'POST':
+        bib = request.json['bibdata']
+        bibdata = io.StringIO()
         bibdata.write(bib)
         temp_raw = request.json['template']
         template = io.StringIO()
         template.write(temp_raw)
-        bibdata.seek(0); template.seek(0)
-    elif request.method=='GET':
+        bibdata.seek(0)
+        template.seek(0)
+    elif request.method == 'GET':
         return 0
     else:
         return 0
 
-    if (bib=="") or (temp_raw==""):
+    if (bib == "") or (temp_raw == ""):
         return json.dumps({'data': "Please enter/upload both the bibtex entries and a template!"})
 
     strfile = io.StringIO()
@@ -54,7 +55,7 @@ def parse():
     try:
         parser = bibtexParser('test', bibdata)
 
-        if len(parser.records)==0:
+        if len(parser.records) == 0:
             return "No records found in bibtex!"
 
         parser.to_out(strfile, template, sort=False, clean=False)
@@ -67,37 +68,38 @@ def parse():
 
     return json.dumps({'data': output})
 
+
 @app.route('/upload/', methods=['POST'])
 def upload():
-    if request.method=='POST':
+    if request.method == 'POST':
         try:
-            file  = request.files['file']
+            file = request.files['file']
         except Exception as e:
             raise e
 
         try:
             clean = request.values['clean']
 
-            if clean=='false':
+            if clean == 'false':
                 clean = False
-            elif clean=='true':
+            elif clean == 'true':
                 clean = True
             print(clean)
-        except Exception as e:
+        except Exception:
             clean = False
             pass
-    elif request.method=='GET':
+    elif request.method == 'GET':
         return ""
     else:
         return ""
 
     if clean:
-        bibdata  = io.StringIO()
+        bibdata = io.StringIO()
         bibdata.write(str(file.stream.read(), encoding='utf-8'))
-        bibdata.seek(0);
+        bibdata.seek(0)
 
         parser = bibtexParser('test', bibdata)
-        
+
         clean_data = io.StringIO()
 
         recs = parser.cleanup(sort=True, save=True, outfile=clean_data)
@@ -108,8 +110,10 @@ def upload():
         data = clean_data.getvalue()
     else:
         data = str(file.stream.read(), encoding='utf-8')
-    
-    return json.dumps({'data': data}) #render_template('show_output.html', output=output)
 
-if __name__=='__main__':
+    # render_template('show_output.html', output=output)
+    return json.dumps({'data': data})
+
+
+if __name__ == '__main__':
     app.run(port=5000, debug=True)
