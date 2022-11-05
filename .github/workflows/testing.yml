@@ -16,7 +16,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy
+        pip install numpy coveralls
     - name: Run unit tests
       run: |
-        python -m unittest bibtexparser.test.test
+        coverage run -m unittest bibtexparser.test.test
+        coveralls
