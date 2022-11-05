@@ -16,22 +16,24 @@ class Author:
 
         if("," in bib_entry):
             nnames = bib_entry.split(', ')
-            try:
-                self.firstname = nnames[1]
-                self.lastname = nnames[0]
-            except Exception:
+            self.firstname = nnames[1]
+            self.lastname = nnames[0]
+        else:
+            nnames = re.findall('[{]?([\w]+)[}]?', bib_entry)
+            if len(nnames) > 1:
+                self.lastname = " ".join(nnames[1:])
+                self.firstname = nnames[0]
+            else:
                 self.lastname = nnames[0]
                 self.firstname = ""
-        else:
-            nnames = re.findall('[{]?(.*)[}]?', bib_entry)
-            self.lastname = nnames[0]
-            self.firstname = ""
 
-        if(self.lastname[0] == "{"):
+        if ("{" in self.lastname) or ("}" in self.lastname):
             self.lastname = self.lastname.replace("{", "")
             self.lastname = self.lastname.replace("}", "")
-        if(len(nnames) == 3):
-            self.suffix = nnames[2]
+
+        if ("{" in self.firstname) or ("}" in self.firstname):
+            self.firstname = self.firstname.replace("{", "")
+            self.firstname = self.firstname.replace("}", "")
 
     def short_name(self):
         # format as [last name], [first name letters].
@@ -72,14 +74,12 @@ class Records(object):
         text = re.sub(r"[\s]{2,50}?|[\n?]", r"", text)
 
         # the entry pattern is [key] = [entry],
-        text_pattern = r"(\w+)\s*=\s*\"?\{*\"?(.*?)\"?\}*\"?,?(,|$)"
+        # text_pattern = r"(\w+)\s*=\s*\"?\{*\"?(.*?)\"?\}*\"?,?(,|$)"
+        text_pattern = r"(((\w+)\s*=\s*([^=]+))(,|$))"
 
         matches = re.findall(text_pattern, text)
 
-        # print(text, matches)
-
-        for i, (key, entry, _) in enumerate(matches):
-            # print(key, entry)
+        for i, (_, _, key, entry, _) in enumerate(matches):
             key = key.lower().strip()
             line = entry.strip()
             line = line.replace('\"', '')
@@ -91,10 +91,13 @@ class Records(object):
                 for author in authors:
                     authi = Author(author.strip())
                     self.authors.append(authi)
+            else:
+                entry = entry.replace("{","")
+                entry = entry.replace("}","")
 
             # if the journaly contains a macro,
             # parse it using the dictionary
-            elif(key == "journal"):
+            if(key == "journal"):
                 self.journal = entry
 
                 if(self.journal[0] == '\\'):
