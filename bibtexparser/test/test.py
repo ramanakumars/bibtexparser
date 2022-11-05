@@ -1,6 +1,12 @@
 import unittest
 from ..parser import bibtexParser
-from .test_file import test_file, bib_dict_check
+from io import StringIO
+from .test_file import (test_file, bib_dict_check,
+                        tex_long_template, tex_long_output,
+                        html_short_template, html_output)
+import pprint
+
+unittest.util._MAX_LENGTH = 2000
 
 
 def todict(obj, classkey=None):
@@ -36,6 +42,22 @@ class TestBibReader(unittest.TestCase):
     def test_bib_records(self):
         bib_dict = todict(self.bib.records)
         self.assertEqual(bib_dict, bib_dict_check)
+
+    def test_bib_output(self):
+        outfile = StringIO()
+        self.bib.to_out(outfile, tex_long_template)
+        outfile.seek(0)
+        bib_formatted = outfile.readlines()
+
+        self.assertEqual(bib_formatted, tex_long_output)
+
+    def test_bib_html_output(self):
+        outfile = StringIO()
+        self.bib.to_out(outfile, html_short_template, clean=True, sort=True)
+        outfile.seek(0)
+        bib_formatted = outfile.readlines()
+
+        self.assertEqual(bib_formatted, html_output)
 
 
 if "__name__" == '__main__':
