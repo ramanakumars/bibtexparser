@@ -19,7 +19,7 @@ jobs:
         pip install flake8
     - name: Run flake on parser
       run: |
-        flake8 bibtexparser/parser --ignore E501 
+        flake8 bibtexparser/parser --ignore E501,W605
     - name: Run flake on parser
       run: |
-        flake8 bibtexparser/app.py --ignore E501
+        flake8 bibtexparser/app.py --ignore E501,W605

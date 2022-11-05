@@ -82,7 +82,7 @@ def tex2unicode(text):
     match = re.findall(pattern, text)
     replace_text = re.findall(p_replace, text)
 
-    if(match):
+    if match:
         nmatches = len(match)
 
         # for multiple matches
@@ -90,10 +90,10 @@ def tex2unicode(text):
             accent = match[matchi][0]
             letter = match[matchi][1]
 
-            if(accent == ''):
+            if accent == '':
                 continue
 
-            if(accent == '"'):
+            if accent == '"':
                 accent = ':'
 
             # find the new accented character in the unicode database
