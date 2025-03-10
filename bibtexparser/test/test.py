@@ -4,7 +4,6 @@ from io import StringIO
 from .test_outputs import (bib_dict_check, tex_long_output,
                            html_output, html_short_output)
 import os
-import pprint
 
 unittest.util._MAX_LENGTH = 2000
 
