@@ -57,7 +57,8 @@ journal_macros = {
     "\\physrep": "Physics Reports",
     "\\physscr": "Physica Scripta",
     "\\planss": "Planetary Space Science",
-    "\\procspie": "Proceedings of the SPIE"
+    "\\procspie": "Proceedings of the SPIE",
+    "\\psj": "Planetary Science Journal"
 }
 
 accent2combining = {
