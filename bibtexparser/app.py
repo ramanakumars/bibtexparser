@@ -76,42 +76,44 @@ def upload():
             file = request.files['file']
         except Exception as e:
             raise e
-
-        try:
-            clean = request.values['clean']
-
-            if clean == 'false':
-                clean = False
-            elif clean == 'true':
-                clean = True
-            print(clean)
-        except Exception:
-            clean = False
-            pass
     elif request.method == 'GET':
         return ""
     else:
         return ""
 
-    if clean:
-        bibdata = io.StringIO()
-        bibdata.write(str(file.stream.read(), encoding='utf-8'))
-        bibdata.seek(0)
+    data = str(file.stream.read(), encoding='utf-8')
 
+    # render_template('show_output.html', output=output)
+    return json.dumps({'data': data})
+
+
+@app.route('/clean/', methods=['POST'])
+def clean():
+    if request.method == 'POST':
+        bib = request.json['text']
+        bibdata = io.StringIO()
+        bibdata.write(bib)
+        bibdata.seek(0)
+    elif request.method == 'GET':
+        return 0
+    else:
+        return 0
+
+    if bib == "":
+        return json.dumps({'data': "Please enter/upload a bibtex file!"})
+
+    clean_data = io.StringIO()
+
+    try:
         parser = bibtexParser('test', bibdata)
 
         clean_data = io.StringIO()
 
-        recs = parser.cleanup(sort=True, save=True, outfile=clean_data)
-        print([rec[1] for rec in recs])
-
-        # print(clean_data.getvalue())
-
+        parser.cleanup(sort=True, save=True, outfile=clean_data)
         data = clean_data.getvalue()
-    else:
-        data = str(file.stream.read(), encoding='utf-8')
+    except Exception as e:
+        return json.dumps({'error': f"Error: {e}"})
 
-    # render_template('show_output.html', output=output)
     return json.dumps({'data': data})
 
 

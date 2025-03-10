@@ -1,7 +1,6 @@
 import re
 from string import Template
 import io
-import numpy as np
 from .utils import journal_macros, get_month_num, tex2unicode
 
 
@@ -14,12 +13,15 @@ class Author:
         # figure out if it is lastname, firstname
         # or firstname lastname
 
-        if "," in bib_entry:
+        if re.search(r"[^\\]\,\s?", bib_entry) is not None:
             nnames = bib_entry.split(', ')
             self.firstname = nnames[1]
             self.lastname = nnames[0]
         else:
-            nnames = re.findall('[{]?([\S]+)[}]?', bib_entry)
+            nnames = re.findall('{?(\S+)}?', bib_entry)
+
+            # filter out initials
+            nnames = list(filter(lambda name: re.match(r"\w\.", name) is None, nnames))
             if len(nnames) > 1:
                 self.lastname = " ".join(nnames[1:])
                 self.firstname = nnames[0]
@@ -113,13 +115,13 @@ class Records(object):
             # year and volume are numbers
             elif key == "year":
                 try:
-                    self.year = int(entry)
+                    self.year = int(entry.strip('"'))
                 except ValueError:
                     self.year = entry
 
             elif key == "month":
                 try:
-                    self.month = int(entry)
+                    self.month = int(entry.strip('"'))
                 except ValueError:
                     self.month = entry
 
@@ -421,15 +423,13 @@ class bibtexParser:
             # key later
             record_sub = []
             for record in self.records:
-                if 'Yoden' in record.entry_name:
-                    print(record.entry_name)
                 if hasattr(record, "month"):
                     monthnum = get_month_num(record.month)
                 else:
                     monthnum = 0
                 try:
                     namei = "%s%d%02d_%s" % (
-                        record.authors[0].lastname, record.year,
+                        record.authors[0].lastname.replace(' ', '').strip('"').lower(), record.year,
                         monthnum, record.title[:5])
                 except IndexError:
                     try:
@@ -437,14 +437,11 @@ class bibtexParser:
                     except Exception:
                         continue
                 except Exception as e:
-                    print(f"failing on {record.entry_name}")
-                    print(e)
-                    continue
+                    raise ValueError(f"failing on {record.entry_name} => {e}")
                 names.append(namei)
                 record_sub.append(record)
-            # namesort = sorted(names)
-            # records = [record_sub[names.index(name)] for name in namesort]
-            records = np.asarray(record_sub)[np.argsort(names)]
+
+            records = [rec for _, rec in sorted(zip(names, record_sub), key=lambda pair: pair[0])]
 
         else:
             # if we don't want to sort then just use the same list
@@ -456,8 +453,7 @@ class bibtexParser:
         for record in records:
             try:
                 # [record.authors[0].short_name(), record.title, record.year]
-                reci = f"{record.authors[0].lastname}_{record.title[:5]}"
-                f"_{record.year}_{record.entry_name}"
+                reci = f"{record.authors[0].lastname}_{record.title[:5]}_{record.year}_{record.entry_name}"
             except IndexError:
                 try:
                     reci = f"{record.title[:5]}_{record.year}"
@@ -470,6 +466,8 @@ class bibtexParser:
             if reci not in rec_list:
                 recs.append([record, record.entry_name])
                 rec_list.append(reci)
+            else:
+                print(f"Duplicate entry found for {record.entry_name}")
             # recs.append([record, record.entry_name])
         print(f"Down to {len(recs)} records")
 
@@ -482,7 +480,7 @@ class bibtexParser:
                     outfile.write("@%s{%s,\n" % (rec[0].rec_type, rec[1]))
                     for text in rec[0].text:
                         outfile.write("%s" % text)
-                    outfile.write("\n}\n\n")
+                    outfile.write("}\n\n")
             # for a file input
             elif self.filetype == 'file':
                 with open(outname, "w", encoding='utf-8') as outfile:
@@ -490,6 +488,6 @@ class bibtexParser:
                         outfile.write("@%s{%s,\n" % (rec[0].rec_type, rec[1]))
                         for text in rec[0].text:
                             outfile.write("%s" % text)
-                        outfile.write("\n}\n\n")
+                        outfile.write("}\n\n")
 
         return recs
