@@ -2,6 +2,7 @@ import React, { createContext, StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import Input from './components/Input.js';
 import Output from './components/Output.js';
+import { bibtexParser } from './parser/parser.js';
 
 const bibContext = createContext();
 const tempContext = createContext();
@@ -11,8 +12,11 @@ const App = () => {
     const [tempText, setTempText] = useState('');
     const [output, setOutput] = useState({ text: 'Please enter/upload both the bibtex entries and a template!', error: false });
 
+
     useEffect(() => {
         var formData = { bibdata: bibText, template: tempText };
+    
+        const parser = new bibtexParser(bibText);
 
         fetch('/parse/', {
             method: 'POST',
