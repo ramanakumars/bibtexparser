@@ -1,52 +1,50 @@
 import React, { createContext, StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import Input from './components/Input.js';
+import BibInput from './components/BibInput.js';
+import TemplateInput from './components/TemplateInput.js';
 import Output from './components/Output.js';
-import { bibtexParser } from './parser/parser.js';
-
-const bibContext = createContext();
-const tempContext = createContext();
+import { bibContext } from './contexts/bibContext.js';
+import { tempContext } from './contexts/tempContext.js';
 
 const App = () => {
-    const [bibText, setBibText] = useState('');
-    const [tempText, setTempText] = useState('');
+    const [records, setRecords] = useState([]);
+    const [templates, setTemplates] = useState([]);
     const [output, setOutput] = useState({ text: 'Please enter/upload both the bibtex entries and a template!', error: false });
 
 
     useEffect(() => {
-        var formData = { bibdata: bibText, template: tempText };
+        // var formData = { bibdata: bibText, template: tempText };
     
-        const parser = new bibtexParser(bibText);
+        // fetch('/parse/', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(formData),
+        // }).then(result => result.json()).then(data => {
+        //     if (!data.error) {
+        //         setOutput({ text: data.data, error: false });
+        //     } else {
+        //         setOutput({ text: data.error, error: true });
+        //     }
+        // })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
 
-        fetch('/parse/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData),
-        }).then(result => result.json()).then(data => {
-            if (!data.error) {
-                setOutput({ text: data.data, error: false });
-            } else {
-                setOutput({ text: data.error, error: true });
-            }
-        })
-            .catch((error) => {
-                console.log(error);
-            });
-
-    }, [bibText, tempText]);
-
+    }, [records, templates]);
+    
+    
     return (
         <article id='main' className='center-frame'>
-            <bibContext.Provider value={{ text: bibText, setText: setBibText }}>
-                <Input type='bib' context={bibContext} />
+            <bibContext.Provider value={{ records: records, setRecords: setRecords }}>
+                <BibInput />
             </bibContext.Provider>
-            <tempContext.Provider value={{ text: tempText, setText: setTempText }}>
-                <Input type='template' context={tempContext} />
+            <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
+                <TemplateInput />
             </tempContext.Provider>
-            <Output text={output.text} error={output.error} />
+            <Output records={records} template={templates}/>
             <HelpText />
         </article>
 

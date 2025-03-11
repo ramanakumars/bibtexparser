@@ -28,10 +28,10 @@ export default class Author {
             }
         }
 
-        this.lastname = this.lastname.replace(/{/g, "");
-        this.lastname = this.lastname.replace(/}/g, "");
-        this.firstname = this.firstname.replace(/{/g, "");
-        this.firstname = this.firstname.replace(/}/g, "");
+        console.log(author_text, this.lastname);
+
+        this.lastname = this.lastname.replace(/[{}]/g, "");
+        this.firstname = this.firstname.replace(/[{}]/g, "");
     }
 
     get short_name() {
