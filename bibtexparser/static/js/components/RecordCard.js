@@ -8,8 +8,8 @@ export default function RecordCard({ record }){
         <section className="record">
             <span className="record-header-container">
                 <div className="record-header">
-                    <h2 className="title">{record.title}</h2>
-                    <h3 className="subtitle">{record.rec_type} ({record.entry_name})</h3>
+                    <h2 className="title">{record.title}   ({record.year})</h2>
+                    <h3 className="subtitle">{record.rec_type.toUpperCase()} ({record.entry_name})</h3>
                     <div className="author-container">
                         {record.authors.slice(0, 5).map((author, index) => (
                             <span key={index} className="author">{author.short_name}</span>
