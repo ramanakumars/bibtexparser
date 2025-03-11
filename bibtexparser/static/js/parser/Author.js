@@ -17,21 +17,25 @@ export default class Author {
             let nnames = [...this.author_text.matchAll(/{?(\S+)}?/g)].map((value) => value[1]);
 
             // remove the initials
-            nnames = nnames.filter((name) => !/\w\./.test(name));
+            const names_without_initials = nnames.filter((name) => !/\w\./.test(name));
+            const initials = nnames.filter((name) => /\w\./.test(name));
 
-            if(nnames.length > 1) {
-                this.lastname = nnames.slice(1).join(" ");
-                this.firstname = nnames[0];
+            if(!initials) {
+                initials = [];
+            }
+
+            if(names_without_initials.length > 1) {
+                this.lastname = names_without_initials.slice(1).join(" ");
+                this.firstname = names_without_initials[0] + " " + initials.join(" ");
+                // this.firstname += " " + initials.join(" ");
             } else {
-                this.lastname = nnames[0];
+                this.lastname = names_without_initials[0];
                 this.firstname = "";
             }
         }
 
-        console.log(author_text, this.lastname);
-
-        this.lastname = this.lastname.replace(/[{}]/g, "");
-        this.firstname = this.firstname.replace(/[{}]/g, "");
+        this.lastname = this.lastname.replace(/[{}]/g, "").trim();
+        this.firstname = this.firstname.replace(/[{}]/g, "").trim();
     }
 
     get short_name() {
