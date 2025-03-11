@@ -1,3 +1,4 @@
+
 .input-container {
     display: flex;
     flex-direction: column;
@@ -82,12 +83,12 @@
     box-sizing: border-box;
     border: none;
     border-radius: 0 1.25em 1.25em 0;
-    background-color: #909090;
+    background-color: var(--sec-color);
     cursor: pointer;
 }
 
 .record-header-container button:hover {
-    background-color: #707070;
+    background-color: var(--link-color);
 }
 
 .record-header {
@@ -128,6 +129,6 @@
 
 .record .author {
     min-width: 2em;
-    padding: 0.25em 0.5em;
+    padding: 0.25em 1em;
     padding-left: 0px;
 }
