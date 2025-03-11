@@ -49,9 +49,9 @@ export default class UploadForm extends React.Component {
             var labeltext = "Upload your template";
         }
 
-        if (this.state.type == 'bib') {
-            return (
-                <div className='bib-upload-container'>
+        return (
+            <div className='upload-container'>
+                {this.state.type == 'bib' ?
                     <form action="#" className="file-upload" method="POST" onSubmit={this.handleUpload}>
                         <label htmlFor={inputname} className="file-desc">{labeltext}: </label>
                         <label className="file-upload">
@@ -61,25 +61,19 @@ export default class UploadForm extends React.Component {
 
                         <input type="submit" value="Upload!" />
 
-                        <label className="checkbox-container">
-                            <button type='button' className='clean-button' onClick={this.props.handleClean}>Sort & Clean!</button>
-                        </label>
                     </form>
 
-                </div>
-
-            )
-        } else {
-            return (
-                <form action="#" className="file-upload" method="POST" onSubmit={this.handleUpload}>
-                    <label htmlFor={inputname} className="file-desc">{labeltext}: </label>
-                    <label className="file-upload">
-                        <input name={inputname} id={inputname} type="file" className="file-upload" onChange={this.handleFileInput} />
-                        <span>{this.state.filename}</span>
-                    </label>
-                    <input type="submit" value="Upload!" />
-                </form>
-            )
-        }
+                    :
+                    <form action="#" className="file-upload" method="POST" onSubmit={this.handleUpload}>
+                        <label htmlFor={inputname} className="file-desc">{labeltext}: </label>
+                        <label className="file-upload">
+                            <input name={inputname} id={inputname} type="file" className="file-upload" onChange={this.handleFileInput} />
+                            <span>{this.state.filename}</span>
+                        </label>
+                        <input type="submit" value="Upload!" />
+                    </form>
+                }
+            </div>
+        )
     }
 }
