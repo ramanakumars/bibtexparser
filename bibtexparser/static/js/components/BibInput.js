@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import UploadForm from './UploadForm.js';
 import Record from '../parser/Record.js';
 import { bibContext } from "../contexts/bibContext.js";
-
+import RecordCard from './RecordCard.js';
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -53,7 +53,7 @@ const test = `@book{texbook,
 }
 `;
 
-export default function BibInput(props) {
+export default function BibInput() {
     const [text, setText] = useState(test);
     const [editable, setEditable] = useState(false);
     const { records, setRecords } = useContext(bibContext);
@@ -69,6 +69,7 @@ export default function BibInput(props) {
     }
 
     useEffect(() => {
+        // find the pattern of the type @type{entry_name, ...}
         let pattern = /@(\w+)\s*\{(.*?),\n?([\s\S\t]*?=[\{\}\s\S\t]*?,?[^\w\.\)\!])\}[^\},]\n?/g;
 
         const records = text.matchAll(pattern);
@@ -77,7 +78,7 @@ export default function BibInput(props) {
             let rec_type = record[1].toLowerCase();
             let entry_name = record[2];
             let entry_text = record[3];
-            let new_record = new Record(rec_type, entry_name);
+            let new_record = new Record(rec_type, entry_name, record[0]);
             new_record.parse_text(entry_text);
             new_records.push(new_record);
         }
@@ -140,19 +141,3 @@ export default function BibInput(props) {
     )
 }
 
-
-const RecordCard = (props) => {
-    const { record } = props;
-
-    return (
-        <section className="record">
-            <h2 className="title">{record.title}</h2>
-            <h3 className="subtitle">{record.rec_type} ({record.entry_name})</h3>
-            <div className="author-container">
-                {record.authors.map((author, index) => (
-                    <span key={index} className="author">{author.short_name}</span>
-                ))}
-            </div>
-        </section>
-    )
-}
