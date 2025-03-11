@@ -41,10 +41,10 @@ export default class Record {
                 case "author":
                 case "authors":
                     const authors = value.split(" and");
-                    
+
                     // get the list of authors
                     for (const author of authors) {
-                        let authi = new Author(author);
+                        let authi = new Author(author.trim());
                         this.authors.push(authi);
                     }
                     break;
@@ -56,7 +56,7 @@ export default class Record {
                         if (journal_macros[this.journal]) {
                             this.journal = journal_macros[this.journal];
                         } else {
-                            console.error(`Journal macro ${this.journal} not found for entry ${this.entry_name}`);
+                            console.log(`Error: Journal macro ${this.journal} not found for entry ${this.entry_name}`);
                         }
                     }
                     break;
@@ -78,11 +78,11 @@ export default class Record {
                     this.volume = Number(value.replace("{", "").replace("}", ""));
                     break;
                 case "doi":
-                    this.doi = entry;
-                    this.doiurl = `https://doi.org/${entry}`;
+                    this.doi = value;
+                    this.doiurl = `https://doi.org/${value}`;
                     break;
                 default:
-                    this[key] = value;
+                    this[key] = value.replace(/[{}]/, "");
                     break;
             }
         }
