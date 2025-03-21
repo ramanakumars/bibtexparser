@@ -1,11 +1,11 @@
 @import "./global.css";
 
 .input-container {
-    @apply flex flex-col justify-start items-center w-full box-border h-[50vh];
+    @apply flex flex-col justify-start items-center w-full box-border h-[50vh] px-2;
 }
 
 .input-container textarea {
-    @apply w-full h-84 max-h-[500px] max-w-full p-2 box-border overflow-y-scroll font-mono leading-1;
+    @apply w-full h-84 max-h-[50vh] max-w-full block p-2 overflow-y-scroll font-mono leading-4 whitespace-pre-wrap box-border;
 }
 
 .input-header {
@@ -29,7 +29,7 @@
 }
 
 .record-header-container button {
-    @apply w-full h-full p-2 m-0 box-border rounded-r-2xl bg-secondary cursor-pointer;
+    @apply w-full h-full p-2 m-0 box-border rounded-r-2xl bg-secondary cursor-pointer flex justify-center items-center;
 }
 
 .record-header-container button:hover {

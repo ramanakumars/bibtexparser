@@ -20,7 +20,7 @@ body {
     src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format('woff2');
 }
 
-body *{
+body {
     font-size: 11pt;
     font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
