@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #166971;
+  --color-secondary: #1B1B1E;
+  --color-tertiary: #A30015;
+}
+        
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply container mx-auto m-0 p-0 box-border;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format('woff2');
+}
+
+body *{
+    font-size: 11pt;
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+}

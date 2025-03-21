@@ -1,134 +1,61 @@
+@import "./global.css";
 
 .input-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    padding: 1em;
-    width: 100%;
-    box-sizing: border-box;
-    height: 50vh;
+    @apply flex flex-col justify-start items-center w-full box-border h-[50vh];
 }
 
 .input-container textarea {
-    width: 100%;
-    height: 20em;
-    max-height: 500px;
-    max-width: 100%;
-    padding: 0.5em;
-    box-sizing: border-box;
-    overflow-y: scroll;
-    font-family: 'Courier New', Courier, monospace;
-    line-height: 1.1em;
+    @apply w-full h-84 max-h-[500px] max-w-full p-2 box-border overflow-y-scroll font-mono leading-1;
 }
 
-
 .input-header {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    width: 100%;
-    padding: 0em 2em;
-    box-sizing: border-box;
-    justify-content: space-between;
+    @apply flex flex-nowrap flex-row w-full p-0 px-6 box-border justify-between;
 }
 
 .input-header span {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    justify-content: space-evenly;
-    min-width: 40%;
+    @apply flex flex-nowrap flex-row justify-between min-w-2/5;
 }
 
 .record-list {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    width: 100%;
-    box-sizing: border-box;
-    margin: 1em 0em;
-    padding: 0em 1em;
-    overflow-y: scroll;
+    @apply flex flex-col justify-start w-full box-border m-4 py-0 px-1 overflow-y-scroll;
 }
 
 .record {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    box-sizing: border-box;
-    border: 2px solid black;
-    border-radius: 1.25em;
-    margin: 0.25em 1em;
-    padding: 0;
+    @apply flex flex-col justify-start box-border border-1 border-black my-1 mx-1 p-0 rounded-2xl;
 }
 
 .record-header-container {
-    display: grid;
-    grid-template-columns: 90% 10%;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    grid-template-rows: auto;
-    justify-content: start;
-    align-items: start;
+    @apply grid grid-cols-10 w-full box-border p-0 m-0 justify-start items-start;
 }
 
 .record-header-container button {
-    width: 100%;
-    height: 100%;
-    padding: 0.5em;
-    margin: 0;
-    box-sizing: border-box;
-    border: none;
-    border-radius: 0 1.25em 1.25em 0;
-    background-color: var(--sec-color);
-    cursor: pointer;
+    @apply w-full h-full p-2 m-0 box-border rounded-r-2xl bg-secondary cursor-pointer;
 }
 
 .record-header-container button:hover {
-    background-color: var(--link-color);
+    @apply bg-tertiary;
 }
 
 .record-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: start;
-    width: 100%;
-    padding: 0.5em 1em;
-    box-sizing: border-box;
+    @apply w-full flex col-span-9 flex-col justify-start items-start px-2 py-1 m-0 box-border;
 }
 
 .record .title {
-    font-size: 1.25em;
-    font-weight: bold;
-    margin: 0.25em 0em;
+    @apply text-lg font-bold my-0.5;
 }
 
 .record .subtitle {
-    font-size: 1em;
-    font-weight: bold;
-    margin: 0em 0em;
+    @apply font-bold my-0.5;
 }
 
 .record code {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1em;
-    line-height: 1.1em;
-    margin: 1em;
-    white-space: pre-wrap;
+    @apply font-mono text-base leading-4 m-2 whitespace-pre-wrap block box-border p-0;
 }
 
 .record .author-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+    @apply flex flex-wrap flex-row;
 }
 
 .record .author {
-    min-width: 2em;
-    padding: 0.25em 1em;
-    padding-left: 0px;
+    @apply min-w-4 px-2 py-1 pl-0;
 }

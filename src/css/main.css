@@ -1,42 +1,20 @@
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    width: 100%;
-    font-size: 11pt;
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-display: swap;
-    src: url(https://fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format('woff2');
-}
-
-body *{
-    font-family: "Roboto", Arial, Helvetica, sans-serif;
-}
+@import "./global.css";
 
 h1 {
-    font-size: 1.3em;
-    margin: 0.25em 1em;
-    width: 100%;
-    display: block;
-    text-align: center;
+    @apply container block font-bold text-xl mx-2 my-4 text-center;
 }
 
 form {
-    display: flex;
+    @apply flex flex-wrap m-2;
+    /* display: flex;
     flex-wrap: wrap;
-    margin: 5px;
+    margin: 5px; */
 }
 
 input {
-    margin: 5px;
-    font-size: 0.9em;
+    @apply m-2 text-sm;
+    /* margin: 5px;
+    font-size: 0.9em; */
 }
 
 pre, code{
@@ -45,37 +23,25 @@ pre, code{
 }
 
 section {
-    padding: 5px;
+    @apply p-2;
+    /* padding: 5px; */
 }
 
-:root {
-    --main-color:#166971;
-    --sec-color: #1B1B1E;
-    --link-color:#A30015;
-    --light-color: #EDE7E3;
-}
 
 input[type=file] {
     display: none;
 }
 
 form input[type=submit], button {
-    width: 8em;
-    height: 2.5em;
-    line-height: 2.5em;
-    background-color: var(--sec-color);
-    color: var(--light-color);
-    border: 0px;
-    font-weight: bold;
-    cursor: pointer;
+    @apply bg-secondary text-white w-28 h-10 font-bold cursor-pointer;
 }
 
 form input[type=submit]:hover, button:hover {
-    background-color: var(--link-color);
+    @apply bg-tertiary;
 }
 
 article#main {
-    display: flex;
+    /* display: flex;
     flex-wrap: wrap;
     margin: auto;
     box-sizing: border-box;
@@ -83,24 +49,27 @@ article#main {
     align-content: flex-start;
     align-items: flex-start;
     width: 100%;
-    padding: 1em;
+    padding: 1em; */
+    @apply flex flex-wrap m-auto box-border justify-between content-start items-start w-full p-4;
 }
 
 section.main-container {
-    width: 50%;
-    display: block;
-    box-sizing: border-box;
+    @apply lg:w-1/2 w-full block box-border;
+    /* width: 50%; */
 }
 
 form.file-upload {
-    width: 100%;
+    @apply w-full grid grid-cols-4 items-center;
+    /* width: 100%;
     display: grid;
     grid-template-columns: 25% 60% 15%;
     grid-template-rows: auto;
-    align-items: center;
+    align-items: center; */
 }
 
 label.file-upload {
+    @apply col-span-2 flex justify-center items-center w-full border border-gray-500 h-10 rounded-sm cursor-pointer text-gray-500;
+    /*
     display: flex;
     justify-content: center;
     align-content: center;
@@ -114,6 +83,7 @@ label.file-upload {
     cursor: pointer;
     border-radius: 5px;
     color: #555;
+    */
 }
 
 label.file-upload:hover {
@@ -125,7 +95,8 @@ textarea.upload-text {
 }
 
 div#parse-output-container {
-    width: 100%;
+    @apply w-full block border border-black rounded-md p-2 h-full overflow-y-scroll min-h-5 mx-2;
+    /* width: 100%;
     display: block;
     float: left;
     padding: 5px;
@@ -138,43 +109,37 @@ div#parse-output-container {
     max-height: 400px;
     overflow-y: scroll;
     min-height: 1.5em;
-    margin: 1.5em 0px;
+    margin: 1.5em 0px; */
 }
 
 div#error-output-container {
-    color: red;
+    @apply text-red-500 font-bold;
+    /* color: red;
     padding: 1.5em 0px;
     font-size: 1.25em;
-    font-weight: bold;
+    font-weight: bold; */
 }
 
 div#parse-output-container code {
-    width: 100%;
+    @apply w-full h-2/5 min-h-0.5;
+    /* width: 100%;
     height: 40%;
     font-size: 1.1em;
     max-height: 50%;
     line-height: 1.2em;
-    text-indent: 0;
-}
-
-section.upload {
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
+    text-indent: 0; */
 }
 
 div.upload-container {
-    width: 100%;
+    @apply w-full flex justify-start items-center;
+    /* width: 100%;
     display: flex;
     justify-content: flex-start;
-    align-content: center;
+    align-content: center; */
 }
 
 div.upload-container label {
-    display: flex;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
+    @apply flex flex-nowrap justify-center items-center;
 }
 
 label.checkbox-container {
@@ -194,86 +159,50 @@ div.bib-upload-container span {
 
 
 h2 {
-    font-size: 1.1em;
-    margin: 0.25em;
-    width: 100%;
-    display: block;
-}
-
-section.parse-options {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: baseline;
-    align-items: center;
-}
-
-form#parse-options label {
-    padding: 0em 1em;
-    line-height: 1.2em;
-}
-
-form#parse-options input[type="checkbox"] {
-    display: block;
-    height: 1.2em;
-    width: 1.2em;
-}
-
-
-@media screen and (max-width: 1200px) {
-	label.file-upload {
-		width: 100%;
-	}
-    label.file-desc {
-        width: 100%;
-    }
+    @apply h-full block text-base font-bold;
 }
 
 section.template-helper {
-    display: flex;
+    @apply flex flex-wrap justify-start items-start;
+    /* display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: flex-start; */
 }
 
 .template-helper h2 {
-    width: 100%;
-    font-size: 1.1em;
+    @apply w-full text-base;
 }
 
 .template-helper code {
-    color: var(--main-color);
-    font-weight: bold;
-    font-size: 1.1em;
+    @apply text-primary font-bold text-lg;
 }
 
 p.template-tag-desc {
-    display: flex;
+    @apply w-1/2 flex flex-wrap justify-start items-start p-1 m-0;
+    /* display: flex;
     flex-wrap: wrap;
     width: 50%;
     justify-content: flex-start;
     align-content: flex-start;
     box-sizing: border-box;
     padding: 0.25em 0.75em;
-    margin: 0;
+    margin: 0; */
 }
 
 p.template-tag-desc span {
-    width: 100%;
-    text-align: left;
+    @apply w-full text-left;
+    /* width: 100%;
+    text-align: left; */
 }
 
 span.template-tag {
-    width: 100%;
-    display: block;
+    @apply w-full block;
+    /* width: 100%;
+    display: block; */
 }
 
 .template-tag code{
-    color: var(--link-color);
-}
-
-@media screen and (max-width: 900px) {
-	section.main-container {
-		width: 100%;
-	}
+    @apply text-tertiary;
+    /* color: var(--link-color); */
 }
