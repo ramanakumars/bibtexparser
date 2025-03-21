@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import UploadForm from './UploadForm.js';
 import { tempContext } from "../contexts/tempContext.js";
 
-export default function TemplateInput(props) {
+export default function TemplateInput() {
     const [text, setText] = useState('');
     const {templates, setTemplates} = useContext(tempContext);
 

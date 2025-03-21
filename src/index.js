@@ -5,6 +5,8 @@ import TemplateInput from './components/TemplateInput.js';
 import Output from './components/Output.js';
 import { bibContext } from './contexts/bibContext.js';
 import { tempContext } from './contexts/tempContext.js';
+import './css/main.css';
+import './css/records.css'
 
 const App = () => {
     const [records, setRecords] = useState([]);
