@@ -1,6 +1,11 @@
 import React from "react";
+import Record from "../parser/Record";
 
-export default function Output({ records }) {
+interface OutputProps{
+    records: Record[];
+}
+
+const Output: React.FC<OutputProps> = ({ records }) => {
     return (
         <section id="output" className="main-container">
             <h1>Output: </h1>
@@ -8,3 +13,5 @@ export default function Output({ records }) {
         </section>
     )
 }
+
+export default Output;

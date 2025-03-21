@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import Record from '../parser/Record';
 import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 
-export default function RecordCard({ record }){
+interface RecordCardProps {
+    record: Record;
+}
+
+const RecordCard: React.FC<RecordCardProps> = ({ record }) => {
     const [showText, setShowText] = useState(false);
 
     return (
@@ -28,3 +33,5 @@ export default function RecordCard({ record }){
         </section>
     )
 }
+
+export default RecordCard;

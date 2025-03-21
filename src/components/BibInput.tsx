@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import UploadForm from './UploadForm.js';
-import Record from '../parser/Record.js';
-import { bibContext } from "../contexts/bibContext.js";
-import RecordCard from './RecordCard.js';
+import UploadForm from './UploadForm';
+import Record from '../parser/Record';
+import { bibContext, Records } from "../contexts/bibContext";
+import RecordCard from './RecordCard';
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -53,27 +53,32 @@ const test = `@book{texbook,
 }
 `;
 
-export default function BibInput() {
-    const [text, setText] = useState(test);
-    const [editable, setEditable] = useState(false);
-    const { records, setRecords } = useContext(bibContext);
 
-    const handleFileUpload = (field, value) => {
-        if (field == 'text') {
-            setText(value+'\n');
+const BibInput: React.FC = () => {
+    const [text, setText] = useState<string>(test);
+    const [editable, setEditable] = useState<boolean>(false);
+    const { records, setRecords } = useContext<Records>(bibContext);
+
+    const handleFileUpload = (field: string, value: string) => {
+        if (field === 'text') {
+            setText(value + '\n');
         }
     };
 
-    const handleChangeText = (event) => {
-        setText(event.target.value+'\n');
+    const handleChangeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setText(event.target.value);
     }
 
     useEffect(() => {
         // find the pattern of the type @type{entry_name, ...}
+        let _text = text;
+        if (_text[-1] !== '\n') {
+            _text += '\n';
+        }
         let pattern = /@(\w+)\s*\{(.*?),\n?([\s\S\t]*?=[\{\}\s\S\t]*?,?[^\w\.\)\!])\}[^\},]\n?/g;
 
-        const records = text.matchAll(pattern);
-        const new_records = [];
+        const records = _text.matchAll(pattern);
+        const new_records: Record[] = [];
         for (const record of records) {
             let rec_type = record[1].toLowerCase();
             let entry_name = record[2];
@@ -84,10 +89,9 @@ export default function BibInput() {
         }
 
         setRecords(new_records);
-    }, [text]);
+    }, [text, setRecords]);
 
-
-    const handleClean = (event) => {
+    const handleClean = (event: React.FormEvent) => {
         event.preventDefault();
 
         fetch('/clean/', {
@@ -118,7 +122,7 @@ export default function BibInput() {
                             <button onClick={() => setEditable(false)}>Close</button>
                         </span>
                     </span>
-                    <UploadForm type={'bib'} onChange={handleFileUpload} />
+                    <UploadForm input_text={text} upload_type={'bib'} onChange={handleFileUpload} />
                     <textarea id={"bibtext"} className="upload-text" placeholder="... or copy it here" onChange={handleChangeText} value={text} />
                 </section>
                 :
@@ -131,7 +135,7 @@ export default function BibInput() {
                         </span>
                     </span>
                     <div className="record-list">
-                        {records.map((record, index) => (
+                        {records.map((record: Record, index: number) => (
                             <RecordCard record={record} key={index} />
                         ))}
                     </div>
@@ -141,3 +145,4 @@ export default function BibInput() {
     )
 }
 
+export default BibInput;

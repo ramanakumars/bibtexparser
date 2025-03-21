@@ -4,7 +4,12 @@ export default class Author {
     author_text is the text in the author field
     This class breaks this text into first and last names
     */
-    constructor(author_text) {
+
+    public author_text: string;
+    public firstname: string;
+    public lastname: string;
+
+    constructor(author_text: string) {
         this.author_text = author_text.replace(/[^\\]~/g, " ");
 
         // figure out if it is first name first or last name first
@@ -20,9 +25,9 @@ export default class Author {
             const names_without_initials = nnames.filter((name) => !/\w\./.test(name));
             const initials = nnames.filter((name) => /\w\./.test(name));
 
-            if(!initials) {
-                initials = [];
-            }
+            // if(!initials) {
+            //     initials = [];
+            // }
 
             if(names_without_initials.length > 1) {
                 this.lastname = names_without_initials.slice(1).join(" ");
@@ -50,7 +55,8 @@ export default class Author {
             for (const fname of first) {
                 let fname_text = "";
                 if(fname[0] === "{") {
-                    fname_text = fname.match(/(\{.+\})/)[0];
+                    const match = fname.match(/(\{.+\})/);
+                    fname_text = match ? match[0] : "";
                 } else {
                     fname_text = fname[0];
                 }

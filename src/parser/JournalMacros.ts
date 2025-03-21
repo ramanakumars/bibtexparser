@@ -1,5 +1,9 @@
+interface JournalMacro {
+    [key: string]: string;
+}
+
 // list of ADS journal macros
-export const journal_macros = {
+export const journal_macros: JournalMacro = {
     "\\aj": "Astronomical Journal",
     "\\actaa": "Acta Astronomica",
     "\\araa": "Annual Review of Astron and Astrophys",

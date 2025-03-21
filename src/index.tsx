@@ -1,17 +1,23 @@
-import React, { createContext, StrictMode, useState, useEffect } from 'react';
+import React, { StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import BibInput from './components/BibInput.js';
-import TemplateInput from './components/TemplateInput.js';
-import Output from './components/Output.js';
-import { bibContext } from './contexts/bibContext.js';
-import { tempContext } from './contexts/tempContext.js';
+import BibInput from './components/BibInput';
+import Record from './parser/Record.js';
+import TemplateInput from './components/TemplateInput';
+import Output from './components/Output';
+import { bibContext } from './contexts/bibContext';
+import { tempContext, Template } from './contexts/tempContext';
 import './css/main.css';
 import './css/records.css';
 
-const App = () => {
-    const [records, setRecords] = useState([]);
-    const [templates, setTemplates] = useState([]);
-    const [output, setOutput] = useState({ text: 'Please enter/upload both the bibtex entries and a template!', error: false });
+interface OutputState {
+    text: string;
+    error: boolean; 
+}
+
+const App: React.FC = () => {
+    const [records, setRecords] = useState<Record[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
+    const [output, setOutput] = useState<OutputState>({ text: 'Please enter/upload both the bibtex entries and a template!', error: false });
 
 
     useEffect(() => {
@@ -46,14 +52,14 @@ const App = () => {
             <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
                 <TemplateInput />
             </tempContext.Provider>
-            <Output records={records} template={templates}/>
+            <Output records={records}/>
             <HelpText />
         </article>
 
     )
 }
 
-const HelpText = () => {
+const HelpText: React.FC = () => {
     return (
         <section id='template-helper' className='template-helper main-container'>
             <h1>Template tags</h1>
@@ -130,7 +136,7 @@ const HelpText = () => {
 }
 
 const rootElement = document.getElementById('root');
-const root = createRoot(rootElement);
+const root = createRoot(rootElement!);
 root.render(
     <StrictMode>
         <App />

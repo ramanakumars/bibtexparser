@@ -1,7 +1,7 @@
 import Author from "./Author";
 import { journal_macros } from "./JournalMacros";
 
-function checkInt(val) {
+function checkInt(val: string): boolean {
     var intRegex = /^-?\d+$/;
     if (!intRegex.test(val))
         return false;
@@ -17,20 +17,34 @@ export default class Record {
     entry_name is the ID of the entry
     */
 
-    constructor(rec_type, entry_name, full_text) {
+    public authors: Author[];
+    public rec_type: string;
+    public entry_name: string;
+    public full_text: string;
+    public text: string = "";
+    public journal: string = "";
+    public year: number = 0;
+    public month: number | string = 0;
+    public volume: number = 0;
+    public doi: string = "";
+    public doiurl: string = "";
+    public key: string = "";
+    [key: string]: any;
+
+    constructor(rec_type: string, entry_name: string, full_text: string) {
         this.authors = [];
         this.rec_type = rec_type;
         this.entry_name = entry_name;
         this.full_text = full_text;
     }
 
-    parse_text(input_text) {
+    parse_text(input_text: string) {
         this.text = input_text
-        const text = input_text.replace("[\s]{2,50}?|[\n?]", "");
+        const text: string = input_text.replace("[\s]{2,50}?|[\n?]", "");
 
         // the entry pattern is [key] = [entry],
         // text_pattern = r"(\w+)\s*=\s*\"?\{*\"?(.*?)\"?\}*\"?,?(,|$)"
-        let text_pattern = /(((\w+)\s*=\s*([^=]+))(,|$))/g
+        const text_pattern: RegExp = /(((\w+)\s*=\s*([^=]+))(,|$))/g
 
         const matches = text.matchAll(text_pattern);
 
