@@ -7,6 +7,7 @@ import Output from './components/Output';
 import { bibContext } from './contexts/bibContext';
 import { tempContext, Template } from './contexts/tempContext';
 import './css/main.css';
+import './css/input.css';
 import './css/records.css';
 
 interface OutputState {
