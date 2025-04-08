@@ -1,7 +1,7 @@
 @import "./global.css";
 
 .input-container {
-    @apply flex flex-col justify-start items-center w-full box-border h-[50vh] px-2;
+    @apply flex flex-col justify-start items-center w-full box-border h-[50vh] px-2 overflow-y-scroll border-1 border-black ;
 }
 
 
@@ -14,28 +14,57 @@
 }
 
 .record-list {
-    @apply flex flex-col justify-start w-full box-border m-4 py-0 px-1 overflow-y-scroll;
+    @apply flex flex-col justify-start w-full box-border py-0 px-1 overflow-y-scroll;
 }
 
 .record {
-    @apply flex flex-col justify-start box-border border-1 border-black my-1 mx-1 p-0 rounded-2xl;
-}
-
-.record-header-container {
-    @apply grid grid-cols-10 w-full box-border p-0 m-0 justify-start items-start;
-}
-
-.record-header-container button {
-    @apply w-full h-full p-2 m-0 box-border rounded-r-2xl bg-secondary cursor-pointer flex justify-center items-center;
-}
-
-.record-header-container button:hover {
-    @apply bg-tertiary;
+    @apply flex flex-nowrap flex-col w-full box-border my-1 mx-0 p-0 rounded-xl bg-quaternary h-fit text-black;
 }
 
 .record-header {
-    @apply w-full flex col-span-9 flex-col justify-start items-start px-2 py-1 m-0 box-border;
+    @apply border-0 bg-white;
 }
+
+.record-header .record-contents {
+    @apply min-h-5 h-min;
+}
+
+.record-header span {
+    @apply  text-black;
+}
+
+.record-header span {
+    @apply text-lg font-bold text-black;
+}
+
+.record-contents {
+    @apply grid grid-cols-16 box-border min-h-20 h-fit;
+}
+
+.record-contents span, .record-contents div.author-container {
+    @apply p-2;
+}
+
+.record .single-width {
+    @apply col-span-2;
+}
+
+.record .double-width {
+    @apply col-span-4;
+}
+
+.record .half-width {
+    @apply col-span-1;
+}
+
+.record-contents a {
+    @apply p-2 m-0 cursor-pointer flex justify-center items-center text-secondary col-span-1;
+}
+
+.record a:hover {
+    @apply text-primary;
+}
+
 
 .record .title {
     @apply text-lg font-bold my-0.5;

@@ -3,6 +3,7 @@ import UploadForm from './UploadForm';
 import Record from '../parser/Record';
 import { bibContext, Records } from "../contexts/bibContext";
 import RecordCard from './RecordCard';
+import RecordList from "./RecordList";
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -96,11 +97,7 @@ const BibInput: React.FC = () => {
                         <button onClick={() => setEditable(true)}>Add entries</button>
                     </span>
                 </span>
-                <div className="record-list">
-                    {records.map((record: Record, index: number) => (
-                        <RecordCard record={record} key={index} />
-                    ))}
-                </div>
+                <RecordList />
             </section>
             {editable &&
                     <UploadForm upload_type={'bib'} onChange={addText} />

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Record from '../parser/Record';
+import React, { useState } from "react";
+import Record from "../parser/Record";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface RecordCardProps {
@@ -10,33 +10,31 @@ const RecordCard: React.FC<RecordCardProps> = ({ record }) => {
     const [showText, setShowText] = useState(false);
 
     return (
-        <section className="record">
-            <span className="record-header-container">
-                <div className="record-header">
-                    <h2 className="title">{record.title}</h2>
-                    <h3 className="subtitle">Type: {record.rec_type.toUpperCase()}</h3>
-                    <h3 className="subtitle">Key: {record.entry_name}</h3>
-                    <h3 className="subtitle">Year: {record.year}</h3>
-                    <div className="author-container">
-                        <span className='author'>
-                            Authors: 
+        <div className="record">
+            <div className="record-contents">
+                <span className="checkbox half-width"><input type="checkbox" /></span>
+                <span className="title double-width">{record.title}</span>
+                <span className="subtitle single-width">
+                    {record.rec_type.toUpperCase()}
+                </span>
+                <span className="single-width">{record.entry_name}</span>
+                <span className="single-width">{record.year}</span>
+                <div className="author-container double-width">
+                    {record.authors.slice(0, 5).map((author, index) => (
+                        <span key={index} className="author">
+                            {author.short_name}
                         </span>
-                        {record.authors.slice(0, 5).map((author, index) => (
-                            <span key={index} className="author">{author.short_name}</span>
-                        ))}
-                    </div>
+                    ))}
                 </div>
-                <button onClick={() => setShowText(!showText)}>
+                <a onClick={() => setShowText(!showText)}>
                     {!showText ? <FaChevronDown /> : <FaChevronUp />}
-                </button>
-            </span>
-            { showText && 
-                <code className="record-text">
-                    {record.full_text}
-                </code>
-            }
-        </section>
-    )
-}
+                </a>
+            </div>
+            {showText && (
+                <code className="record-text">{record.full_text}</code>
+            )}
+        </div>
+    );
+};
 
 export default RecordCard;
