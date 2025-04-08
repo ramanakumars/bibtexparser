@@ -55,21 +55,14 @@ const test = `@book{texbook,
 
 
 const BibInput: React.FC = () => {
-    const [text, setText] = useState<string>(test);
     const [editable, setEditable] = useState<boolean>(false);
     const { records, setRecords } = useContext<Records>(bibContext);
 
-    const handleFileUpload = (field: string, value: string) => {
-        if (field === 'text') {
-            setText(value + '\n');
-        }
-    };
-
-    const handleChangeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setText(event.target.value);
-    }
-
     useEffect(() => {
+        addText(test);
+    }, []);
+
+    const addText = (text: string) => {
         // find the pattern of the type @type{entry_name, ...}
         let _text = text;
         if (_text[-1] !== '\n') {
@@ -88,58 +81,29 @@ const BibInput: React.FC = () => {
             new_records.push(new_record);
         }
 
-        setRecords(new_records);
-    }, [text, setRecords]);
-
-    const handleClean = (event: React.FormEvent) => {
-        event.preventDefault();
-
-        fetch('/clean/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: text }),
-        }).then(result => result.json()).then(data => {
-            if (!data.error) {
-                setText(data.data);
-            }
-        })
-            .catch((error) => {
-                alert(error);
-            });
-    }
+        setRecords((old_records) => ([...old_records, ...new_records]));
+        setEditable(false);
+    };
 
     return (
         <section className="main-container">
             <h1>BibTex entry</h1>
-            {editable ?
-                <section className='input-container'>
-                    <span className="input-header">
-                        <strong>Found {records.length} entries</strong>
-                        <span>
-                            <button type='button' className='clean-button' onClick={handleClean}>Sort & Clean!</button>
-                            <button onClick={() => setEditable(false)}>Close</button>
-                        </span>
+            <section className="input-container">
+                <span className="input-header">
+                    <strong>Found {records.length} entries</strong>
+                    <span>
+                        <button type='button' className='clean-button' onClick={() => (null)}>Sort & Clean!</button>
+                        <button onClick={() => setEditable(true)}>Add entries</button>
                     </span>
-                    <UploadForm input_text={text} upload_type={'bib'} onChange={handleFileUpload} />
-                    <textarea id={"bibtext"} className="upload-text" placeholder="... or copy it here" onChange={handleChangeText} value={text} />
-                </section>
-                :
-                <section className="input-container">
-                    <span className="input-header">
-                        <strong>Found {records.length} entries</strong>
-                        <span>
-                            <button type='button' className='clean-button' onClick={handleClean}>Sort & Clean!</button>
-                            <button onClick={() => setEditable(true)}>Edit</button>
-                        </span>
-                    </span>
-                    <div className="record-list">
-                        {records.map((record: Record, index: number) => (
-                            <RecordCard record={record} key={index} />
-                        ))}
-                    </div>
-                </section>
+                </span>
+                <div className="record-list">
+                    {records.map((record: Record, index: number) => (
+                        <RecordCard record={record} key={index} />
+                    ))}
+                </div>
+            </section>
+            {editable &&
+                    <UploadForm upload_type={'bib'} onChange={addText} />
             }
         </section>
     )
