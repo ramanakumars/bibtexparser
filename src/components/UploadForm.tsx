@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import "../css/upload.css";
 
 interface UploadFormProps {
-    input_text: string;
     upload_type: string;
-    onChange: (field: string, value: string) => void;
+    onChange: (value: string) => void;
 }
 
-const UploadForm: React.FC<UploadFormProps> = ({ input_text, upload_type, onChange }) => {
+const UploadForm: React.FC<UploadFormProps> = ({ upload_type, onChange }) => {
     const [filename, setFilename] = useState<string>('No file selected!');
     const [fileInput, setFileInput] = useState<File | null>(null);
-    const [text, setText] = useState<string>(input_text);
+    const [text, setText] = useState<string>('');
 
     const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) {
@@ -20,60 +20,43 @@ const UploadForm: React.FC<UploadFormProps> = ({ input_text, upload_type, onChan
     }
 
     useEffect(() => {
-        if(text != "") {
-            onChange('text', text);
-        }
-    }, [text]);
-
-    const handleUpload = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const formData = new FormData();
-
-        if (!fileInput) {
-            return;
-        }
-
-        formData.append('file', fileInput);
-
-        fetch('/upload/', {
-            method: 'POST',
-            body: formData
-        }).then(result => result.json()).then(data => {
-            if (!data.error) {
-                setText(data.data);
+        if (fileInput) {
+            var reader = new FileReader();
+            reader.readAsText(fileInput as Blob);
+            reader.onload = function () {          
+                setText(reader.result as string);
             }
-        })
-            .catch((error) => {
-                alert(error);
-            });
-    }
+        }
+    }, [fileInput]);
+
 
     return (
-        <div className='upload-container'>
-            {upload_type == 'bib' ?
-                <form action="#" className="file-upload" method="POST" onSubmit={handleUpload}>
-                    <label htmlFor={upload_type + "file"} className="file-desc">Upload your bibfile: </label>
-                    <label className="file-upload">
-                        <input name={upload_type + "file"} id={upload_type + "file"} type="file" className="file-upload" onChange={handleFileInput} />
-                        <span>{filename}</span>
-                    </label>
-
-                    <input type="submit" value="Upload!" />
-
-                </form>
-
-                :
-                <form action="#" className="file-upload" method="POST" onSubmit={handleUpload}>
-                    <label htmlFor={upload_type + "file"} className="file-desc">Upload your template: </label>
-                    <label className="file-upload">
-                        <input name={upload_type + "file"} id={upload_type + "file"} type="file" className="file-upload" onChange={handleFileInput} />
-                        <span>{filename}</span>
-                    </label>
-                    <input type="submit" value="Upload!" />
-                </form>
-            }
-        </div>
+        <>        
+            <div className='upload-background' onClick={() => onChange('')}>
+                &nbsp;
+            </div>
+            <div className='upload-container'>
+                {upload_type == 'bib' ?
+                    <form action="#" className="file-upload" method="POST">
+                        <label htmlFor={upload_type + "file"} className="file-desc">Upload your bibfile: </label>
+                        <label className="file-upload">
+                            <input name={upload_type + "file"} id={upload_type + "file"} type="file" className="file-upload" onChange={handleFileInput} />
+                            <span>{filename}</span>
+                        </label>
+                    </form>
+                    :
+                    <form action="#" className="file-upload" method="POST">
+                        <label htmlFor={upload_type + "file"} className="file-desc">Upload your template: </label>
+                        <label className="file-upload">
+                            <input name={upload_type + "file"} id={upload_type + "file"} type="file" className="file-upload" onChange={handleFileInput} />
+                            <span>{filename}</span>
+                        </label>
+                    </form>
+                }
+                <textarea id={upload_type + "text"} className="upload-text" placeholder="... or copy it here" onChange={(event) => setText(event.target.value)} value={text} />
+                <button type='button' className='upload' onClick={() => (onChange(text))}>Add!</button>
+            </div>
+        </>
     )
 }
 
