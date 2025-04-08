@@ -100,21 +100,6 @@ div#parse-output-container code {
     text-indent: 0; */
 }
 
-div.upload-container {
-    @apply w-full flex justify-start items-center px-0;
-}
-
-div.upload-container label {
-    @apply flex flex-nowrap justify-center items-center;
-}
-
-label.checkbox-container {
-    margin: 0em 1.5em;
-}
-
-div.bib-upload-container span {
-    margin: auto;
-}
 
 /* form.file-upload {
     display: flex;

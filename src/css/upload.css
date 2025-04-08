@@ -1,0 +1,25 @@
+@import "./global.css";
+
+div.upload-background {
+    @apply fixed w-full h-full bg-white z-10 left-0 top-0 overflow-clip opacity-50;
+}
+
+div.upload-container {
+    @apply fixed flex flex-col w-1/2 left-0 top-1/4 right-0 m-auto justify-center items-center border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
+}
+
+div.upload-container textarea {
+    @apply w-full h-84 max-h-[50vh] max-w-full block p-2 overflow-y-scroll font-mono leading-4 whitespace-pre-wrap box-border my-2;
+}
+
+div.upload-container label {
+    @apply flex flex-nowrap justify-center items-center;
+}
+
+label.checkbox-container {
+    margin: 0em 1.5em;
+}
+
+div.bib-upload-container span {
+    margin: auto;
+}
