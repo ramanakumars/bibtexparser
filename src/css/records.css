@@ -1,17 +1,5 @@
 @import "./global.css";
 
-.input-container {
-    @apply flex flex-col justify-start items-center w-full box-border h-[50vh] px-2 overflow-y-scroll border-1 border-black ;
-}
-
-
-.input-header {
-    @apply flex flex-nowrap flex-row w-full p-0 px-6 box-border justify-between;
-}
-
-.input-header span {
-    @apply flex flex-nowrap flex-row justify-between min-w-2/5;
-}
 
 .record-list {
     @apply flex flex-col justify-start w-full box-border py-0 px-1 overflow-y-scroll;
@@ -34,11 +22,11 @@
 }
 
 .record-header span {
-    @apply text-lg font-bold text-black;
+    @apply text-lg font-bold text-black items-center justify-start flex;
 }
 
 .record-contents {
-    @apply grid grid-cols-16 box-border min-h-20 h-fit;
+    @apply grid grid-cols-15 box-border min-h-20 h-fit;
 }
 
 .record-contents span, .record-contents div.author-container {
@@ -65,9 +53,8 @@
     @apply text-primary;
 }
 
-
 .record .title {
-    @apply text-lg font-bold my-0.5;
+    @apply font-bold my-0.5;
 }
 
 .record .subtitle {
