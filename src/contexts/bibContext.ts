@@ -1,9 +1,9 @@
 import { createContext } from "react";
-import Record from "../parser/Record";
+import { Entry } from "../parser/Record";
 
-export const bibContext = createContext<Records>({ records: [], setRecords: () => {} });
+export const bibContext = createContext<Entries>({ entries: [], setEntries: () => {} });
 
-export interface Records {
-    records: Record[];
-    setRecords: React.Dispatch<React.SetStateAction<Record[]>>;
+export interface Entries {
+    entries: Entry[];
+    setEntries: React.Dispatch<React.SetStateAction<Entry[]>>;
 }

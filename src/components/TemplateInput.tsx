@@ -20,8 +20,8 @@ const TemplateInput: React.FC = () => {
         <section className="main-container">
             <h1>Template entry:</h1>
             <section className='input-container'>
-                <UploadForm input_text={text} upload_type={'temp'} onChange={handleFileUpload}/>
-                <textarea id={"temptext"} className="upload-text" placeholder="... or copy it here" onChange={handleChangeText} value={text} />
+                {/* <UploadForm upload_type={'temp'} onChange={handleFileUpload}/>
+                <textarea id={"temptext"} className="upload-text" placeholder="... or copy it here" onChange={handleChangeText} value={text} /> */}
             </section>
         </section>
     )

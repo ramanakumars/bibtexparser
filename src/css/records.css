@@ -30,7 +30,7 @@
 }
 
 .record-contents span, .record-contents div.author-container {
-    @apply p-2;
+    @apply p-2 items-center content-center;
 }
 
 .record .single-width {

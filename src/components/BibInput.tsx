@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import UploadForm from './UploadForm';
-import Record from '../parser/Record';
-import { bibContext, Records } from "../contexts/bibContext";
-import RecordCard from './RecordCard';
+import UploadForm from "./UploadForm";
+import { Entry, parse_text } from "../parser/Record";
+import { bibContext, Entries } from "../contexts/bibContext";
 import RecordList from "./RecordList";
+import { regex } from "regex";
+import { recursion } from "regex-recursion-cjs";
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -54,10 +55,9 @@ const test = `@book{texbook,
 }
 `;
 
-
 const BibInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
-    const { records, setRecords } = useContext<Records>(bibContext);
+    const { entries, setEntries } = useContext<Entries>(bibContext);
 
     useEffect(() => {
         addText(test);
@@ -66,23 +66,29 @@ const BibInput: React.FC = () => {
     const addText = (text: string) => {
         // find the pattern of the type @type{entry_name, ...}
         let _text = text;
-        if (_text[-1] !== '\n') {
-            _text += '\n';
+        if (_text[-1] !== "\n") {
+            _text += "\n";
         }
-        let pattern = /@(\w+)\s*\{(.*?),\n?([\s\S\t]*?=[\{\}\s\S\t]*?,?[^\w\.\)\!])\}[^\},]\n?/g;
+        const re = regex({
+            plugins: [recursion],
+            flags: "gm",
+            disable: { v: true },
+        })`(?<rec_type>@\w+)(?<rec_text>\{(?:[^\{\}]++|(\g<rec_text&R=20>))*\})`;
+        //`(\w+\s=\s)?\{(?>[^\{\}]+|(?R))*\}`;
+        // /@(\w+)\s*\{(.*?),\n?([\s\S\t]*?=[\{\}\s\S\t]*?,?[^\w\.\)\!])\}[^\},]\n?/g;
 
-        const records = _text.matchAll(pattern);
-        const new_records: Record[] = [];
-        for (const record of records) {
-            let rec_type = record[1].toLowerCase();
-            let entry_name = record[2];
-            let entry_text = record[3];
-            let new_record = new Record(rec_type, entry_name, record[0]);
-            new_record.parse_text(entry_text);
-            new_records.push(new_record);
+        const entries = _text.matchAll(re);
+
+        if (!entries) return null;
+
+        const new_entries: Entry[] = [];
+        for (const entry of entries) {
+            let rec_type = entry[1].toLowerCase();
+            let new_entry: Entry = parse_text(entry[0], rec_type);
+            new_entries.push(new_entry);
         }
 
-        setRecords((old_records) => ([...old_records, ...new_records]));
+        setEntries((old_entries) => [...old_entries, ...new_entries]);
         setEditable(false);
     };
 
@@ -91,19 +97,25 @@ const BibInput: React.FC = () => {
             <h1>BibTex entry</h1>
             <section className="input-container">
                 <span className="input-header">
-                    <strong>Found {records.length} entries</strong>
+                    <strong>Found {entries.length} entries</strong>
                     <span>
-                        <button type='button' className='clean-button' onClick={() => (null)}>Sort & Clean!</button>
-                        <button onClick={() => setEditable(true)}>Add entries</button>
+                        <button
+                            type="button"
+                            className="clean-button"
+                            onClick={() => null}
+                        >
+                            Sort & Clean!
+                        </button>
+                        <button onClick={() => setEditable(true)}>
+                            Add entries
+                        </button>
                     </span>
                 </span>
                 <RecordList />
             </section>
-            {editable &&
-                    <UploadForm upload_type={'bib'} onChange={addText} />
-            }
+            {editable && <UploadForm upload_type={"bib"} onChange={addText} />}
         </section>
-    )
-}
+    );
+};
 
 export default BibInput;

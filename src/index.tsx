@@ -1,10 +1,10 @@
 import React, { StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import BibInput from './components/BibInput';
-import Record from './parser/Record.js';
 import TemplateInput from './components/TemplateInput';
 import Output from './components/Output';
 import { bibContext } from './contexts/bibContext';
+import { Entry } from './parser/Record';
 import { tempContext, Template } from './contexts/tempContext';
 import './css/main.css';
 import './css/input.css';
@@ -16,7 +16,7 @@ interface OutputState {
 }
 
 const App: React.FC = () => {
-    const [records, setRecords] = useState<Record[]>([]);
+    const [entries, setEntries] = useState<Entry[]>([]);
     const [templates, setTemplates] = useState<Template[]>([]);
     const [output, setOutput] = useState<OutputState>({ text: 'Please enter/upload both the bibtex entries and a template!', error: false });
 
@@ -42,18 +42,18 @@ const App: React.FC = () => {
         //         console.log(error);
         //     });
 
-    }, [records, templates]);
+    }, [entries, templates]);
     
     
     return (
         <article id='main' className='center-frame'>
-            <bibContext.Provider value={{ records: records, setRecords: setRecords }}>
+            <bibContext.Provider value={{ entries: entries, setEntries: setEntries }}>
                 <BibInput />
             </bibContext.Provider>
             <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
                 <TemplateInput />
             </tempContext.Provider>
-            <Output records={records}/>
+            <Output entries={entries}/>
             <HelpText />
         </article>
 

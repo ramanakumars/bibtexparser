@@ -1,31 +1,40 @@
 import React, { useContext, useEffect, useState } from "react";
-import Record from "../parser/Record";
 import RecordCard from "./RecordCard";
+import { Entry } from "../parser/Record";
 import { bibContext } from "../contexts/bibContext";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
 const RecordList: React.FC = () => {
-    const { records, setRecords } = useContext(bibContext);
-    const [selectedRecords, setSelectedRecords] = useState<number[]>([]);
+    const { entries, setEntries } = useContext(bibContext);
+    const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
 
     const deleteSelected = () => {
-        setRecords((_records) => _records.filter((_, ind) => selectedRecords.indexOf(ind) == -1));
+        setEntries((_entries) =>
+            _entries.filter((_, ind) => selectedEntries.indexOf(ind) == -1)
+        );
     };
 
     useEffect(() => {
-        setSelectedRecords([]);
-    }, [records]);
+        setSelectedEntries([]);
+    }, [entries]);
 
     const selectAll = () => {
-        setSelectedRecords(records.map((_, index) => (index)));
-    }
+        setSelectedEntries(entries.map((_, index) => index));
+    };
 
     return (
         <div className="record-list">
             <div className="record record-header">
                 <div className="record-contents">
                     <span className="checkbox half-width">
-                        <input type="checkbox" onChange={(e) => e.target.checked ? selectAll() : setSelectedRecords([])}/>
+                        <input
+                            type="checkbox"
+                            onChange={(e) =>
+                                e.target.checked
+                                    ? selectAll()
+                                    : setSelectedEntries([])
+                            }
+                        />
                     </span>
                     <span className="title double-width">Title</span>
                     <span className="single-width">Type</span>
@@ -39,19 +48,28 @@ const RecordList: React.FC = () => {
                     </span>
                 </div>
             </div>
-            {records.map((record: Record, index: number) => (
+            {entries.map((entry: Entry, index: number) => (
                 <RecordCard
-                    record={record}
+                    entry={entry}
+                    updateEntry={(new_entry) => setEntries((_records: Entry[]) =>
+                        _records.map((rec: Entry, i: number) => {
+                            if(i == index) {
+                                return {...rec, ...new_entry};
+                            } else {
+                                return rec;
+                            }
+                        })
+                    )}
                     key={index}
-                    isChecked={selectedRecords.indexOf(index) != -1}
+                    isChecked={selectedEntries.indexOf(index) != -1}
                     onSelect={() =>
-                        setSelectedRecords((prev_state) => [
+                        setSelectedEntries((prev_state) => [
                             ...prev_state,
                             index,
                         ])
                     }
                     onDeselect={() =>
-                        setSelectedRecords((prev_state) =>
+                        setSelectedEntries((prev_state) =>
                             prev_state.filter((ind) => ind != index)
                         )
                     }

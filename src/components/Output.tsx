@@ -1,15 +1,15 @@
 import React from "react";
-import Record from "../parser/Record";
+import { Entry } from "../parser/Record";
 
 interface OutputProps{
-    records: Record[];
+    entries: Entry[];
 }
 
-const Output: React.FC<OutputProps> = ({ records }) => {
+const Output: React.FC<OutputProps> = ({ entries }) => {
     return (
         <section id="output" className="main-container">
             <h1>Output: </h1>
-            {records.length > 0 ? <span>{records.length} entries found</span> : "" } 
+            {entries.length > 0 ? <span>{entries.length} entries found</span> : "" } 
         </section>
     )
 }
