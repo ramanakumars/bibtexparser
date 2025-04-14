@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import RecordCard from "./RecordCard";
-import { Entry } from "../parser/Record";
+import { Entry } from "../parser/parser";
 import { bibContext } from "../contexts/bibContext";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
@@ -23,7 +23,7 @@ const RecordList: React.FC = () => {
     };
 
     return (
-        <div className="record-list">
+        <>
             <div className="record record-header">
                 <div className="record-contents">
                     <span className="checkbox half-width">
@@ -48,34 +48,38 @@ const RecordList: React.FC = () => {
                     </span>
                 </div>
             </div>
-            {entries.map((entry: Entry, index: number) => (
-                <RecordCard
-                    entry={entry}
-                    updateEntry={(new_entry) => setEntries((_records: Entry[]) =>
-                        _records.map((rec: Entry, i: number) => {
-                            if(i == index) {
-                                return {...rec, ...new_entry};
-                            } else {
-                                return rec;
-                            }
-                        })
-                    )}
-                    key={index}
-                    isChecked={selectedEntries.indexOf(index) != -1}
-                    onSelect={() =>
-                        setSelectedEntries((prev_state) => [
-                            ...prev_state,
-                            index,
-                        ])
-                    }
-                    onDeselect={() =>
-                        setSelectedEntries((prev_state) =>
-                            prev_state.filter((ind) => ind != index)
-                        )
-                    }
-                />
-            ))}
-        </div>
+            <div className="record-list">
+                {entries.map((entry: Entry, index: number) => (
+                    <RecordCard
+                        entry={entry}
+                        updateEntry={(new_entry) =>
+                            setEntries((_records: Entry[]) =>
+                                _records.map((rec: Entry, i: number) => {
+                                    if (i == index) {
+                                        return { ...rec, ...new_entry };
+                                    } else {
+                                        return rec;
+                                    }
+                                })
+                            )
+                        }
+                        key={"record_" + index}
+                        isChecked={selectedEntries.indexOf(index) != -1}
+                        onSelect={() =>
+                            setSelectedEntries((prev_state) => [
+                                ...prev_state,
+                                index,
+                            ])
+                        }
+                        onDeselect={() =>
+                            setSelectedEntries((prev_state) =>
+                                prev_state.filter((ind) => ind != index)
+                            )
+                        }
+                    />
+                ))}
+            </div>
+        </>
     );
 };
 

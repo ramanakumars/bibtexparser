@@ -16,7 +16,7 @@ const Editable: React.FC<EditableProps> = ({ value, setValue, className }) => {
             )
             :
             (
-                <input type='text' onChange={(e) => setValue(e.target.value)} onBlur={() => setEditable(false)} className={className} autoFocus value={value} />
+                <input type='text' onChange={(e) => setValue(e.target.value)} onBlur={() => setEditable(false)} onKeyDownCapture={(e) => e.key === "Enter"  && setEditable(false)} className={className} autoFocus value={value} />
             )
         }
         </>

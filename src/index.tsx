@@ -4,7 +4,7 @@ import BibInput from './components/BibInput';
 import TemplateInput from './components/TemplateInput';
 import Output from './components/Output';
 import { bibContext } from './contexts/bibContext';
-import { Entry } from './parser/Record';
+import { Entry } from './parser/parser';
 import { tempContext, Template } from './contexts/tempContext';
 import './css/main.css';
 import './css/input.css';

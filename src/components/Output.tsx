@@ -1,5 +1,5 @@
 import React from "react";
-import { Entry } from "../parser/Record";
+import { Entry } from "../parser/parser";
 
 interface OutputProps{
     entries: Entry[];

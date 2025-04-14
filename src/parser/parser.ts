@@ -27,7 +27,62 @@ export interface Entry {
     [key: string]: any;
 }
 
-export const parse_text = (input_text: string, rec_type: string): Entry => {
+
+const add_accent = (text: string, match: string, accent: string, unicode: string) : string => {
+    const re = new RegExp(`^\\\\${accent}\\\\?\\{?(\\w)\\}?$`, 'g');
+    const accent_match = match.matchAll(re);
+    for(const accenti of accent_match) {
+        let accent_text: string = `${accenti[1]}${unicode}`;
+        text = text.replace(accenti[0], accent_text)
+    }
+
+    return text
+}
+
+
+const sanitize_latex = (text: string) => {
+    // return text.replace(/^"?\{?([\S\s]+?)\}?"?,?$/gm, "$1")
+    const pattern_braces = regex({ flags: 'gm', plugins: [recursion], disable: {v: true, n: true}})`\{((?:[^\{\}]++|(?R=20))*)\}`;
+    const pattern_quotes = regex({ flags: 'gm', plugins: [recursion], disable: {v: true, n: true}})`"((?:[^"]++|(?R=20))*)"`;
+
+    // convert accents
+    // const accent_matches = text.matchAll(/\\'\\?\{?(\w)\}?/g);
+    // for(const match of accent_matches) {
+    //     console.log(match);
+    // }
+
+    // remove nested curly braces
+    for(var i=0; i < 5; i++) {
+        let matches = text.matchAll(pattern_braces);
+        for(const matchi of matches) {
+            text = add_accent(text, matchi[1], "'", "\u{0301}")
+            text = add_accent(text, matchi[1], "`", "\u{0301}")
+            text = add_accent(text, matchi[1], "^", "\u{0302}")
+            text = add_accent(text, matchi[1], "~", "\u{0303}")
+            text = add_accent(text, matchi[1], "v", "\u{030C}")
+            text = add_accent(text, matchi[1], "c", "\u{0327}")
+            text = add_accent(text, matchi[1], "c", "\u{0327}")
+
+            let match = text.replace(matchi[0], matchi[1]);
+
+            if(match) {
+                text = match;
+            }
+        }
+    }
+    
+    // remove nested quotes
+    for(var i=0; i < 5; i++) {
+        let match = text.replace(pattern_quotes, "$1");
+        if(match) {
+            text = match;
+        }
+    }
+
+    return text;
+}
+
+export const parse_text = (input_text: string, entry_name: string, rec_type: string): Entry => {
     const text: string = input_text.replace("[\s]{2,50}?|[\n?]", "");
 
     // the entry pattern is [key] = [entry],
@@ -38,12 +93,10 @@ export const parse_text = (input_text: string, rec_type: string): Entry => {
     // `;
 
     const text_pattern = regex({ plugins: [recursion], flags: 'gm', disable: { v: true } })`
-        (?<key>\w+\s?=\s?)(?<value>[\s\S]+?)\s+(?:(?=(\g<key>)))
+        (?<key>\w+\s*=\s*)(?<value>[\s\S]+?),?\s+(?:(?=(\g<key>))|\})
     `;
 
     const matches = text.matchAll(text_pattern);
-
-    let entry_name = "";
 
     const entry: Entry = {
         rec_type: rec_type.replace('@',''),
@@ -59,15 +112,8 @@ export const parse_text = (input_text: string, rec_type: string): Entry => {
     };
 
     for (const match of matches) {
-        let key = match[1].toLowerCase().trim().replace(/\s?=\s?/, '');
-        let value = match[2].replace(/^"?\{?([\S\s]+?)\}?"?,?$/gm, "$1");
-        console.log("match: ", match[2]);
-
-        console.log(key)
-        if(value) {
-            console.log("value: ", value);
-        }
-
+        let key = match[1].toLowerCase().trim().replace(/\s*=\s*/, '');
+        let value = sanitize_latex(match[2]);
 
         if ((key == 'author') || (key == 'authors')) {
             const authors = value.split(" and");

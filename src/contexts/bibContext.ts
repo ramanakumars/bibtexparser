@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Entry } from "../parser/Record";
+import { Entry } from "../parser/parser";
 
 export const bibContext = createContext<Entries>({ entries: [], setEntries: () => {} });
 

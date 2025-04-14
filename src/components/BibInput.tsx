@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import UploadForm from "./UploadForm";
-import { Entry, parse_text } from "../parser/Record";
+import { Entry, parse_text } from "../parser/parser";
 import { bibContext, Entries } from "../contexts/bibContext";
 import RecordList from "./RecordList";
 import { regex } from "regex";
@@ -84,7 +84,12 @@ const BibInput: React.FC = () => {
         const new_entries: Entry[] = [];
         for (const entry of entries) {
             let rec_type = entry[1].toLowerCase();
-            let new_entry: Entry = parse_text(entry[0], rec_type);
+            let match = [...entry[2].matchAll(/^\{(\S+),/g)];
+            let entry_name: string = "";
+            if(match) {
+                entry_name = match[0][1];
+            }
+            let new_entry: Entry = parse_text(entry[0], entry_name, rec_type);
             new_entries.push(new_entry);
         }
 

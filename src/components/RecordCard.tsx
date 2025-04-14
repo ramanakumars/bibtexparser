@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Entry } from "../parser/Record";
+import { Entry } from "../parser/parser";
 import { bibContext } from "../contexts/bibContext";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Editable from "./Editable";
@@ -25,7 +25,6 @@ const RecordCard: React.FC<RecordCardProps> = ({
 }) => {
     const [showText, setShowText] = useState(false);
 
-
     if (!entry) {
         return null;
     }
@@ -45,19 +44,22 @@ const RecordCard: React.FC<RecordCardProps> = ({
                 {/* <span className="title double-width">{record.title}</span> */}
                 <Editable
                     value={entry.title}
-                    setValue={(text) =>
-                        updateEntry({ title: text })
-                    }
+                    setValue={(text) => updateEntry({ title: text })}
                     className="title double-width"
                 />
                 <span className="subtitle single-width">
                     {entry.rec_type.toUpperCase()}
                 </span>
-                <span className="single-width">{entry.entry_name}</span>
+                <Editable
+                    value={entry.entry_name}
+                    setValue={(text) => updateEntry({ entry_name: text })}
+                    className="single-width"
+                />
+
                 <span className="half-width">{entry.year}</span>
                 <div className="author-container double-width">
                     {entry.authors.slice(0, 5).map((author, index) => (
-                        <span key={index} className="author">
+                        <span key={"author_" + index} className="author">
                             {author.short_name}
                         </span>
                     ))}
