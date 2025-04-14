@@ -1,5 +1,5 @@
 // import React, { useMemo, useState } from "react";
-import Author from "./Author";
+import { Author, parse_author } from "./Author";
 import { journal_macros } from "./JournalMacros";
 import { regex } from 'regex';
 import { recursion } from "regex-recursion-cjs";
@@ -40,28 +40,24 @@ const add_accent = (text: string, match: string, accent: string, unicode: string
 }
 
 
-const sanitize_latex = (text: string) => {
+export const sanitize_latex = (text: string) => {
     // return text.replace(/^"?\{?([\S\s]+?)\}?"?,?$/gm, "$1")
     const pattern_braces = regex({ flags: 'gm', plugins: [recursion], disable: {v: true, n: true}})`\{((?:[^\{\}]++|(?R=20))*)\}`;
     const pattern_quotes = regex({ flags: 'gm', plugins: [recursion], disable: {v: true, n: true}})`"((?:[^"]++|(?R=20))*)"`;
-
-    // convert accents
-    // const accent_matches = text.matchAll(/\\'\\?\{?(\w)\}?/g);
-    // for(const match of accent_matches) {
-    //     console.log(match);
-    // }
 
     // remove nested curly braces
     for(var i=0; i < 5; i++) {
         let matches = text.matchAll(pattern_braces);
         for(const matchi of matches) {
+
+            // fix all accents. Can probably do this in a loop but this works fine.
             text = add_accent(text, matchi[1], "'", "\u{0301}")
             text = add_accent(text, matchi[1], "`", "\u{0301}")
             text = add_accent(text, matchi[1], "^", "\u{0302}")
             text = add_accent(text, matchi[1], "~", "\u{0303}")
             text = add_accent(text, matchi[1], "v", "\u{030C}")
             text = add_accent(text, matchi[1], "c", "\u{0327}")
-            text = add_accent(text, matchi[1], "c", "\u{0327}")
+            text = add_accent(text, matchi[1], '"', "\u{0308}")
 
             let match = text.replace(matchi[0], matchi[1]);
 
@@ -85,13 +81,7 @@ const sanitize_latex = (text: string) => {
 export const parse_text = (input_text: string, entry_name: string, rec_type: string): Entry => {
     const text: string = input_text.replace("[\s]{2,50}?|[\n?]", "");
 
-    // the entry pattern is [key] = [entry],
-    // text_pattern = r"(\w+)\s*=\s*\"?\{*\"?(.*?)\"?\}*\"?,?(,|$)"
-    // const text_pattern: RegExp = /(((\w+)\s*=\s*([^=]+))(,|$))/g
-    // const text_pattern = regex({ plugins: [recursion], flags: 'gm', disable: { v: true } })`
-    //     (?<key>\w+\s?=\s?)(((?<value1>\{(?:[^\{\}]++|(\g<value1&R=20>)|(\g<value2>))*\})|(?<value2>"(?:[^"]+|(\g<value1>|(\g<value2&R=20>))*")))|(?<value3>([^{},"]+)))
-    // `;
-
+    // the entry pattern is [key] = [value],
     const text_pattern = regex({ plugins: [recursion], flags: 'gm', disable: { v: true } })`
         (?<key>\w+\s*=\s*)(?<value>[\s\S]+?),?\s+(?:(?=(\g<key>))|\})
     `;
@@ -120,7 +110,7 @@ export const parse_text = (input_text: string, entry_name: string, rec_type: str
 
             // get the list of authors
             for (const author of authors) {
-                let authi = new Author(author.trim());
+                let authi = parse_author(author.trim());
                 entry.authors.push(authi);
             }
         } else {
@@ -169,102 +159,3 @@ export const parse_text = (input_text: string, entry_name: string, rec_type: str
 
     return entry;
 }
-
-
-
-// class RecordOld {
-//     /*
-//     A class to represent a bibtex record
-//     rec_type is the type of record (e.g., article, book, etc.)
-//     entry_name is the ID of the entry
-//     */
-
-//     public authors: Author[];
-//     public rec_type: string;
-//     public entry_name: string;
-//     public full_text: string;
-//     public text: string = "";
-//     public journal: string = "";
-//     public year: number = 0;
-//     public month: number | string = 0;
-//     public volume: number = 0;
-//     public doi: string = "";
-//     public doiurl: string = "";
-//     public key: string = "";
-//     [key: string]: any;
-
-//     constructor(rec_type: string, entry_name: string, full_text: string) {
-//         this.authors = [];
-//         this.rec_type = rec_type;
-//         this.entry_name = entry_name;
-//         this.full_text = full_text;
-//     }
-
-//     parse_text(input_text: string) {
-//         this.text = input_text
-//         const text: string = input_text.replace("[\s]{2,50}?|[\n?]", "");
-
-//         // the entry pattern is [key] = [entry],
-//         // text_pattern = r"(\w+)\s*=\s*\"?\{*\"?(.*?)\"?\}*\"?,?(,|$)"
-//         const text_pattern: RegExp = /(((\w+)\s*=\s*([^=]+))(,|$))/g
-
-//         const matches = text.matchAll(text_pattern);
-
-//         for (const match of matches) {
-//             let key = match[3].toLowerCase().trim();
-//             let value = match[4].trim().replace('"', "");
-
-//             if ((key == 'author') || (key == 'authors')) {
-//                 const authors = value.split(" and");
-
-//                 // get the list of authors
-//                 for (const author of authors) {
-//                     let authi = new Author(author.trim());
-//                     this.authors.push(authi);
-//                 }
-//             } else {
-//                 value = value.replace(/^\{/, "").replace(/\}$/, "")
-//                 switch (key) {
-//                     case "journal":
-//                         this.journal = value;
-
-//                         // check if the journal is a macro
-//                         if (this.journal[0] === "\\") {
-//                             if (journal_macros[this.journal]) {
-//                                 this.journal = journal_macros[this.journal];
-//                             } else {
-//                                 console.log(`Error: Journal macro ${this.journal} not found for entry ${this.entry_name}`);
-//                             }
-//                         }
-//                         break;
-//                     case "year":
-
-//                         // convert hte year to an integer
-//                         this.year = Number(value);
-//                         break;
-//                     case "month":
-//                         // check if the month is an integer or a month name
-//                         if (checkInt(value)) {
-//                             this.month = Number(value);
-//                         } else {
-//                             this.month = value;
-//                         }
-//                         break;
-//                     case "volume":
-//                         this.volume = Number(value.replace("{", "").replace("}", ""));
-//                         break;
-//                     case "doi":
-//                         this.doi = value;
-//                         this.doiurl = `https://doi.org/${value}`;
-//                         break;
-//                     default:
-//                         this[key] = value;
-//                         break;
-//                 }
-
-//             }
-//         }
-//     }
-// }
-
-// export default Record;

@@ -70,5 +70,21 @@
 }
 
 .record .author {
-    @apply min-w-4 px-2 py-1 pl-0;
+    @apply min-w-4 px-2 py-1 pl-1 mx-1 my-1 bg-gray-700 rounded-md text-quaternary cursor-pointer;
+}
+
+.record .author-editor-background {
+    @apply fixed w-full h-full bg-white z-10 left-0 top-0 overflow-clip opacity-50;
+}
+
+.record .author-editor {
+    @apply fixed flex flex-col flex-nowrap w-1/2 max-h-3/4 left-0 top-1/8 right-0 m-auto justify-center items-center border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
+}
+
+.author-editor .author-list {
+    @apply flex flex-wrap w-full justify-center items-center box-border overflow-y-scroll m-2;
+}
+
+.author-edit {
+    @apply flex flex-nowrap justify-center items-center border-1 border-black rounded-xl p-2 m-4 w-1/4 text-center leading-6;
 }
