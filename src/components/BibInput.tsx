@@ -2,14 +2,18 @@ import React, { useContext, useEffect, useState } from "react";
 import UploadForm from "./UploadForm";
 import { Entry, parse_text } from "../parser/parser";
 import { bibContext, Entries } from "../contexts/bibContext";
-import RecordList from "./RecordList";
+import RecordCard from "./RecordCard";
 import { regex } from "regex";
 import { recursion } from "regex-recursion-cjs";
+import { IoMdAddCircle } from "react-icons/io";
+import { BiSort } from "react-icons/bi";
+import { MdDownloadForOffline } from "react-icons/md";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
   year = {1986},
-  title = {The {\TeX} Book},
+  title = {The {\\TeX} Book},
   publisher = {Addison-Wesley Professional}
 }
 
@@ -18,7 +22,7 @@ const test = `@book{texbook,
             and Johannes Braams and David Carlisle
             and Chris Rowley},
   year = {2004},
-  title = {The {\LaTeX} Companion},
+  title = {The {\\LaTeX} Companion},
   publisher = {Addison-Wesley Professional},
   edition = {2}
 }
@@ -26,7 +30,7 @@ const test = `@book{texbook,
 @book{latex2e,
   author = {Leslie Lamport},
   year = {1994},
-  title = {{\LaTeX}: a Document Preparation System},
+  title = {{\\LaTeX}: a Document Preparation System},
   publisher = {Addison Wesley},
   address = {Massachusetts},
   edition = {2}
@@ -58,10 +62,42 @@ const test = `@book{texbook,
 const BibInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
     const { entries, setEntries } = useContext<Entries>(bibContext);
+    const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
+
+    const deleteSelected = () => {
+        setEntries((_entries) =>
+            _entries.filter((_, ind) => selectedEntries.indexOf(ind) == -1)
+        );
+    };
+
+    useEffect(() => {
+        setSelectedEntries([]);
+    }, [entries]);
+
+    const selectAll = () => {
+        setSelectedEntries(entries.map((_, index) => index));
+    };
 
     useEffect(() => {
         addText(test);
     }, []);
+
+
+    const sortAndClean = () => {
+        const get_entry_id = (entry: Entry): string => `${entry.authors[0].lastname}_${entry.year}_${entry.title}`;
+        const entries_name = entries.map((entry) => get_entry_id(entry));
+
+        const _filtered_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) == i);
+        const _sorted_entries = _filtered_entries.sort((a, b) => get_entry_id(a).localeCompare(get_entry_id(b)));
+
+        console.log(_filtered_entries);
+        
+        setEntries(_sorted_entries);
+    }
+
+    const downloadBib = () => {
+
+    }
 
     const addText = (text: string) => {
         // find the pattern of the type @type{entry_name, ...}
@@ -104,19 +140,77 @@ const BibInput: React.FC = () => {
                 <span className="input-header">
                     <strong>Found {entries.length} entries</strong>
                     <span>
-                        <button
-                            type="button"
-                            className="clean-button"
-                            onClick={() => null}
+                        <a
+                            className="icon-button"
+                            onClick={() => sortAndClean()}
+                            title="Sort and clean entries"
                         >
-                            Sort & Clean!
-                        </button>
-                        <button onClick={() => setEditable(true)}>
-                            Add entries
-                        </button>
+                            <BiSort />
+                        </a>
+                        <a onClick={() => setEditable(true)} title="Add entries" className="icon-button">
+                            <IoMdAddCircle/>
+                        </a>
+                        <a onClick={() => downloadBib()} title="Download as .bib" className="icon-button">
+                            <MdDownloadForOffline />
+                        </a>
+                        <a onClick={() => deleteSelected()} title="Remove Selected entries" className="icon-button">
+                            <RiDeleteBin5Line />
+                        </a>
                     </span>
                 </span>
-                <RecordList />
+                {/* <RecordList /> */}
+                <div className="record record-header">
+                    <div className="record-contents">
+                        <span className="checkbox half-width">
+                            <input
+                                type="checkbox"
+                                onChange={(e) =>
+                                    e.target.checked
+                                        ? selectAll()
+                                        : setSelectedEntries([])
+                                }
+                            />
+                        </span>
+                        <span className="title double-width">Title</span>
+                        <span className="single-width">Type</span>
+                        <span className="single-width">Entry Name</span>
+                        <span className="half-width">Year</span>
+                        <span className="double-width">Authors</span>
+                        <span className="half-width">
+                        </span>
+                    </div>
+                </div>
+                <div className="record-list">
+                    {entries.map((entry: Entry, index: number) => (
+                        <RecordCard
+                            entry={entry}
+                            updateEntry={(new_entry) =>
+                                setEntries((_records: Entry[]) =>
+                                    _records.map((rec: Entry, i: number) => {
+                                        if (i == index) {
+                                            return { ...rec, ...new_entry };
+                                        } else {
+                                            return rec;
+                                        }
+                                    })
+                                )
+                            }
+                            key={"record_" + index}
+                            isChecked={selectedEntries.indexOf(index) != -1}
+                            onSelect={() =>
+                                setSelectedEntries((prev_state) => [
+                                    ...prev_state,
+                                    index,
+                                ])
+                            }
+                            onDeselect={() =>
+                                setSelectedEntries((prev_state) =>
+                                    prev_state.filter((ind) => ind != index)
+                                )
+                            }
+                        />
+                    ))}
+                </div>
             </section>
             {editable && <UploadForm upload_type={"bib"} onChange={addText} />}
         </section>
