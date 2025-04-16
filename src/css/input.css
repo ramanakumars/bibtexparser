@@ -1,7 +1,7 @@
 @import "./global.css";
 
 .input-container {
-    @apply flex flex-col justify-start items-center w-full box-border h-[75vh] px-2 overflow-y-scroll border-1 border-black ;
+    @apply flex flex-col justify-start items-center max-h-[75vh] w-full box-border px-2 overflow-y-scroll border-1 border-black ;
 }
 
 .input-header {

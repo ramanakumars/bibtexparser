@@ -21,7 +21,7 @@
 }
 
 .template .other {
-    @apply flex flex-row bg-tertiary text-white;
+    @apply flex flex-row bg-gray-300 text-black;
 }
 
 .template .group {

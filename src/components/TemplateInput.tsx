@@ -32,7 +32,7 @@ const TemplateInput: React.FC = () => {
     return (
         <section className="main-container">
             <h1>Template entry:</h1>
-            <section className="input-container">
+            <section className="input-container min-h-56">
                 <span className="input-header">
                     <strong>Found {templates.length} entries</strong>
                     <span>

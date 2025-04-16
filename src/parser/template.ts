@@ -24,24 +24,21 @@ const isNumeric = (val: string): boolean => {
     return parseFloat(val) == intVal && !isNaN(intVal);
 }
 
-export const parse_template = (template_text: string): Template => {
-    const template: Template = {
-        entry_type: "",
-        author_template: { form: '', number: 0 },
-        blocks: [],
-        groups: []
-    };
-
+const get_groups_and_blocks = (text: string, start: number): { groups: Blocks[], blocks: Blocks } => {
     const group_pattern = regex({ plugins: [recursion], flags: 'gm' })`(?!<\\)\{((?:\\\{|\\\}|[^\{\}])++|(?R=4))*(?!<\\)\}`;
     const re = regex({ plugins: [recursion], flags: 'gm' })`
         (?<keyword>\$(\w+))|
         (?<other>[^\$\\\{\}]|
             (\\\$|(\\(?![\{\}]))|(\\\{)|(\\\}))
         )*`;
-    const group_matches = template_text.matchAll(group_pattern);
 
-    var new_text: string = template_text;
-    var index = 0;
+    const new_groups: Blocks[] = [];
+    const new_blocks: Blocks = [];
+
+    const group_matches = text.matchAll(group_pattern);
+
+    var new_text: string = text;
+    var index: number = start;
     for (const group of group_matches) {
         new_text = new_text.replace(group[0], `\$group${index}`)
         const group_block: Block[] = [];
@@ -52,7 +49,7 @@ export const parse_template = (template_text: string): Template => {
             const blocki: Block = { type: type ? type : "", text: match[0] };
             group_block.push(blocki);
         }
-        template.groups.push(group_block);
+        new_groups.push(group_block);
         index++;
     }
     const blocks = new_text.matchAll(re);
@@ -66,8 +63,24 @@ export const parse_template = (template_text: string): Template => {
             type = Object.keys(groups).find((key) => groups[key] !== undefined) as string;
         }
         const blocki: Block = { type: type ? type : "", text: block[0] };
-        template.blocks.push(blocki);
+        new_blocks.push(blocki);
     }
+
+    return { blocks: new_blocks, groups: new_groups}
+}
+
+export const parse_template = (template_text: string): Template => {
+    const template: Template = {
+        entry_type: "",
+        author_template: { form: '', number: 0 },
+        blocks: [],
+        groups: []
+    };
+
+    const { groups, blocks } = get_groups_and_blocks(template_text, 0);
+
+    template.groups = groups;
+    template.blocks = blocks;
 
     const author_template_search: Blocks = template.blocks.filter((block) => (block.text.indexOf("$auth") !== -1));
     if (author_template_search.length !== 1) {
@@ -80,8 +93,6 @@ export const parse_template = (template_text: string): Template => {
         template.author_template.form = author_template.value[1];
         template.author_template.number = author_template.value[2] === "a" ? -1 : (isNumeric(author_template.value[2]) ? Number(author_template.value[2]) : 0);
     }
-
-    console.log(template);
 
     return template;
 }
