@@ -1,9 +1,7 @@
 import { createContext } from "react";
 import { Template } from "../parser/template";
 
-
-export const tempContext = createContext<Templates>({ templates: [], setTemplates: () => {} });
-
+export const tempContext = createContext<Templates>({ templates: [], setTemplates: () => { } });
 
 export interface Templates {
     templates: Template[];

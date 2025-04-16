@@ -1,0 +1,29 @@
+@import './global.css';
+
+.templates {
+    @apply flex flex-col overflow-y-scroll justify-start w-full;
+}
+
+.template {
+    @apply flex flex-row w-full px-4 py-2 box-border flex-nowrap;
+}
+
+.template span {
+    @apply box-border px-1 leading-10 font-mono whitespace-break-spaces;
+}
+
+.template .group, .template .block, .template .other {
+    @apply  rounded-md cursor-pointer;
+}
+
+.template .block {
+    @apply flex flex-row bg-gray-700 text-white;
+}
+
+.template .other {
+    @apply flex flex-row bg-tertiary text-white;
+}
+
+.template .group {
+    @apply flex flex-row bg-gray-200 border-l-2 border-r-2;
+}
