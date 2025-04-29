@@ -6,8 +6,24 @@ import { tempContext, Templates } from "../contexts/tempContext";
 import TemplateCard from "./TemplateCard";
 
 const template_test = `
-$auths2 $title.{ $journal, $pages.}{ \\item\\{ $hi\\}} ($year)
+$auths2 $title.{ $journal, $pages.}{ \\item\\{ hi\\}} ($year)
+@article $authsa $title. ($year)
 `;
+
+const checkUniqueTemplateTypes = (old_templates: Template[], new_templates: Template[]): Template[] => {
+    const old_template_types = old_templates.map((template) => template.entry_type);
+    const new_template_types = new_templates.map((template) => template.entry_type);
+    
+    const duplicate_entries = new_template_types.filter((_type, i) => old_template_types.indexOf(_type) != i);
+
+    if(duplicate_entries.length > 0) {
+        console.warn(`Found ${duplicate_entries.length} duplicated entry types for ${duplicate_entries}`);
+    }
+
+    const _templates = [...old_templates, ...new_templates.filter((template) => (duplicate_entries.indexOf(template.entry_type) != -1))];
+
+    return _templates;
+};
 
 const TemplateInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
@@ -18,10 +34,11 @@ const TemplateInput: React.FC = () => {
         const _templates: Template[] = [];
         for (const _template of _templates_text) {
             if (_template != "") {
-                _templates.push(parse_template(_template));
+                const new_template: Template = parse_template(_template);
+                _templates.push(new_template);
             }
         }
-        setTemplates((old_templates) => [...old_templates, ..._templates]);
+        setTemplates((old_templates) => checkUniqueTemplateTypes(old_templates, _templates));
         setEditable(false);
     };
 

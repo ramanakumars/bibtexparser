@@ -5,11 +5,15 @@
 }
 
 .template-container {
-    @apply w-fit grid grid-cols-10 justify-center items-center;
+    @apply grid grid-cols-10 flex-nowrap w-fit justify-center items-center leading-10;
+}
+
+.template-entry-type {
+    @apply justify-start items-center px-4 py-2 w-36  bg-primary box-border text-lg text-quaternary font-bold font-mono;
 }
 
 .template-delete {
-    @apply col-span-2 text-2xl cursor-pointer;
+    @apply text-2xl cursor-pointer mx-8;
 }
 
 .template-delete svg:hover {
@@ -17,25 +21,29 @@
 }
 
 .template {
-    @apply flex flex-row w-full px-4 py-2 box-border flex-nowrap col-span-8;
+    @apply flex flex-row w-fit px-4 py-2 box-border flex-nowrap justify-start items-center col-span-9;
 }
 
 .template span {
-    @apply box-border px-1 leading-10 font-mono whitespace-break-spaces;
+    @apply box-border px-1 leading-10 font-mono whitespace-break-spaces flex-nowrap flex flex-row;
 }
 
-.template .group, .template .block, .template .other {
-    @apply  rounded-md cursor-pointer;
+.template .group, .template .block, .template .other, .template .author {
+    @apply  rounded-md cursor-pointer flex flex-row;
 }
 
 .template .block {
-    @apply flex flex-row bg-gray-700 text-white;
+    @apply bg-gray-700 text-white;
+}
+
+.template .author {
+    @apply bg-gray-700 text-white;
 }
 
 .template .other {
-    @apply flex flex-row bg-gray-300 text-black;
+    @apply bg-gray-300 text-black;
 }
 
 .template .group {
-    @apply flex flex-row bg-gray-200 border-l-2 border-r-2;
+    @apply bg-gray-200 border-l-2 border-r-2;
 }

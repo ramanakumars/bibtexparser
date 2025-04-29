@@ -8,6 +8,10 @@ interface TemplateCardProps {
     deleteTemplate: () => void;
 }
 
+interface AuthorCardProps {
+    block: AuthorBlock;
+}
+
 interface BlockCardProps {
     block: Block;
 }
@@ -19,10 +23,15 @@ interface GroupCardProps {
 const TemplateCard: React.FC<TemplateCardProps> = ({ template, deleteTemplate }) => {
     return (
         <span className="template-container">
+            <span className="template-entry-type">
+                {template.entry_type}:
+            </span>
             <span className="template">
                 {template.blocks.map((block, i) => {
-                    if (block.type !== "group") {
+                    if ((block.type != "group")&&(block.type != "author")) {
                         return <BlockCard key={"block_" + i} block={block} />;
+                    } else if (block.type === 'author') {
+                        return <AuthorCard key={"author_" + i} block={block as AuthorBlock} />;
                     } else {
                         return (
                             <GroupCard
@@ -34,10 +43,19 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, deleteTemplate })
                         );
                     }
                 })}
+                <span className="template-delete">
+                    <RiDeleteBin5Line onClick={deleteTemplate}/>
+                </span>
             </span>
-            <span className="template-delete">
-                <RiDeleteBin5Line onClick={deleteTemplate}/>
-            </span>
+        </span>
+    );
+};
+
+
+const AuthorCard: React.FC<AuthorCardProps> = ({ block }) => {
+    return (
+        <span className="author">
+            author ({ block.author_template.form === "s" ? "short" : "long" }, {block.author_template.number === -1 ? 'all' : block.author_template.number})
         </span>
     );
 };
@@ -49,7 +67,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block }) => {
                 ((block.type === "keyword") || (block.type === "author"))  ? "block" : ((block.text.trim() === "") ? "" : "other")
             }
         >
-            {block.text}
+            {block.type === 'keyword' ? block.text.replace('$', '') : block.text }
         </span>
     );
 };
