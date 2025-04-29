@@ -6,7 +6,7 @@ import { tempContext, Templates } from "../contexts/tempContext";
 import TemplateCard from "./TemplateCard";
 
 const template_test = `
-$authsa $year $title. { $journal $pages }  { \\item\\{ $hi \\} }
+$auths2 $title.{ $journal, $pages.}{ \\item\\{ $hi \\}} ($year)
 `;
 
 const TemplateInput: React.FC = () => {
@@ -24,6 +24,12 @@ const TemplateInput: React.FC = () => {
         setTemplates((old_templates) => [...old_templates, ..._templates]);
         setEditable(false);
     };
+
+    const deleteTemplate = (index: Number) => {
+        setTemplates((_templates) => (
+            _templates.filter((_template, _ind) => _ind != index)
+        ))
+    }
 
     useEffect(() => {
         addText(template_test);
@@ -50,6 +56,7 @@ const TemplateInput: React.FC = () => {
                         <TemplateCard
                             key={"template_" + index}
                             template={template}
+                            deleteTemplate={() => deleteTemplate(index)}
                         />
                     ))}
                 </div>

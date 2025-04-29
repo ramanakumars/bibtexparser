@@ -1,0 +1,5 @@
+@import "./global.css";
+
+div.output-container {
+    @apply flex flex-col font-mono whitespace-break-spaces;
+}

@@ -5,7 +5,7 @@ import {
     parse_author,
     get_long_name,
     get_short_name,
-} from "../parser/Author";
+} from "../parser/author";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Editable from "./Editable";
 

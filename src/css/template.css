@@ -4,8 +4,20 @@
     @apply flex flex-col overflow-y-scroll justify-start w-full;
 }
 
+.template-container {
+    @apply w-fit grid grid-cols-10 justify-center items-center;
+}
+
+.template-delete {
+    @apply col-span-2 text-2xl cursor-pointer;
+}
+
+.template-delete svg:hover {
+    @apply text-tertiary;
+}
+
 .template {
-    @apply flex flex-row w-full px-4 py-2 box-border flex-nowrap;
+    @apply flex flex-row w-full px-4 py-2 box-border flex-nowrap col-span-8;
 }
 
 .template span {

@@ -54,7 +54,11 @@ const App: React.FC = () => {
             <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
                 <TemplateInput />
             </tempContext.Provider>
-            <Output entries={entries}/>
+            <bibContext.Provider value={{ entries: entries, setEntries: setEntries }}>
+                <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
+                    <Output />
+                </tempContext.Provider>
+            </bibContext.Provider>
             <HelpText />
         </article>
 
