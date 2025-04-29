@@ -6,7 +6,7 @@ import { tempContext, Templates } from "../contexts/tempContext";
 import TemplateCard from "./TemplateCard";
 
 const template_test = `
-$auths2 $title.{ $journal, $pages.}{ \\item\\{ $hi \\}} ($year)
+$auths2 $title.{ $journal, $pages.}{ \\item\\{ $hi\\}} ($year)
 `;
 
 const TemplateInput: React.FC = () => {

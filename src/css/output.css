@@ -1,5 +1,9 @@
 @import "./global.css";
 
 div.output-container {
-    @apply flex flex-col font-mono whitespace-break-spaces;
+    @apply flex flex-col;
+}
+
+.output-container span {
+    @apply py-1 font-mono whitespace-break-spaces text-xl;
 }

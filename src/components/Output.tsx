@@ -13,11 +13,6 @@ const Output: React.FC<OutputProps> = () => {
     return (
         <section id="output" className="main-container">
             <h1>Output: </h1>
-            {entries.length > 0 ? (
-                <span>{entries.length} entries found</span>
-            ) : (
-                ""
-            )}
             { templates.length > 0 &&
             <div className="output-container">
                 {entries.map((entry) => (

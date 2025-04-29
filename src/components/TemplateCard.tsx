@@ -46,11 +46,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block }) => {
     return (
         <span
             className={
-                block.type === "keyword"
-                    ? "block"
-                    : block.text.trim() === ""
-                    ? ""
-                    : "other"
+                ((block.type === "keyword") || (block.type === "author"))  ? "block" : ((block.text.trim() === "") ? "" : "other")
             }
         >
             {block.text}

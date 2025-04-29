@@ -89,6 +89,9 @@ const BibInput: React.FC = () => {
 
         const _filtered_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) == i);
         const _sorted_entries = _filtered_entries.sort((a, b) => get_entry_id(a).localeCompare(get_entry_id(b)));
+        
+        const duplicate_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) != i);
+        console.log(duplicate_entries)
 
         setEntries(_sorted_entries);
     }
