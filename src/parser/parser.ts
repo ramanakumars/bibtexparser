@@ -29,7 +29,8 @@ export interface Entry {
 
 
 const add_accent = (text: string, match: string, accent: string, unicode: string) : string => {
-    const re = new RegExp(`^\\\\${accent}\\\\?\\{?(\\w)\\}?$`, 'g');
+    const re = new RegExp(`\\\\${accent}\\\\?\\{?(\\w)\\}?`, 'gm');
+
     const accent_match = match.matchAll(re);
     for(const accenti of accent_match) {
         let accent_text: string = `${accenti[1]}${unicode}`;
