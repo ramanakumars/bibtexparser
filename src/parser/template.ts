@@ -92,15 +92,23 @@ export const parse_template = (template_text: string): Template => {
         blocks: [],
     };
 
+    const type_match = template_text.match(/\@(\w+)/);
+
+    if(type_match) {
+        template.entry_type = type_match[1];
+        template_text = template_text.replace(type_match[0], '').trim();
+    } else {
+        template.entry_type = 'generic';
+    }
+
     const blocks = get_groups_and_blocks(template_text, 0);
 
     template.blocks = blocks;
 
-    const author_template_search: Blocks = template.blocks.filter((block) => (block.text.indexOf("$auth") !== -1));
+    const author_template_search: Blocks = template.blocks.filter((block) => (block.type === 'author'));
     if (author_template_search.length !== 1) {
         throw (`There must be atleast one author template and it must not be in an optional group! Currently found ${author_template_search.length} templates for authors`)
     }
-
 
     return template;
 }
