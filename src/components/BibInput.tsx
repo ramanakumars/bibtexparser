@@ -96,9 +96,7 @@ const BibInput: React.FC = () => {
         setEntries(_sorted_entries);
     }
 
-    const downloadBib = () => {
-
-    }
+    const bibdata = new Blob([entries.map((entry) => entry.text).join("\n\n")], {type: 'text/plain'});
 
     const addText = (text: string) => {
         // find the pattern of the type @type{entry_name, ...}
@@ -151,7 +149,7 @@ const BibInput: React.FC = () => {
                         <a onClick={() => setEditable(true)} title="Add entries" className="icon-button">
                             <IoMdAddCircle/>
                         </a>
-                        <a onClick={() => downloadBib()} title="Download as .bib" className="icon-button">
+                        <a download="references.bib" target="_blank" title="Download as .bib" className="icon-button" rel="noreferrer" href={URL.createObjectURL(bibdata)}>
                             <MdDownloadForOffline />
                         </a>
                         <a onClick={() => deleteSelected()} title="Remove Selected entries" className="icon-button">
