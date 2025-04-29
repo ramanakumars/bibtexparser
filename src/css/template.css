@@ -5,11 +5,11 @@
 }
 
 .template-container {
-    @apply grid grid-cols-10 flex-nowrap w-fit justify-center items-center leading-10;
+    @apply grid grid-cols-7 flex-nowrap w-fit justify-center items-center text-[1.05rem] ml-6 my-2 leading-10 h-fit;
 }
 
 .template-entry-type {
-    @apply justify-start items-center px-4 py-2 w-36  bg-primary box-border text-lg text-quaternary font-bold font-mono;
+    @apply justify-start items-center px-4 w-36 bg-primary box-border text-quaternary font-bold font-mono;
 }
 
 .template-delete {
@@ -21,11 +21,11 @@
 }
 
 .template {
-    @apply flex flex-row w-fit px-4 py-2 box-border flex-nowrap justify-start items-center col-span-9;
+    @apply flex flex-row w-fit px-4 box-border flex-nowrap justify-start items-center col-span-6 h-full;
 }
 
 .template span {
-    @apply box-border px-1 leading-10 font-mono whitespace-break-spaces flex-nowrap flex flex-row;
+    @apply box-border px-1 font-mono whitespace-break-spaces flex-nowrap flex flex-row;
 }
 
 .template .group, .template .block, .template .other, .template .author {

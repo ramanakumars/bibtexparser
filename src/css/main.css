@@ -71,11 +71,11 @@ div#parse-output-container code {
 }
 
 h2 {
-    @apply h-full block text-base font-bold;
+    @apply h-full block text-base font-bold text-2xl;
 }
 
 section.template-helper {
-    @apply flex flex-wrap justify-start items-start;
+    @apply flex flex-wrap justify-start items-start text-xl;
 }
 
 .template-helper h2 {
