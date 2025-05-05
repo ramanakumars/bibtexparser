@@ -5,10 +5,90 @@ import { bibContext, Entries } from "../contexts/bibContext";
 import RecordCard from "./RecordCard";
 import { regex } from "regex";
 import { recursion } from "regex-recursion-cjs";
-import { IoMdAddCircle } from "react-icons/io";
-import { BiSort } from "react-icons/bi";
-import { MdDownloadForOffline } from "react-icons/md";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import '../css/input.css';
+
+const AddCircle = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="icon icon-tabler icons-tabler-filled icon-tabler-circle-plus"
+        >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4.929 4.929a10 10 0 1 1 14.141 14.141a10 10 0 0 1 -14.14 -14.14zm8.071 4.071a1 1 0 1 0 -2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0 -2h-2v-2z" />
+        </svg>
+    );
+};
+
+const SortIcon = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="icon icon-tabler icons-tabler-outline icon-tabler-arrows-sort"
+        >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 9l4 -4l4 4m-4 -4v14" />
+            <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+        </svg>
+    );
+};
+
+const DownloadIcon = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="icon icon-tabler icons-tabler-outline icon-tabler-download"
+        >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+            <path d="M7 11l5 5l5 -5" />
+            <path d="M12 4l0 12" />
+        </svg>
+    );
+};
+
+const DeleteIcon = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="icon icon-tabler icons-tabler-outline icon-tabler-trash"
+        >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 7l16 0" />
+            <path d="M10 11l0 6" />
+            <path d="M14 11l0 6" />
+            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+        </svg>
+    );
+};
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -82,21 +162,30 @@ const BibInput: React.FC = () => {
         addText(test);
     }, []);
 
-
     const sortAndClean = () => {
-        const get_entry_id = (entry: Entry): string => `${entry.authors[0].lastname}_${entry.year}_${entry.title}`;
+        const get_entry_id = (entry: Entry): string =>
+            `${entry.authors[0].lastname}_${entry.year}_${entry.title}`;
         const entries_name = entries.map((entry) => get_entry_id(entry));
 
-        const _filtered_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) == i);
-        const _sorted_entries = _filtered_entries.sort((a, b) => get_entry_id(a).localeCompare(get_entry_id(b)));
-        
-        const duplicate_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) != i);
-        console.log(duplicate_entries)
+        const _filtered_entries = entries.filter(
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i
+        );
+        const _sorted_entries = _filtered_entries.sort((a, b) =>
+            get_entry_id(a).localeCompare(get_entry_id(b))
+        );
+
+        const duplicate_entries = entries.filter(
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i
+        );
+        console.log(duplicate_entries);
 
         setEntries(_sorted_entries);
-    }
+    };
 
-    const bibdata = new Blob([entries.map((entry) => entry.text).join("\n\n")], {type: 'text/plain'});
+    const bibdata = new Blob(
+        [entries.map((entry) => entry.text).join("\n\n")],
+        { type: "text/plain" }
+    );
 
     const addText = (text: string) => {
         // find the pattern of the type @type{entry_name, ...}
@@ -121,7 +210,7 @@ const BibInput: React.FC = () => {
             let rec_type = entry[1].toLowerCase();
             let match = [...entry[2].matchAll(/^\{(\S+),/g)];
             let entry_name: string = "";
-            if(match) {
+            if (match) {
                 entry_name = match[0][1];
             }
             let new_entry: Entry = parse_text(entry[0], entry_name, rec_type);
@@ -144,16 +233,31 @@ const BibInput: React.FC = () => {
                             onClick={() => sortAndClean()}
                             title="Sort and clean entries"
                         >
-                            <BiSort />
+                            <SortIcon />
                         </a>
-                        <a onClick={() => setEditable(true)} title="Add entries" className="icon-button">
-                            <IoMdAddCircle/>
+                        <a
+                            onClick={() => setEditable(true)}
+                            title="Add entries"
+                            className="icon-button"
+                        >
+                            <AddCircle />
                         </a>
-                        <a download="references.bib" target="_blank" title="Download as .bib" className="icon-button" rel="noreferrer" href={URL.createObjectURL(bibdata)}>
-                            <MdDownloadForOffline />
+                        <a
+                            download="references.bib"
+                            target="_blank"
+                            title="Download as .bib"
+                            className="icon-button"
+                            rel="noreferrer"
+                            href={URL.createObjectURL(bibdata)}
+                        >
+                            <DownloadIcon />
                         </a>
-                        <a onClick={() => deleteSelected()} title="Remove Selected entries" className="icon-button">
-                            <RiDeleteBin5Line />
+                        <a
+                            onClick={() => deleteSelected()}
+                            title="Remove Selected entries"
+                            className="icon-button"
+                        >
+                            <DeleteIcon />
                         </a>
                     </span>
                 </span>
@@ -175,8 +279,7 @@ const BibInput: React.FC = () => {
                         <span className="single-width">Entry Name</span>
                         <span className="half-width">Year</span>
                         <span className="double-width">Authors</span>
-                        <span className="half-width">
-                        </span>
+                        <span className="half-width"></span>
                     </div>
                 </div>
                 <div className="record-list">

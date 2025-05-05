@@ -1,4 +1,4 @@
-import React, { StrictMode, useState, useEffect } from 'react';
+import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import BibInput from './components/BibInput';
 import TemplateInput from './components/TemplateInput';
@@ -8,43 +8,12 @@ import { Entry } from './parser/parser';
 import { tempContext } from './contexts/tempContext';
 import { Template } from './parser/template';
 import './css/main.css';
-import './css/input.css';
-import './css/records.css';
 
-interface OutputState {
-    text: string;
-    error: boolean; 
-}
 
 const App: React.FC = () => {
     const [entries, setEntries] = useState<Entry[]>([]);
     const [templates, setTemplates] = useState<Template[]>([]);
-    const [output, setOutput] = useState<OutputState>({ text: 'Please enter/upload both the bibtex entries and a template!', error: false });
 
-
-    useEffect(() => {
-        // var formData = { bibdata: bibText, template: tempText };
-    
-        // fetch('/parse/', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(formData),
-        // }).then(result => result.json()).then(data => {
-        //     if (!data.error) {
-        //         setOutput({ text: data.data, error: false });
-        //     } else {
-        //         setOutput({ text: data.error, error: true });
-        //     }
-        // })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     });
-
-    }, [entries, templates]);
-    
     
     return (
         <article id='main' className='center-frame'>
