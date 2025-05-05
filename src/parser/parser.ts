@@ -1,5 +1,5 @@
 // import React, { useMemo, useState } from "react";
-import { Author, parse_author } from "./author";
+import { Author, parse_author } from "./Author";
 import { journal_macros } from "./JournalMacros";
 import { regex } from 'regex';
 import { recursion } from "regex-recursion-cjs";

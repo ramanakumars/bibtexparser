@@ -1,5 +1,5 @@
 import { Block, Template, AuthorBlock, Group, Blocks } from "./template"
-import { Author, get_long_name, get_short_name } from "./author";
+import { Author, get_long_name, get_short_name } from "./Author";
 import { Entry } from "./parser"
 
 const authors_to_text = (entry: Entry, block: AuthorBlock): string => {
