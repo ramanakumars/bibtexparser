@@ -1,4 +1,0 @@
-\item $auths2 $year. $title. {\{\it $journal. $volume, $pages.\}}{\{\it $booktitle. $pages\}}{\{\it $publisher\}}
-@inbook:\item $auths2 $year. $title. {\{\it $publisher, $pages\}}
-@book:\item $auths2 $year. $title. {\{\it $publisher\}}
-@inproceedings:\item $auths2 $year. $title. {\{\it $booktitle. $pages\}}

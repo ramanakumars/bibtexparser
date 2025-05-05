@@ -1,0 +1,103 @@
+@import "./global.css";
+
+h1 {
+    @apply container block font-bold text-xl mx-2 my-4 text-center;
+}
+
+form {
+    @apply flex flex-wrap m-2;
+}
+
+input {
+    @apply m-2 text-sm;
+}
+
+pre, code{
+    white-space: pre-line;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+section {
+    @apply p-2;
+}
+
+
+input[type=file] {
+    display: none;
+}
+
+form input[type=submit], button {
+    @apply bg-secondary text-white w-28 h-10 font-bold cursor-pointer;
+}
+
+form input[type=submit]:hover, button:hover {
+    @apply bg-tertiary;
+}
+
+article#main {
+    @apply flex flex-wrap m-auto box-border justify-between content-start items-start w-full p-0;
+}
+
+section.main-container {
+    @apply w-full block box-border p-0;
+}
+
+form.file-upload {
+    @apply w-full grid grid-cols-4 items-center mx-0;
+}
+
+label.file-upload {
+    @apply col-span-2 flex justify-center items-center w-full border border-gray-500 h-10 rounded-sm cursor-pointer text-gray-500;
+}
+
+label.file-upload:hover {
+    color: #111;
+}
+
+textarea.upload-text {
+    font-size: 1em;
+}
+
+div#parse-output-container {
+    @apply w-full block border border-black rounded-md p-2 h-full overflow-y-scroll min-h-5 mx-2;
+}
+
+div#error-output-container {
+    @apply text-red-500 font-bold;
+}
+
+div#parse-output-container code {
+    @apply w-full h-2/5 min-h-0.5;
+}
+
+h2 {
+    @apply h-full block text-base font-bold text-2xl;
+}
+
+section.template-helper {
+    @apply flex flex-wrap justify-start items-start text-xl;
+}
+
+.template-helper h2 {
+    @apply w-full text-base;
+}
+
+.template-helper code {
+    @apply text-primary font-bold text-lg;
+}
+
+p.template-tag-desc {
+    @apply w-1/2 flex flex-wrap justify-start items-start p-1 m-0;
+}
+
+p.template-tag-desc span {
+    @apply w-full text-left;
+}
+
+span.template-tag {
+    @apply w-full block;
+}
+
+.template-tag code{
+    @apply text-tertiary;
+}

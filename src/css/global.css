@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fjord+One&display=swap');
+
+@theme {
+  --color-primary: #166971;
+  --color-secondary: #1B1B1E;
+  --color-tertiary: #A30015;
+  --color-quaternary: #F2F2F2;
+}
+        
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply container mx-auto m-0 p-0 box-border;
+}
+
+body {
+    font-size: 14pt;
+    font-family: "Fjord One", 'Times New Roman', Times, serif;
+}

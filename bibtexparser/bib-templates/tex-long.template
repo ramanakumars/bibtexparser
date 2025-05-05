@@ -1,4 +1,0 @@
-\item $authsa $year. $title. {\{\it $journal. $volume, $pages.\}}{\{\it $booktitle. $pages\}}{\{\it $publisher\}} DOI: \href\{$doiurl\}\{$doi\} 
-@inbook:\item $authsa $year. $title. {\{\it $publisher, $pages\}}
-@book:\item $authsa $year. $title. {\{\it $publisher\}}
-@inproceedings:\item $authsa $year. $title. {\{\it $booktitle. $pages\}}
