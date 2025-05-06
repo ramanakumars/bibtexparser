@@ -5,10 +5,9 @@ import { bibContext, Entries } from "../contexts/bibContext";
 import RecordCard from "./RecordCard";
 import { regex } from "regex";
 import { recursion } from "regex-recursion-cjs";
-import { IoMdAddCircle } from "react-icons/io";
-import { BiSort } from "react-icons/bi";
-import { MdDownloadForOffline } from "react-icons/md";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { AddCircle, DeleteIcon, DownloadIcon, SortIcon } from "./Icons";
+import '../css/input.css';
+
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -82,21 +81,30 @@ const BibInput: React.FC = () => {
         addText(test);
     }, []);
 
-
     const sortAndClean = () => {
-        const get_entry_id = (entry: Entry): string => `${entry.authors[0].lastname}_${entry.year}_${entry.title}`;
+        const get_entry_id = (entry: Entry): string =>
+            `${entry.authors[0].lastname}_${entry.year}_${entry.title}`;
         const entries_name = entries.map((entry) => get_entry_id(entry));
 
-        const _filtered_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) == i);
-        const _sorted_entries = _filtered_entries.sort((a, b) => get_entry_id(a).localeCompare(get_entry_id(b)));
-        
-        const duplicate_entries = entries.filter((entry, i) => entries_name.indexOf(get_entry_id(entry)) != i);
-        console.log(duplicate_entries)
+        const _filtered_entries = entries.filter(
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i
+        );
+        const _sorted_entries = _filtered_entries.sort((a, b) =>
+            get_entry_id(a).localeCompare(get_entry_id(b))
+        );
+
+        const duplicate_entries = entries.filter(
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i
+        );
+        console.log(duplicate_entries);
 
         setEntries(_sorted_entries);
-    }
+    };
 
-    const bibdata = new Blob([entries.map((entry) => entry.text).join("\n\n")], {type: 'text/plain'});
+    const bibdata = new Blob(
+        [entries.map((entry) => entry.text).join("\n\n")],
+        { type: "text/plain" }
+    );
 
     const addText = (text: string) => {
         // find the pattern of the type @type{entry_name, ...}
@@ -121,7 +129,7 @@ const BibInput: React.FC = () => {
             let rec_type = entry[1].toLowerCase();
             let match = [...entry[2].matchAll(/^\{(\S+),/g)];
             let entry_name: string = "";
-            if(match) {
+            if (match) {
                 entry_name = match[0][1];
             }
             let new_entry: Entry = parse_text(entry[0], entry_name, rec_type);
@@ -144,16 +152,31 @@ const BibInput: React.FC = () => {
                             onClick={() => sortAndClean()}
                             title="Sort and clean entries"
                         >
-                            <BiSort />
+                            <SortIcon />
                         </a>
-                        <a onClick={() => setEditable(true)} title="Add entries" className="icon-button">
-                            <IoMdAddCircle/>
+                        <a
+                            onClick={() => setEditable(true)}
+                            title="Add entries"
+                            className="icon-button"
+                        >
+                            <AddCircle />
                         </a>
-                        <a download="references.bib" target="_blank" title="Download as .bib" className="icon-button" rel="noreferrer" href={URL.createObjectURL(bibdata)}>
-                            <MdDownloadForOffline />
+                        <a
+                            download="references.bib"
+                            target="_blank"
+                            title="Download as .bib"
+                            className="icon-button"
+                            rel="noreferrer"
+                            href={URL.createObjectURL(bibdata)}
+                        >
+                            <DownloadIcon />
                         </a>
-                        <a onClick={() => deleteSelected()} title="Remove Selected entries" className="icon-button">
-                            <RiDeleteBin5Line />
+                        <a
+                            onClick={() => deleteSelected()}
+                            title="Remove Selected entries"
+                            className="icon-button"
+                        >
+                            <DeleteIcon />
                         </a>
                     </span>
                 </span>
@@ -175,8 +198,7 @@ const BibInput: React.FC = () => {
                         <span className="single-width">Entry Name</span>
                         <span className="half-width">Year</span>
                         <span className="double-width">Authors</span>
-                        <span className="half-width">
-                        </span>
+                        <span className="half-width"></span>
                     </div>
                 </div>
                 <div className="record-list">

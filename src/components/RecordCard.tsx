@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Entry } from "../parser/parser";
 import {
     Author,
@@ -6,8 +6,10 @@ import {
     get_long_name,
     get_short_name,
 } from "../parser/Author";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Editable from "./Editable";
+import '../css/records.css';
+import { ChevronDown, ChevronUp } from "./Icons";
+
 
 interface UpdateProp {
     [key: string]: any;
@@ -87,7 +89,7 @@ const RecordCard: React.FC<RecordCardProps> = ({
                     ))}
                 </div>
                 <a onClick={() => setShowText(!showText)}>
-                    {!showText ? <FaChevronDown /> : <FaChevronUp />}
+                    {!showText ? <ChevronDown /> : <ChevronUp />}
                 </a>
             </div>
             {showText && <code className="record-text">{entry.text}</code>}

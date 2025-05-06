@@ -1,7 +1,7 @@
 import React from "react";
 import { Block, Template, Group, AuthorBlock } from "../parser/template";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import "../css/template.css";
+import { DeleteIcon } from "./Icons";
 
 interface TemplateCardProps {
     template: Template;
@@ -43,9 +43,9 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, deleteTemplate })
                         );
                     }
                 })}
-                <span className="template-delete">
-                    <RiDeleteBin5Line onClick={deleteTemplate}/>
-                </span>
+                <a className="template-delete" onClick={deleteTemplate}>
+                    <DeleteIcon />
+                </a>
             </span>
         </span>
     );
