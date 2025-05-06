@@ -2,7 +2,6 @@ const path = require("path");
 const JSON = require("json5");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const ENV_TYPE = process.env.TYPE;
 const PUBLIC_URL = ENV_TYPE === 'development' ? '/' : '/bibtexparser';
@@ -35,7 +34,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "public", "index.html"),
     }),
-    new BundleAnalyzerPlugin(),
   ],
   optimization: {
     usedExports: true, // Marks unused exports

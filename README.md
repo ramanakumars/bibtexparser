@@ -1,3 +1,5 @@
+[![deploy](https://github.com/ramanakumars/bibtexparser/actions/workflows/deploy.yml/badge.svg)](https://github.com/ramanakumars/bibtexparser/actions/workflows/deploy.yml)
+
 # bibtexparser
 Parses .bib entries into plaintext/HTML entries or clean up the .bib file. Currently hosted [here](https://ramanakumars.com/bibtexparser/).
 
