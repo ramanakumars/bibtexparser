@@ -26,12 +26,19 @@ const Output: React.FC<OutputProps> = () => {
                         }
 
                         if (template_index !== -1) {
+                            var text = "";
+                            try {
+                                text = template_to_text(
+                                            templates[template_index],
+                                            entry
+                                );
+                            } catch (error: unknown) {
+                                console.error(error);
+                                return null;
+                            }
                             return (
                                 <span key={`output_${index}`}>
-                                    {template_to_text(
-                                        templates[template_index],
-                                        entry
-                                    )}
+                                    { text } 
                                 </span>
                             );
                         } else {

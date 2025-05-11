@@ -30,7 +30,7 @@ const block_to_text = (block: Block | Group | AuthorBlock, entry: Entry): string
             if(entry[match[1]]) {
                 return entry[match[1]];
             } else {
-                throw(`entry ${match[1]} not found`)
+                throw(`entry ${match[1]} not found for ${entry.entry_name}`)
             }
         } else {
             return block.text;
