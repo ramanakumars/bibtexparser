@@ -17,6 +17,7 @@ export interface AuthorBlock extends Block{
 export type Blocks = (Block|Group|AuthorBlock)[];
 
 export interface Template {
+    template_text: string;
     entry_type: string;
     blocks: Blocks;
 }
@@ -88,6 +89,7 @@ const get_groups_and_blocks = (text: string, start: number): Blocks => {
 
 export const parse_template = (template_text: string): Template => {
     const template: Template = {
+        template_text: template_text,
         entry_type: "",
         blocks: [],
     };

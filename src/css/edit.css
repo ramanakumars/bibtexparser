@@ -1,0 +1,13 @@
+@import "./global.css";
+
+div.edit-form-background {
+    @apply fixed w-full h-full bg-white z-10 left-0 top-0 overflow-clip opacity-50;
+}
+
+div.edit-form {
+    @apply fixed flex flex-col w-1/2 left-0 top-1/4 right-0 m-auto justify-center items-center border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
+}
+
+.edit-text {
+    @apply w-full text-lg my-2 font-mono whitespace-break-spaces;
+}

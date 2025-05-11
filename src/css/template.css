@@ -5,23 +5,23 @@
 }
 
 .template-container {
-    @apply grid grid-cols-7 flex-nowrap w-fit justify-center items-center text-[1.05rem] ml-6 my-2 leading-10 h-fit;
+    @apply flex flex-row flex-nowrap w-fit justify-center items-center text-[1.05rem] ml-6 my-2 leading-10 h-fit;
 }
 
 .template-entry-type {
-    @apply justify-start items-center px-4 w-36 bg-primary box-border text-quaternary font-bold font-mono;
+    @apply justify-start items-center px-4 w-30 bg-primary box-border text-quaternary font-bold font-mono;
 }
 
-.template-delete {
-    @apply text-2xl cursor-pointer mx-8;
+.template-delete, .template-edit {
+    @apply text-2xl cursor-pointer ml-2 col-span-1;
 }
 
-.template-delete svg:hover {
+.template-delete svg:hover, .template-edit svg:hover {
     @apply text-tertiary;
 }
 
 .template {
-    @apply flex flex-row w-fit px-4 box-border flex-nowrap justify-start items-center col-span-6 h-full;
+    @apply flex flex-row w-fit px-4 box-border flex-nowrap justify-start items-center h-full;
 }
 
 .template span {

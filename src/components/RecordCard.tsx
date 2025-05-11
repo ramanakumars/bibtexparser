@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Entry } from "../parser/parser";
+import { Entry, sanitize_latex } from "../parser/parser";
 import {
     Author,
     parse_author,
@@ -60,7 +60,7 @@ const RecordCard: React.FC<RecordCardProps> = ({
                 </span>
                 <Editable
                     value={entry.title}
-                    setValue={(text) => updateEntry({ title: text })}
+                    setValue={(text) => updateEntry({ title: sanitize_latex(text) })}
                     className="title double-width"
                 />
                 <span className="subtitle single-width">
@@ -68,13 +68,13 @@ const RecordCard: React.FC<RecordCardProps> = ({
                 </span>
                 <Editable
                     value={entry.entry_name}
-                    setValue={(text) => updateEntry({ entry_name: text })}
+                    setValue={(text) => updateEntry({ entry_name: sanitize_latex(text) })}
                     className="single-width"
                 />
 
                 <Editable
                     value={String(entry.year)}
-                    setValue={(text) => updateEntry({ year: Number(text) })}
+                    setValue={(text) => updateEntry({ year: Number(sanitize_latex(text)) })}
                     className="half-width"
                 />
                 <div className="author-container double-width">

@@ -57,10 +57,18 @@ const TemplateInput: React.FC = () => {
         setEditable(false);
     };
 
-    const deleteTemplate = (index: Number) => {
+    const deleteTemplate = (index: number) => {
         setTemplates((_templates) => (
             _templates.filter((_template, _ind) => _ind != index)
         ))
+    }
+
+    const updateTemplate = (index: number, newTemplate: Template) => {
+        setTemplates((_templates) => {
+            const new_templates = [ ..._templates];
+            new_templates[index] = newTemplate;
+            return new_templates;
+        });
     }
 
     useEffect(() => {
@@ -88,6 +96,7 @@ const TemplateInput: React.FC = () => {
                         <TemplateCard
                             key={"template_" + index}
                             template={template}
+                            updateTemplate={(newTemplate: Template) => updateTemplate(index, newTemplate)}
                             deleteTemplate={() => deleteTemplate(index)}
                         />
                     ))}
