@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { bibContext } from "../contexts/bibContext";
 import { tempContext } from "../contexts/tempContext";
 import { template_to_text } from "../parser/template_to_text";
