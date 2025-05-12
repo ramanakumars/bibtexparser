@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Block, Template, Group, AuthorBlock, parse_template } from "../parser/template";
 import "../css/template.css";
 import { EditIcon, DeleteIcon } from "./Icons";

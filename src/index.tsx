@@ -8,27 +8,29 @@ import { Entry } from './parser/parser';
 import { tempContext } from './contexts/tempContext';
 import { Template } from './parser/template';
 import './css/main.css';
+import ErrorDisplay from './components/Error';
 
 
 const App: React.FC = () => {
     const [entries, setEntries] = useState<Entry[]>([]);
     const [templates, setTemplates] = useState<Template[]>([]);
-
     
     return (
         <article id='main' className='center-frame'>
-            <bibContext.Provider value={{ entries: entries, setEntries: setEntries }}>
-                <BibInput />
-            </bibContext.Provider>
-            <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
-                <TemplateInput />
-            </tempContext.Provider>
-            <bibContext.Provider value={{ entries: entries, setEntries: setEntries }}>
+            <ErrorDisplay>
+                <bibContext.Provider value={{ entries: entries, setEntries: setEntries }}>
+                    <BibInput />
+                </bibContext.Provider>
                 <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
-                    <Output />
+                    <TemplateInput />
                 </tempContext.Provider>
-            </bibContext.Provider>
-            <HelpText />
+                <bibContext.Provider value={{ entries: entries, setEntries: setEntries }}>
+                    <tempContext.Provider value={{ templates: templates, setTemplates: setTemplates }}>
+                        <Output />
+                    </tempContext.Provider>
+                </bibContext.Provider>
+                <HelpText />
+            </ErrorDisplay>
         </article>
 
     )

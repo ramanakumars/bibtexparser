@@ -1,11 +1,10 @@
-import React, { Children, useContext, useState } from "react";
+import React, { useState } from "react";
 import { errorContext } from "../contexts/errorContext";
 import '../css/error.css';
 
 interface ErrorDisplayProps {
     children: React.ReactNode;
 }
-
 
 const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ children }) => {
     const [error, setError] = useState<string>("");
