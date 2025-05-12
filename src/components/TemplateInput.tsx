@@ -3,6 +3,7 @@ import UploadForm from "./UploadForm";
 import { parse_template, Template } from "../parser/template";
 import { tempContext, Templates } from "../contexts/tempContext";
 import TemplateCard from "./TemplateCard";
+import { errorContext } from "../contexts/errorContext";
 
 const AddCircle = () => {
     return (
@@ -43,18 +44,24 @@ const checkUniqueTemplateTypes = (old_templates: Template[], new_templates: Temp
 const TemplateInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
     const { templates, setTemplates } = useContext<Templates>(tempContext);
+    const { setError } = useContext(errorContext);
 
     const addText = (value: string) => {
         const _templates_text = value.split("\n");
         const _templates: Template[] = [];
-        for (const _template of _templates_text) {
-            if (_template != "") {
-                const new_template: Template = parse_template(_template);
-                _templates.push(new_template);
+        try {
+            for (const _template of _templates_text) {
+                if (_template != "") {
+                    const new_template: Template = parse_template(_template);
+                    _templates.push(new_template);
+                }
             }
+            setTemplates((old_templates) => checkUniqueTemplateTypes(old_templates, _templates));
+            setEditable(false);
+        } catch(e: unknown) {
+            console.log("template input" + e);
+            setError(e as string);
         }
-        setTemplates((old_templates) => checkUniqueTemplateTypes(old_templates, _templates));
-        setEditable(false);
     };
 
     const deleteTemplate = (index: number) => {

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Block, Template, Group, AuthorBlock, parse_template } from "../parser/template";
 import "../css/template.css";
 import { EditIcon, DeleteIcon } from "./Icons";
 import EditForm from "./EditForm";
+import { errorContext } from "../contexts/errorContext";
 
 interface TemplateCardProps {
     template: Template;
@@ -23,17 +24,20 @@ interface GroupCardProps {
 }
 
 const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, deleteTemplate }) => {
-    const [template_text, setTemplateText] = useState(template.template_text);
     const [editable, setEditable] = useState<boolean>(false);
+    const { setError } = useContext(errorContext);
 
-    useEffect(() => {
-        if (template_text !== template.template_text) {
-            updateTemplate(parse_template(template_text));
+    const setNewTemplate = (new_template_text: string) => {
+        if (new_template_text !== template.template_text) {
+            var new_template: Template;
+            try {
+                new_template = parse_template(new_template_text);
+                updateTemplate(new_template);
+                setEditable(false);
+            } catch (e) {
+                setError(e as string);
+            }
         }
-        setEditable(false);
-    }, [template_text]);
-
-    const editTemplate = () => {
     };
 
     return (
@@ -65,7 +69,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, d
                     <DeleteIcon />
                 </a>
             </span>
-            <EditForm input_text={template_text} setText={setTemplateText} editable={editable} setEditable={setEditable} className="edit-text" />
+            <EditForm input_text={template.template_text} setText={setNewTemplate} editable={editable} setEditable={setEditable} className="edit-text" />
         </span>
     );
 };
