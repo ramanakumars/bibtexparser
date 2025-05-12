@@ -1,10 +1,13 @@
-import React from "react";
-import { Block, Template, Group, AuthorBlock } from "../parser/template";
+import React, { useContext, useState } from "react";
+import { Block, Template, Group, AuthorBlock, parse_template } from "../parser/template";
 import "../css/template.css";
-import { DeleteIcon } from "./Icons";
+import { EditIcon, DeleteIcon } from "./Icons";
+import EditForm from "./EditForm";
+import { errorContext } from "../contexts/errorContext";
 
 interface TemplateCardProps {
     template: Template;
+    updateTemplate: (newTemplate: Template) => void;
     deleteTemplate: () => void;
 }
 
@@ -20,7 +23,23 @@ interface GroupCardProps {
     group: Group;
 }
 
-const TemplateCard: React.FC<TemplateCardProps> = ({ template, deleteTemplate }) => {
+const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, deleteTemplate }) => {
+    const [editable, setEditable] = useState<boolean>(false);
+    const { setError } = useContext(errorContext);
+
+    const setNewTemplate = (new_template_text: string) => {
+        if (new_template_text !== template.template_text) {
+            var new_template: Template;
+            try {
+                new_template = parse_template(new_template_text);
+                updateTemplate(new_template);
+                setEditable(false);
+            } catch (e) {
+                setError(e as string);
+            }
+        }
+    };
+
     return (
         <span className="template-container">
             <span className="template-entry-type">
@@ -43,10 +62,14 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, deleteTemplate })
                         );
                     }
                 })}
+                <a className="template-edit" onClick={() => setEditable(true)}>
+                    <EditIcon />
+                </a>
                 <a className="template-delete" onClick={deleteTemplate}>
                     <DeleteIcon />
                 </a>
             </span>
+            <EditForm input_text={template.template_text} setText={setNewTemplate} editable={editable} setEditable={setEditable} className="edit-text" />
         </span>
     );
 };
