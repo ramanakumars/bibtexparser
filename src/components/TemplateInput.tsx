@@ -26,17 +26,15 @@ $auths2 $title.{ $journal, $pages.}{ \\item\\{ hi\\}} ($year)
 @article $authsa $title. ($year)
 `;
 
-const checkUniqueTemplateTypes = (old_templates: Template[], new_templates: Template[]): Template[] => {
-    const old_template_types = old_templates.map((template) => template.entry_type);
-    const new_template_types = new_templates.map((template) => template.entry_type);
-    
-    const duplicate_entries = new_template_types.filter((_type, i) => old_template_types.indexOf(_type) != i);
+const checkUniqueTemplateTypes = (templates: Template[]): Template[] => {
+    const template_types = templates.map((template) => template.entry_type);
+    const duplicate_entries = template_types.filter((_type, i) => template_types.indexOf(_type) != i);
 
     if(duplicate_entries.length > 0) {
         console.warn(`Found ${duplicate_entries.length} duplicated entry types for ${duplicate_entries}`);
     }
 
-    const _templates = [...old_templates, ...new_templates.filter((template) => (duplicate_entries.indexOf(template.entry_type) != -1))];
+    const _templates = templates.filter((template, index) => (template_types.indexOf(template.entry_type) == index));
 
     return _templates;
 };
@@ -56,10 +54,9 @@ const TemplateInput: React.FC = () => {
                     _templates.push(new_template);
                 }
             }
-            setTemplates((old_templates) => checkUniqueTemplateTypes(old_templates, _templates));
+            setTemplates((old_templates) => checkUniqueTemplateTypes([...old_templates, ..._templates]));
             setEditable(false);
         } catch(e: unknown) {
-            console.log("template input" + e);
             setError(e as string);
         }
     };
@@ -71,11 +68,15 @@ const TemplateInput: React.FC = () => {
     }
 
     const updateTemplate = (index: number, newTemplate: Template) => {
+        try {
         setTemplates((_templates) => {
             const new_templates = [ ..._templates];
             new_templates[index] = newTemplate;
-            return new_templates;
+            return checkUniqueTemplateTypes(new_templates);
         });
+        } catch (e: unknown) {
+            setError(e as string);
+        }
     }
 
     useEffect(() => {
@@ -84,7 +85,9 @@ const TemplateInput: React.FC = () => {
 
     return (
         <section className="main-container">
-            <h1>Template entry:</h1>
+            <span className="main-header">
+                <span><h1>Template entry:</h1></span>
+            </span>
             <section className="input-container min-h-56">
                 <span className="input-header">
                     <strong>Found {templates.length} entries</strong>

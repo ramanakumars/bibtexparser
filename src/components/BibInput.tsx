@@ -142,7 +142,9 @@ const BibInput: React.FC = () => {
 
     return (
         <section className="main-container">
-            <h1>BibTex entry</h1>
+            <span className='main-header'>
+                <span><h1>BibTex entry</h1></span>
+            </span>
             <section className="input-container">
                 <span className="input-header">
                     <strong>Found {entries.length} entries</strong>
