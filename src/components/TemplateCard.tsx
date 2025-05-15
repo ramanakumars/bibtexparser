@@ -37,6 +37,8 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, d
             } catch (e) {
                 setError(e as string);
             }
+        } else {
+            setEditable(false);
         }
     };
 

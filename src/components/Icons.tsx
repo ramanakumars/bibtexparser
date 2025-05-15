@@ -10,9 +10,9 @@ export const DeleteIcon: React.FC = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="icon-button"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -50,9 +50,9 @@ export const SortIcon: React.FC = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="icon-button"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -71,9 +71,9 @@ export const DownloadIcon: React.FC = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="icon-button"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -93,9 +93,9 @@ export const ChevronDown = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M6 9l6 6l6 -6" />
@@ -112,9 +112,9 @@ export const ChevronUp: React.FC = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M6 15l6 -6l6 6" />
@@ -131,9 +131,9 @@ export const EditIcon: React.FC = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="icon-button"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -152,15 +152,36 @@ export const WarningIcon: React.FC = () => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="icon-button"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 9v4" />
       <path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" />
       <path d="M12 16h.01" />
+    </svg>
+  );
+};
+
+export const CopyIcon: React.FC = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="icon-button"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
+      <path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" />
     </svg>
   );
 };

@@ -1,7 +1,7 @@
 @import "./global.css";
 
 h1 {
-    @apply container block font-bold text-xl mx-2 my-4 text-center;
+    @apply w-fit font-bold text-xl mx-2 my-4 text-center;
 }
 
 form {
@@ -100,4 +100,20 @@ span.template-tag {
 
 .template-tag code{
     @apply text-tertiary;
+}
+
+span.main-header {
+    @apply flex w-full;
+}
+
+span.main-header > span {
+    @apply flex flex-1 justify-center items-center flex-row;
+}
+
+span.main-header > span:first-child > * {
+    @apply mr-auto;
+}
+
+span.main-header > span:last-child > * {
+    @apply ml-auto;
 }

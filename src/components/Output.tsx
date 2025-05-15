@@ -1,9 +1,10 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { bibContext } from "../contexts/bibContext";
 import { tempContext } from "../contexts/tempContext";
 import { template_to_text } from "../parser/template_to_text";
 import "../css/output";
 import WarningDisplay from "./Warning";
+import { CopyIcon } from "./Icons";
 
 interface ParsedProps {
     warnings: string[];
@@ -14,6 +15,7 @@ interface ParsedProps {
 const Output: React.FC = () => {
     const { entries } = useContext(bibContext);
     const { templates } = useContext(tempContext);
+    const [isCopied, setCopied] = useState(false);
 
     const { warnings, text } = useMemo((): ParsedProps => {
         let parsed_templates = [];
@@ -53,10 +55,25 @@ const Output: React.FC = () => {
         return {warnings: warnings, text: text};
     }, [entries, templates]);
 
+    const copyOutput = () => {
+        const _text = text.join("\n");
+        navigator.clipboard.writeText(_text).then(() => (setCopied(true)));
+    }
+
+    useEffect(() => {
+        if (isCopied) {
+            setTimeout(() => setCopied(false), 2000);
+        }
+    }, [isCopied]);
+
 
     return (
         <section id="output" className="main-container">
-            <h1>Output: </h1>
+            <span className="main-header">
+                <span>&nbsp;</span>
+                <span><h1>Output: </h1></span>
+                <span><span className="w-fit flex flex-row items-center">{isCopied ? "Copied!" : "" }<a onClick={copyOutput}><CopyIcon /></a></span></span>
+            </span>
             <WarningDisplay warnings={warnings} />
             {templates.length > 0 && (
                 <div className="output-container">

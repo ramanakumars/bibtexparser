@@ -39,7 +39,11 @@ const App: React.FC = () => {
 const HelpText: React.FC = () => {
     return (
         <section id='template-helper' className='template-helper main-container'>
-            <h1>Template tags</h1>
+            <span className='main-header'>
+                <span>
+                    <h1>Template tags</h1>
+                </span>
+            </span>
             <p className="template-tag-desc">
                 <span className="template-tag"><code>$auths[x]</code></span>
                 <span className='template-desc'>
@@ -63,7 +67,7 @@ const HelpText: React.FC = () => {
             </p>
 
             <p style={{ 'display': 'block', 'width': '100%', 'textAlign': 'center' }} className='template-tag-desc'>
-                <b>You must have either <code>$auths[x]</code> or <code>$authf</code> in your template.</b>
+                <b>You must have either <code>$auths[x]</code> or <code>$authf</code> in your template and not both.</b>
             </p>
 
             <p className="template-tag-desc">
