@@ -5,9 +5,15 @@ import { bibContext, Entries } from "../contexts/bibContext";
 import RecordCard from "./RecordCard";
 import { regex } from "regex";
 import { recursion } from "regex-recursion-cjs";
-import { AddCircle, DeleteIcon, DownloadIcon, SortIcon } from "./Icons";
-import '../css/input.css';
-
+import {
+    AddCircle,
+    DeleteIcon,
+    DownloadIcon,
+    ImportIcon,
+    SortIcon,
+} from "./Icons";
+import "../css/input.css";
+import AdsInput from "./AdsInput";
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -60,12 +66,13 @@ const test = `@book{texbook,
 
 const BibInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
+    const [ADSimport, setADSImport] = useState<boolean>(false);
     const { entries, setEntries } = useContext<Entries>(bibContext);
     const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
 
     const deleteSelected = () => {
         setEntries((_entries) =>
-            _entries.filter((_, ind) => selectedEntries.indexOf(ind) == -1)
+            _entries.filter((_, ind) => selectedEntries.indexOf(ind) == -1),
         );
     };
 
@@ -87,14 +94,14 @@ const BibInput: React.FC = () => {
         const entries_name = entries.map((entry) => get_entry_id(entry));
 
         const _filtered_entries = entries.filter(
-            (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i,
         );
         const _sorted_entries = _filtered_entries.sort((a, b) =>
-            get_entry_id(a).localeCompare(get_entry_id(b))
+            get_entry_id(a).localeCompare(get_entry_id(b)),
         );
 
         const duplicate_entries = entries.filter(
-            (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i,
         );
         console.log(duplicate_entries);
 
@@ -103,7 +110,7 @@ const BibInput: React.FC = () => {
 
     const bibdata = new Blob(
         [entries.map((entry) => entry.text).join("\n\n")],
-        { type: "text/plain" }
+        { type: "text/plain" },
     );
 
     const addText = (text: string) => {
@@ -138,12 +145,15 @@ const BibInput: React.FC = () => {
 
         setEntries((old_entries) => [...old_entries, ...new_entries]);
         setEditable(false);
+        setADSImport(false);
     };
 
     return (
         <section className="main-container">
-            <span className='main-header'>
-                <span><h1>BibTex entry</h1></span>
+            <span className="main-header">
+                <span>
+                    <h1>BibTex entry</h1>
+                </span>
             </span>
             <section className="input-container">
                 <span className="input-header">
@@ -162,6 +172,13 @@ const BibInput: React.FC = () => {
                             className="icon-button"
                         >
                             <AddCircle />
+                        </a>
+                        <a
+                            onClick={() => setADSImport(true)}
+                            title="Import from ADS"
+                            className="icon-button"
+                        >
+                            <ImportIcon />
                         </a>
                         <a
                             download="references.bib"
@@ -215,7 +232,7 @@ const BibInput: React.FC = () => {
                                         } else {
                                             return rec;
                                         }
-                                    })
+                                    }),
                                 )
                             }
                             key={"record_" + index}
@@ -228,7 +245,7 @@ const BibInput: React.FC = () => {
                             }
                             onDeselect={() =>
                                 setSelectedEntries((prev_state) =>
-                                    prev_state.filter((ind) => ind != index)
+                                    prev_state.filter((ind) => ind != index),
                                 )
                             }
                         />
@@ -236,6 +253,7 @@ const BibInput: React.FC = () => {
                 </div>
             </section>
             {editable && <UploadForm upload_type={"bib"} onChange={addText} />}
+            <AdsInput onChange={addText} isVisible={ADSimport} />
         </section>
     );
 };
