@@ -5,8 +5,9 @@ import { bibContext, Entries } from "../contexts/bibContext";
 import RecordCard from "./RecordCard";
 import { regex } from "regex";
 import { recursion } from "regex-recursion-cjs";
-import { AddCircle, DeleteIcon, DownloadIcon, SortIcon } from "./Icons";
+import { AddCircle, DeleteIcon, DownloadIcon, ImportIcon, SortIcon } from "./Icons";
 import '../css/input.css';
+import AdsInput from "./AdsInput";
 
 
 const test = `@book{texbook,
@@ -60,6 +61,7 @@ const test = `@book{texbook,
 
 const BibInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
+    const [ADSimport, setADSImport] = useState<boolean>(false);
     const { entries, setEntries } = useContext<Entries>(bibContext);
     const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
 
@@ -138,6 +140,7 @@ const BibInput: React.FC = () => {
 
         setEntries((old_entries) => [...old_entries, ...new_entries]);
         setEditable(false);
+        setADSImport(false);
     };
 
     return (
@@ -162,6 +165,13 @@ const BibInput: React.FC = () => {
                             className="icon-button"
                         >
                             <AddCircle />
+                        </a>
+                        <a
+                            onClick={() => setADSImport(true)}
+                            title="Import from ADS"
+                            className="icon-button"
+                        >
+                            <ImportIcon />
                         </a>
                         <a
                             download="references.bib"
@@ -236,6 +246,7 @@ const BibInput: React.FC = () => {
                 </div>
             </section>
             {editable && <UploadForm upload_type={"bib"} onChange={addText} />}
+            <AdsInput onChange={addText} isVisible={ADSimport}/>
         </section>
     );
 };

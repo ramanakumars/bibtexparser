@@ -1,0 +1,33 @@
+@import "./global.css";
+
+div.ads-background {
+    @apply fixed w-full h-full bg-white z-10 left-0 top-0 overflow-clip opacity-50;
+}
+
+div.ads-container {
+    @apply fixed flex flex-col w-1/2 left-0 top-1/4 right-0 m-auto justify-center items-center border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
+}
+
+.access-token {
+    @apply w-full grid grid-cols-9 items-center text-lg;
+}
+
+.ads-query  {
+    @apply w-full grid grid-cols-9 items-center text-lg;
+}
+
+.ads-query button {
+    @apply h-fit box-border w-full;
+}
+
+.ads-query button[disabled]:hover {
+    @apply bg-gray-400 cursor-not-allowed;
+}
+
+.ads-input {
+    @apply border-1 border-black text-lg col-span-7;
+}
+
+.ads-input[disabled] {
+    @apply text-gray-700 italic;
+}
