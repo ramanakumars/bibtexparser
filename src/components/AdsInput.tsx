@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import "../css/ads.css";
 import ADSItems, { BibEntry } from "./ADSItems";
 import { errorContext } from "../contexts/errorContext";
+import { HelpIcon } from "./Icons";
 
 interface ADSInputProps {
     onChange: (value: string) => void;
@@ -93,6 +94,7 @@ const AdsInput: React.FC<ADSInputProps> = ({ onChange, isVisible }) => {
                             onChange={(e) => setAccessToken(e.target.value)}
                             className={"ads-input"}
                         />
+                        <a href="https://github.com/adsabs/adsabs-dev-api/blob/master/README.md#access" target="_blank" rel="noreferrer"><HelpIcon /></a>
                     </div>
                     <div className="ads-query">
                         <label htmlFor="query">Query: </label>
