@@ -84,7 +84,7 @@ export const DownloadIcon: React.FC = () => {
     );
 };
 
-export const ChevronDown = () => {
+export const ChevronDown: React.FC = () => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
