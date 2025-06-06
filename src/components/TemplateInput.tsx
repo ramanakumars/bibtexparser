@@ -22,7 +22,7 @@ const AddCircle = () => {
 };
 
 const template_test = `
-$auths2 $title.{ $journal, $pages.}{ \\item\\{ hi\\}} ($year)
+$auths2 $title.{ $journal, $pages.}{ \\item\\{ $missing_key \\}} ($year)
 @article $authsa $title. ($year)
 `;
 
