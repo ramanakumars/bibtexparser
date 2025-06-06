@@ -28,13 +28,20 @@ $auths2 $title.{ $journal, $pages.}{ \\item\\{ hi\\}} ($year)
 
 const checkUniqueTemplateTypes = (templates: Template[]): Template[] => {
     const template_types = templates.map((template) => template.entry_type);
-    const duplicate_entries = template_types.filter((_type, i) => template_types.indexOf(_type) != i);
+    const duplicate_entries = template_types.filter(
+        (_type, i) => template_types.indexOf(_type) != i
+    );
 
-    if(duplicate_entries.length > 0) {
-        console.warn(`Found ${duplicate_entries.length} duplicated entry types for ${duplicate_entries}`);
+    if (duplicate_entries.length > 0) {
+        console.warn(
+            `Found ${duplicate_entries.length} duplicated entry types for ${duplicate_entries}`
+        );
     }
 
-    const _templates = templates.filter((template, index) => (template_types.indexOf(template.entry_type) == index));
+    const _templates = templates.filter(
+        (template, index) =>
+            template_types.indexOf(template.entry_type) == index
+    );
 
     return _templates;
 };
@@ -54,30 +61,32 @@ const TemplateInput: React.FC = () => {
                     _templates.push(new_template);
                 }
             }
-            setTemplates((old_templates) => checkUniqueTemplateTypes([...old_templates, ..._templates]));
+            setTemplates((old_templates) =>
+                checkUniqueTemplateTypes([...old_templates, ..._templates])
+            );
             setEditable(false);
-        } catch(e: unknown) {
+        } catch (e: unknown) {
             setError(e as string);
         }
     };
 
     const deleteTemplate = (index: number) => {
-        setTemplates((_templates) => (
+        setTemplates((_templates) =>
             _templates.filter((_template, _ind) => _ind != index)
-        ))
-    }
+        );
+    };
 
     const updateTemplate = (index: number, newTemplate: Template) => {
         try {
-        setTemplates((_templates) => {
-            const new_templates = [ ..._templates];
-            new_templates[index] = newTemplate;
-            return checkUniqueTemplateTypes(new_templates);
-        });
+            setTemplates((_templates) => {
+                const new_templates = [..._templates];
+                new_templates[index] = newTemplate;
+                return checkUniqueTemplateTypes(new_templates);
+            });
         } catch (e: unknown) {
             setError(e as string);
         }
-    }
+    };
 
     useEffect(() => {
         addText(template_test);
@@ -86,7 +95,9 @@ const TemplateInput: React.FC = () => {
     return (
         <section className="main-container">
             <span className="main-header">
-                <span><h1>Template entry:</h1></span>
+                <span>
+                    <h1>Template entry:</h1>
+                </span>
             </span>
             <section className="input-container min-h-56">
                 <span className="input-header">
@@ -106,7 +117,9 @@ const TemplateInput: React.FC = () => {
                         <TemplateCard
                             key={"template_" + index}
                             template={template}
-                            updateTemplate={(newTemplate: Template) => updateTemplate(index, newTemplate)}
+                            updateTemplate={(newTemplate: Template) =>
+                                updateTemplate(index, newTemplate)
+                            }
                             deleteTemplate={() => deleteTemplate(index)}
                         />
                     ))}

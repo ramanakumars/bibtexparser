@@ -22,7 +22,7 @@ const ADSItems: React.FC<ADSItemsProp> = ({ items, addItems }) => {
 
     const deSelectItem = (index: number) => {
         setSelectedItems((prev_state) =>
-            prev_state.filter((ind) => ind != index),
+            prev_state.filter((ind) => ind != index)
         );
     };
 

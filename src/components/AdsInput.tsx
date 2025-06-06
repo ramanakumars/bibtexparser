@@ -48,11 +48,11 @@ const AdsInput: React.FC<ADSInputProps> = ({ onChange, isVisible }) => {
                                 bibcode: bibitem.bibcode,
                                 authors: bibitem.author,
                                 year: Number(bibitem.year),
-                            }),
-                        ),
+                            })
+                        )
                     );
-                } else if(data.error) {
-                    throw { message: data.error.msg }
+                } else if (data.error) {
+                    throw { message: data.error.msg };
                 } else {
                     throw { message: data.message };
                 }

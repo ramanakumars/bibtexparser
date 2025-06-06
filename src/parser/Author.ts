@@ -5,13 +5,11 @@ export interface Author {
 }
 
 export const parse_author = (author_text: string): Author => {
-
     const author: Author = {
         author_text: author_text.replace(/[^\\]~/g, " "),
         firstname: "",
-        lastname: ""
+        lastname: "",
     };
-
 
     // figure out if it is first name first or last name first
     if (/[^\\]\,\s?/.test(author.author_text)) {
@@ -20,19 +18,24 @@ export const parse_author = (author_text: string): Author => {
         author.lastname = nnames[0];
     } else {
         // get the list of names in the author field
-        let nnames = [...author.author_text.matchAll(/{?(\S+)}?/g)].map((value) => value[1]);
+        let nnames = [...author.author_text.matchAll(/{?(\S+)}?/g)].map(
+            (value) => value[1]
+        );
 
         // remove the initials
-        const names_without_initials = nnames.filter((name) => !/\w\./.test(name));
+        const names_without_initials = nnames.filter(
+            (name) => !/\w\./.test(name)
+        );
         const initials = nnames.filter((name) => /\w\./.test(name));
 
         // if(!initials) {
         //     initials = [];
         // }
 
-        if(names_without_initials.length > 1) {
+        if (names_without_initials.length > 1) {
             author.lastname = names_without_initials.slice(1).join(" ");
-            author.firstname = names_without_initials[0] + " " + initials.join(" ");
+            author.firstname =
+                names_without_initials[0] + " " + initials.join(" ");
             // author.firstname += " " + initials.join(" ");
         } else {
             author.lastname = names_without_initials[0];
@@ -44,7 +47,7 @@ export const parse_author = (author_text: string): Author => {
     author.firstname = author.firstname.replace(/[{}]/g, "").trim();
 
     return author;
-}
+};
 
 export const get_short_name = (author: Author): string => {
     /*
@@ -52,12 +55,12 @@ export const get_short_name = (author: Author): string => {
     Lastname, F. M.
     */
     const first = author.firstname.split(" ");
-    let short_first = ""
+    let short_first = "";
 
     if (first[0] != "") {
         for (const fname of first) {
             let fname_text = "";
-            if(fname[0] === "{") {
+            if (fname[0] === "{") {
                 const match = fname.match(/(\{.+\})/);
                 fname_text = match ? match[0] : "";
             } else {
@@ -68,7 +71,7 @@ export const get_short_name = (author: Author): string => {
     }
 
     return `${author.lastname}, ${short_first.trim()}`;
-}
+};
 
 export const get_long_name = (author: Author): string => {
     /*
@@ -76,4 +79,5 @@ export const get_long_name = (author: Author): string => {
     Firstname Middlenames Lastname
     */
     return `${author.firstname} ${author.lastname}`;
-}
+};
+
