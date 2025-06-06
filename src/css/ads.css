@@ -1,0 +1,69 @@
+@import "./global.css";
+
+div.ads-background {
+    @apply fixed w-full h-full bg-white z-10 left-0 top-0 overflow-clip opacity-50;
+}
+
+div.ads-container {
+    @apply fixed flex flex-col w-3/4 h-4/5 left-0 top-1/12 right-0 mx-auto justify-start items-start border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
+}
+
+.access-token {
+    @apply w-full grid grid-cols-9 items-center text-lg;
+}
+
+.ads-query  {
+    @apply w-full grid grid-cols-9 items-center text-lg;
+}
+
+.ads-query button {
+    @apply box-border w-full;
+}
+
+.ads-query button[disabled]:hover {
+    @apply bg-gray-400 cursor-not-allowed;
+}
+
+.ads-input {
+    @apply border-1 border-black text-lg col-span-7 p-2;
+}
+
+.ads-input[disabled] {
+    @apply text-gray-700 italic;
+}
+
+.ads-items {
+    @apply w-full p-2 flex flex-col overflow-y-scroll;
+}
+
+.ads-item {
+    @apply w-full grid grid-cols-10 py-1;
+}
+
+.ads-items span.ads-item:nth-child(odd):not(:first-child) {
+    @apply bg-gray-200;
+}
+
+.ads-items span.ads-item:nth-child(even) {
+    @apply bg-gray-300;
+}
+
+.ads-header {
+    @apply font-bold bg-gray-800 text-white;
+}
+
+.ads-authors {
+    @apply col-span-3 flex flex-wrap;
+}
+
+.ads-authors span {
+    @apply px-1;
+}
+
+.ads-item .ads-title {
+    @apply col-span-5;
+}
+
+.ads-add {
+    @apply w-full flex flex-row justify-center py-2;
+}

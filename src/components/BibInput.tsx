@@ -5,9 +5,17 @@ import { bibContext, Entries } from "../contexts/bibContext";
 import RecordCard from "./RecordCard";
 import { regex } from "regex";
 import { recursion } from "regex-recursion-cjs";
-import { AddCircle, DeleteIcon, DownloadIcon, SortIcon } from "./Icons";
-import '../css/input.css';
-
+import {
+    AddCircle,
+    ChevronDown,
+    ChevronUp,
+    DeleteIcon,
+    DownloadIcon,
+    ImportIcon,
+    SortIcon,
+} from "./Icons";
+import "../css/input.css";
+import AdsInput from "./AdsInput";
 
 const test = `@book{texbook,
   author = {Donald E. Knuth},
@@ -58,8 +66,18 @@ const test = `@book{texbook,
 }
 `;
 
+interface sortStateProps {
+    key: string;
+    ascending: boolean;
+}
+
 const BibInput: React.FC = () => {
     const [editable, setEditable] = useState<boolean>(false);
+    const [ADSimport, setADSImport] = useState<boolean>(false);
+    const [sortState, setSortState] = useState<sortStateProps>({
+        key: "null",
+        ascending: true,
+    });
     const { entries, setEntries } = useContext<Entries>(bibContext);
     const [selectedEntries, setSelectedEntries] = useState<number[]>([]);
 
@@ -89,16 +107,19 @@ const BibInput: React.FC = () => {
         const _filtered_entries = entries.filter(
             (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i
         );
-        const _sorted_entries = _filtered_entries.sort((a, b) =>
-            get_entry_id(a).localeCompare(get_entry_id(b))
-        );
 
         const duplicate_entries = entries.filter(
             (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i
         );
+
         console.log(duplicate_entries);
 
-        setEntries(_sorted_entries);
+        setEntries(_filtered_entries);
+
+        setSortState({
+            key: "default",
+            ascending: false,
+        });
     };
 
     const bibdata = new Blob(
@@ -138,12 +159,65 @@ const BibInput: React.FC = () => {
 
         setEntries((old_entries) => [...old_entries, ...new_entries]);
         setEditable(false);
+        setADSImport(false);
+    };
+
+    useEffect(() => {
+        let get_entry_id = (entry: Entry): string => "";
+
+        if (!sortState) {
+            return;
+        }
+
+        switch (sortState.key) {
+            case "title":
+                get_entry_id = (entry: Entry) => entry.title;
+                break;
+            case "year":
+                get_entry_id = (entry: Entry) => `${entry.year}`;
+                break;
+            case "author":
+                get_entry_id = (entry: Entry) => entry.authors[0].lastname;
+                break;
+            case "type":
+                get_entry_id = (entry: Entry) => entry.rec_type;
+                break;
+            case "name":
+                get_entry_id = (entry: Entry) => entry.entry_name;
+                break;
+            case "default":
+                get_entry_id = (entry: Entry): string =>
+                    `${entry.authors[0].lastname}_${entry.year}_${entry.title}`;
+            default:
+                break;
+        }
+
+        setEntries((_entries) => [
+            ..._entries.sort((a, b) =>
+                sortState.ascending
+                    ? get_entry_id(a).localeCompare(get_entry_id(b))
+                    : get_entry_id(b).localeCompare(get_entry_id(a))
+            ),
+        ]);
+    }, [sortState]);
+
+    const handleSort = (key: string) => {
+        setSortState((_curr_state) => ({
+            key: key,
+            ascending: _curr_state
+                ? _curr_state.key == key
+                    ? !_curr_state.ascending
+                    : true
+                : true,
+        }));
     };
 
     return (
         <section className="main-container">
-            <span className='main-header'>
-                <span><h1>BibTex entry</h1></span>
+            <span className="main-header">
+                <span>
+                    <h1>BibTex entry</h1>
+                </span>
             </span>
             <section className="input-container">
                 <span className="input-header">
@@ -152,7 +226,7 @@ const BibInput: React.FC = () => {
                         <a
                             className="icon-button"
                             onClick={() => sortAndClean()}
-                            title="Sort and clean entries"
+                            title="Sort and clean entries (alphabetically, then by year)"
                         >
                             <SortIcon />
                         </a>
@@ -162,6 +236,13 @@ const BibInput: React.FC = () => {
                             className="icon-button"
                         >
                             <AddCircle />
+                        </a>
+                        <a
+                            onClick={() => setADSImport(true)}
+                            title="Import from ADS"
+                            className="icon-button"
+                        >
+                            <ImportIcon />
                         </a>
                         <a
                             download="references.bib"
@@ -195,11 +276,61 @@ const BibInput: React.FC = () => {
                                 }
                             />
                         </span>
-                        <span className="title double-width">Title</span>
-                        <span className="single-width">Type</span>
-                        <span className="single-width">Entry Name</span>
-                        <span className="half-width">Year</span>
-                        <span className="double-width">Authors</span>
+                        <span className="title double-width">
+                            <a onClick={() => handleSort("title")}>
+                                Title{" "}
+                                {sortState.key === "title" &&
+                                    (sortState.ascending ? (
+                                        <ChevronUp />
+                                    ) : (
+                                        <ChevronDown />
+                                    ))}{" "}
+                            </a>
+                        </span>
+                        <span className="single-width">
+                            <a onClick={() => handleSort("type")}>
+                                Type{" "}
+                                {sortState.key === "type" &&
+                                    (sortState.ascending ? (
+                                        <ChevronUp />
+                                    ) : (
+                                        <ChevronDown />
+                                    ))}
+                            </a>
+                        </span>
+                        <span className="single-width">
+                            <a onClick={() => handleSort("name")}>
+                                Entry Name{" "}
+                                {sortState.key === "name" &&
+                                    (sortState.ascending ? (
+                                        <ChevronUp />
+                                    ) : (
+                                        <ChevronDown />
+                                    ))}{" "}
+                            </a>
+                        </span>
+                        <span className="half-width">
+                            <a onClick={() => handleSort("year")}>
+                                Year{" "}
+                                {sortState.key === "year" &&
+                                    (sortState.ascending ? (
+                                        <ChevronUp />
+                                    ) : (
+                                        <ChevronDown />
+                                    ))}{" "}
+                            </a>
+                        </span>
+                        <span className="double-width">
+                            <a onClick={() => handleSort("author")}>
+                                Authors{" "}
+                                {sortState.key === "author" &&
+                                    (sortState.ascending ? (
+                                        <ChevronUp />
+                                    ) : (
+                                        <ChevronDown />
+                                    ))}{" "}
+                            </a>
+                        </span>
                         <span className="half-width"></span>
                     </div>
                 </div>
@@ -236,6 +367,7 @@ const BibInput: React.FC = () => {
                 </div>
             </section>
             {editable && <UploadForm upload_type={"bib"} onChange={addText} />}
+            <AdsInput onChange={addText} isVisible={ADSimport} />
         </section>
     );
 };

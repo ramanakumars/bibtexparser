@@ -10,25 +10,35 @@ interface EditFormProps {
     className: string;
 }
 
-const EditForm: React.FC<EditFormProps> = ({ input_text, setText, editable, setEditable, className }) => {
+const EditForm: React.FC<EditFormProps> = ({
+    input_text,
+    setText,
+    editable,
+    setEditable,
+    className,
+}) => {
     const [text, _setText] = useState(input_text);
 
-    if(editable) {
+    if (editable) {
         return (
             <>
-                <div className="edit-form-background" onClick={() => setEditable(false)}>
-                </div>
-                <div className='edit-form'>
-                    <Editable value={text} setValue={_setText} className={className} />
-                    <button onClick={() => setText(text)}>
-                        Update!
-                    </button>
+                <div
+                    className="edit-form-background"
+                    onClick={() => setEditable(false)}
+                ></div>
+                <div className="edit-form">
+                    <Editable
+                        value={text}
+                        setValue={_setText}
+                        className={className}
+                    />
+                    <button onClick={() => setText(text)}>Update!</button>
                 </div>
             </>
-        )
+        );
     } else {
         return null;
     }
-}
+};
 
 export default EditForm;

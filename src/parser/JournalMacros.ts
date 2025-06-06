@@ -59,5 +59,6 @@ export const journal_macros: JournalMacro = {
     "\\physscr": "Physica Scripta",
     "\\planss": "Planetary Space Science",
     "\\procspie": "Proceedings of the SPIE",
-    "\\psj": "Planetary Science Journal"
-}
+    "\\psj": "Planetary Science Journal",
+};
+
