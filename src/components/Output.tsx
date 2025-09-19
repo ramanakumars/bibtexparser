@@ -6,9 +6,9 @@ import "../css/output";
 import WarningDisplay from "./Warning";
 import { CopyIcon } from "./Icons";
 
-interface ParsedProps {
-    warnings: string[];
+interface ParsedPropList {
     text: string[];
+    warnings: string[];
 }
 
 const Output: React.FC = () => {
@@ -16,7 +16,7 @@ const Output: React.FC = () => {
     const { templates } = useContext(tempContext);
     const [isCopied, setCopied] = useState(false);
 
-    const { warnings, text } = useMemo((): ParsedProps => {
+    const { warnings, text } = useMemo((): ParsedPropList => {
         let parsed_templates = [];
         let warnings: string[] = [];
         let text: string[] = [];
@@ -30,28 +30,27 @@ const Output: React.FC = () => {
                 }
 
                 if (template_index !== -1) {
-                    var text = "";
                     try {
-                        text = template_to_text(
+                        return template_to_text(
                             templates[template_index],
-                            entry
+                            entry,
                         );
                     } catch (error: unknown) {
-                        return { text: null, warning: error as string };
+                        return { text: "", warnings: error as string };
                     }
-                    return { text: text, warning: null };
                 } else {
                     return {
-                        text: null,
-                        warning: `No templates found for ${entry.rec_type} type for ${entry.entry_name}!`,
+                        text: "",
+                        warnings: `No templates found for ${entry.rec_type} type for ${entry.entry_name}!`,
                     };
                 }
             });
+
             warnings = parsed_templates
-                .filter((parsed_dict) => parsed_dict.warning !== null)
-                .map((warning) => warning.warning);
+                .filter((parsed_dict) => parsed_dict.warnings !== "")
+                .map((warning) => warning.warnings);
             text = parsed_templates
-                .filter((parsed_dict) => parsed_dict.text !== null)
+                .filter((parsed_dict) => parsed_dict.text !== "")
                 .map((t) => t.text);
         }
 

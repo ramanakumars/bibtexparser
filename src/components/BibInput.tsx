@@ -21,6 +21,7 @@ const test = `@book{texbook,
   author = {Donald E. Knuth},
   year = {1986},
   title = {The {\\TeX} Book},
+  journal = {\\testj},
   publisher = {Addison-Wesley Professional}
 }
 
