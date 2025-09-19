@@ -1,5 +1,11 @@
 import React, { useContext, useState } from "react";
-import { Block, Template, Group, AuthorBlock, parse_template } from "../parser/template";
+import {
+    Block,
+    Template,
+    Group,
+    AuthorBlock,
+    parse_template,
+} from "../parser/template";
 import "../css/template.css";
 import { EditIcon, DeleteIcon } from "./Icons";
 import EditForm from "./EditForm";
@@ -23,7 +29,11 @@ interface GroupCardProps {
     group: Group;
 }
 
-const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, deleteTemplate }) => {
+const TemplateCard: React.FC<TemplateCardProps> = ({
+    template,
+    updateTemplate,
+    deleteTemplate,
+}) => {
     const [editable, setEditable] = useState<boolean>(false);
     const { setError } = useContext(errorContext);
 
@@ -44,22 +54,23 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, d
 
     return (
         <span className="template-container">
-            <span className="template-entry-type">
-                {template.entry_type}:
-            </span>
+            <span className="template-entry-type">{template.entry_type}:</span>
             <span className="template">
                 {template.blocks.map((block, i) => {
-                    if ((block.type != "group")&&(block.type != "author")) {
+                    if (block.type != "group" && block.type != "author") {
                         return <BlockCard key={"block_" + i} block={block} />;
-                    } else if (block.type === 'author') {
-                        return <AuthorCard key={"author_" + i} block={block as AuthorBlock} />;
+                    } else if (block.type === "author") {
+                        return (
+                            <AuthorCard
+                                key={"author_" + i}
+                                block={block as AuthorBlock}
+                            />
+                        );
                     } else {
                         return (
                             <GroupCard
                                 key={"block_" + i}
-                                group={
-                                    block as Group
-                                }
+                                group={block as Group}
                             />
                         );
                     }
@@ -71,16 +82,25 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, updateTemplate, d
                     <DeleteIcon />
                 </a>
             </span>
-            <EditForm input_text={template.template_text} setText={setNewTemplate} editable={editable} setEditable={setEditable} className="edit-text" />
+            <EditForm
+                input_text={template.template_text}
+                setText={setNewTemplate}
+                editable={editable}
+                setEditable={setEditable}
+                className="edit-text"
+            />
         </span>
     );
 };
 
-
 const AuthorCard: React.FC<AuthorCardProps> = ({ block }) => {
     return (
         <span className="author">
-            author ({ block.author_template.form === "s" ? "short" : "long" }, {block.author_template.number === -1 ? 'all' : block.author_template.number})
+            author ({block.author_template.form === "s" ? "short" : "long"},{" "}
+            {block.author_template.number === -1
+                ? "all"
+                : block.author_template.number}
+            )
         </span>
     );
 };
@@ -89,10 +109,16 @@ const BlockCard: React.FC<BlockCardProps> = ({ block }) => {
     return (
         <span
             className={
-                ((block.type === "keyword") || (block.type === "author"))  ? "block" : ((block.text.trim() === "") ? "" : "other")
+                block.type === "keyword" || block.type === "author"
+                    ? "block"
+                    : block.text.trim() === ""
+                      ? ""
+                      : "other"
             }
         >
-            {block.type === 'keyword' ? block.text.replace('$', '') : block.text }
+            {block.type === "keyword"
+                ? block.text.replace("$", "")
+                : block.text}
         </span>
     );
 };

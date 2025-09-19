@@ -4,12 +4,10 @@ import {
     Author,
     parse_author,
     get_long_name,
-    get_short_name,
 } from "../parser/Author";
 import Editable from "./Editable";
-import '../css/records.css';
+import "../css/records.css";
 import { ChevronDown, ChevronUp } from "./Icons";
-
 
 interface UpdateProp {
     [key: string]: any;
@@ -60,7 +58,9 @@ const RecordCard: React.FC<RecordCardProps> = ({
                 </span>
                 <Editable
                     value={entry.title}
-                    setValue={(text) => updateEntry({ title: sanitize_latex(text) })}
+                    setValue={(text) =>
+                        updateEntry({ title: sanitize_latex(text) })
+                    }
                     className="title double-width"
                 />
                 <span className="subtitle single-width">
@@ -68,13 +68,17 @@ const RecordCard: React.FC<RecordCardProps> = ({
                 </span>
                 <Editable
                     value={entry.entry_name}
-                    setValue={(text) => updateEntry({ entry_name: sanitize_latex(text) })}
+                    setValue={(text) =>
+                        updateEntry({ entry_name: sanitize_latex(text) })
+                    }
                     className="single-width"
                 />
 
                 <Editable
                     value={String(entry.year)}
-                    setValue={(text) => updateEntry({ year: Number(sanitize_latex(text)) })}
+                    setValue={(text) =>
+                        updateEntry({ year: Number(sanitize_latex(text)) })
+                    }
                     className="half-width"
                 />
                 <div className="author-container double-width">
@@ -109,7 +113,7 @@ const AuthorEditor: React.FC<AuthorEditorProps> = ({
     updateAuthors,
 }) => {
     const [updated_authors, setUpdatedAuthors] = useState<string[]>(
-        authors.map((author) => author.author_text)
+        authors.map((author) => author.author_text),
     );
 
     return (
@@ -134,7 +138,7 @@ const AuthorEditor: React.FC<AuthorEditorProps> = ({
                                         } else {
                                             return authi;
                                         }
-                                    })
+                                    }),
                                 )
                             }
                             className="author-edit"
@@ -145,8 +149,8 @@ const AuthorEditor: React.FC<AuthorEditorProps> = ({
                     onClick={() => {
                         updateAuthors(
                             updated_authors.map((author) =>
-                                parse_author(author)
-                            )
+                                parse_author(author),
+                            ),
                         );
                         setShowAuthorEditor(false);
                     }}

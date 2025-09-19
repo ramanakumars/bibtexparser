@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import "../css/upload.css";
 
 interface UploadFormProps {
@@ -7,9 +7,9 @@ interface UploadFormProps {
 }
 
 const UploadForm: React.FC<UploadFormProps> = ({ upload_type, onChange }) => {
-    const [filename, setFilename] = useState<string>('No file selected!');
+    const [filename, setFilename] = useState<string>("No file selected!");
     const [fileInput, setFileInput] = useState<File | null>(null);
-    const [text, setText] = useState<string>('');
+    const [text, setText] = useState<string>("");
 
     const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) {
@@ -17,38 +17,58 @@ const UploadForm: React.FC<UploadFormProps> = ({ upload_type, onChange }) => {
         }
         setFilename(event.target.files[0].name);
         setFileInput(event.target.files[0]);
-    }
+    };
 
     useEffect(() => {
         if (fileInput) {
             var reader = new FileReader();
             reader.readAsText(fileInput as Blob);
-            reader.onload = function () {          
+            reader.onload = function () {
                 setText(reader.result as string);
-            }
+            };
         }
     }, [fileInput]);
 
-
     return (
-        <>        
-            <div className='upload-background' onClick={() => onChange('')}>
+        <>
+            <div className="upload-background" onClick={() => onChange("")}>
                 &nbsp;
             </div>
-            <div className='upload-container'>
+            <div className="upload-container">
                 <form action="#" className="file-upload" method="POST">
-                    <label htmlFor={upload_type + "file"} className="file-desc">Upload your { upload_type == "bib" ? "bibfile" : "template" } </label>
+                    <label htmlFor={upload_type + "file"} className="file-desc">
+                        Upload your{" "}
+                        {upload_type == "bib" ? "bibfile" : "template"}{" "}
+                    </label>
                     <label className="file-upload">
-                        <input name={upload_type + "file"} id={upload_type + "file"} type="file" className="file-upload" onChange={handleFileInput} />
+                        <input
+                            name={upload_type + "file"}
+                            id={upload_type + "file"}
+                            type="file"
+                            className="file-upload"
+                            onChange={handleFileInput}
+                        />
                         <span>{filename}</span>
                     </label>
                 </form>
-                <textarea id={upload_type + "text"} className="upload-text" placeholder="... or copy it here" onChange={(event) => setText(event.target.value)} value={text} />
-                <button type='button' className='upload' onClick={() => (onChange(text))}>Add!</button>
+                <textarea
+                    id={upload_type + "text"}
+                    className="upload-text"
+                    placeholder="... or copy it here"
+                    onChange={(event) => setText(event.target.value)}
+                    value={text}
+                />
+                <button
+                    type="button"
+                    className="upload"
+                    onClick={() => onChange(text)}
+                >
+                    Add!
+                </button>
             </div>
         </>
-    )
-}
+    );
+};
 
 // export default class UploadForm extends React.Component {
 //     constructor(props) {
@@ -89,7 +109,6 @@ const UploadForm: React.FC<UploadFormProps> = ({ upload_type, onChange }) => {
 //         this.setState({ clean: event.target.checked });
 //     }
 
-
 //     render() {
 //         const inputname = this.state.type + "file";
 
@@ -129,3 +148,4 @@ const UploadForm: React.FC<UploadFormProps> = ({ upload_type, onChange }) => {
 // }
 
 export default UploadForm;
+
