@@ -148,4 +148,3 @@ const UploadForm: React.FC<UploadFormProps> = ({ upload_type, onChange }) => {
 // }
 
 export default UploadForm;
-

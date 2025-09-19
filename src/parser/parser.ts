@@ -30,7 +30,7 @@ const add_accent = (
     text: string,
     match: string,
     accent: string,
-    unicode: string
+    unicode: string,
 ): string => {
     const re = new RegExp(`\\\\${accent}\\\\?\\{?(\\w)\\}?`, "gm");
 
@@ -91,7 +91,7 @@ export const sanitize_latex = (text: string) => {
 export const parse_text = (
     input_text: string,
     entry_name: string,
-    rec_type: string
+    rec_type: string,
 ): Entry => {
     const text: string = input_text.replace("[\s]{2,50}?|[\n?]", "");
 
@@ -145,7 +145,7 @@ export const parse_text = (
                             journal = journal_macros[journal];
                         } else {
                             console.log(
-                                `Error: Journal macro ${journal} not found for entry ${entry_name}`
+                                `Error: Journal macro ${journal} not found for entry ${entry_name}`,
                             );
                         }
                     }
@@ -166,7 +166,7 @@ export const parse_text = (
                     break;
                 case "volume":
                     entry.volume = Number(
-                        value.replace("{", "").replace("}", "")
+                        value.replace("{", "").replace("}", ""),
                     );
                     break;
                 case "doi":
@@ -182,4 +182,3 @@ export const parse_text = (
 
     return entry;
 };
-

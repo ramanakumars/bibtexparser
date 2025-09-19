@@ -104,4 +104,3 @@ export const template_to_text = (
 ): ParsedProps => {
     return blocks_to_text(template.blocks, entry);
 };
-

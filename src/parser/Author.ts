@@ -19,12 +19,12 @@ export const parse_author = (author_text: string): Author => {
     } else {
         // get the list of names in the author field
         let nnames = [...author.author_text.matchAll(/{?(\S+)}?/g)].map(
-            (value) => value[1]
+            (value) => value[1],
         );
 
         // remove the initials
         const names_without_initials = nnames.filter(
-            (name) => !/\w\./.test(name)
+            (name) => !/\w\./.test(name),
         );
         const initials = nnames.filter((name) => /\w\./.test(name));
 
@@ -80,4 +80,3 @@ export const get_long_name = (author: Author): string => {
     */
     return `${author.firstname} ${author.lastname}`;
 };
-

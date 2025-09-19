@@ -57,7 +57,7 @@ const get_groups_and_blocks = (text: string, start: number): Blocks => {
                 ? match.groups
                 : { keyword: "", other: "", dollar: "" };
             const type = Object.keys(groups).find(
-                (key) => groups[key] !== undefined
+                (key) => groups[key] !== undefined,
             );
             const blocki: Block = { type: type ? type : "", text: match[0] };
             group_block.push(blocki);
@@ -105,7 +105,7 @@ const get_groups_and_blocks = (text: string, start: number): Blocks => {
                 ? block.groups
                 : { keyword: "", other: "", dollar: "" };
             type = Object.keys(groups).find(
-                (key) => groups[key] !== undefined
+                (key) => groups[key] !== undefined,
             ) as string;
             blocki = { type: type ? type : "", text: block[0] };
         }
@@ -136,7 +136,7 @@ export const parse_template = (template_text: string): Template => {
     template.blocks = blocks;
 
     const author_template_search: Blocks = template.blocks.filter(
-        (block) => block.type === "author"
+        (block) => block.type === "author",
     );
     if (author_template_search.length !== 1) {
         throw `There must be atleast one author template and it must not be in an optional group! Currently found ${author_template_search.length} templates for authors`;
