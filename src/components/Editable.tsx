@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface EditableProps {
     value: string;
@@ -7,28 +7,20 @@ interface EditableProps {
 }
 
 const Editable: React.FC<EditableProps> = ({ value, setValue, className }) => {
-    const [isEditable, setEditable] = useState(false);
-
+    const updateValue = (e: any) => {
+        setValue(e.target.textContent ? e.target.textContent : "");
+    };
     return (
-        <>
-            {!isEditable ? (
-                <span onClick={() => setEditable(true)} className={className}>
-                    {value}
-                </span>
-            ) : (
-                <input
-                    type="text"
-                    onChange={(e) => setValue(e.target.value)}
-                    onBlur={() => setEditable(false)}
-                    onKeyDownCapture={(e) =>
-                        e.key === "Enter" && setEditable(false)
-                    }
-                    className={className}
-                    autoFocus
-                    value={value}
-                />
-            )}
-        </>
+        <span
+            contentEditable="true"
+            suppressContentEditableWarning={true}
+            className={className}
+            onBlur={(e) => updateValue(e)}
+            onKeyDownCapture={(e) => e.key === "Enter" && updateValue(e)}
+            autoFocus
+        >
+            {value}
+        </span>
     );
 };
 
