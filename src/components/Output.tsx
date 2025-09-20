@@ -4,12 +4,21 @@ import { tempContext } from "../contexts/tempContext";
 import { template_to_text } from "../parser/template_to_text";
 import "../css/output";
 import WarningDisplay from "./Warning";
-import { CopyIcon, SettingsIcon } from "./Icons";
+import { AddCircle, CopyIcon, SettingsIcon } from "./Icons";
 import PopupContainer from "./PopupContainer";
 import {
     journal_macros as base_journal_macros,
     JournalMacro,
 } from "../parser/JournalMacros";
+
+const sortJournals = (journals: JournalMacro) => {
+    return Object.keys(journals)
+        .sort()
+        .reduce((obj: JournalMacro, key: string) => {
+            obj[key] = journals[key];
+            return obj;
+        }, {});
+};
 
 interface ParsedPropList {
     text: string[];
@@ -21,7 +30,9 @@ const Output: React.FC = () => {
     const { templates } = useContext(tempContext);
     const [isCopied, setCopied] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
-    const [journal_macros, setJournalMacros] = useState(base_journal_macros);
+    const [journal_macros, setJournalMacros] = useState(
+        sortJournals(base_journal_macros),
+    );
 
     const { warnings, text } = useMemo((): ParsedPropList => {
         let parsed_templates = [];
@@ -41,7 +52,7 @@ const Output: React.FC = () => {
                         return template_to_text(
                             templates[template_index],
                             entry,
-                            journal_macros
+                            journal_macros,
                         );
                     } catch (error: unknown) {
                         return { text: "", warnings: error as string };
@@ -125,40 +136,56 @@ const Settings: React.FC<SettingsProps> = ({
     setJournalMacros,
     closeFn,
 }) => {
-    const changeValue = (key: string, value: string | null) => {
-        if(!value) return null;
-        setJournalMacros((prevState) => {
+    const [new_entry_key, setNewEntryKey] = useState<string | null>(null);
+    const [new_entry_value, setNewEntryValue] = useState<string | null>(null);
 
+    const changeValue = (key: string, value: string | null) => {
+        if (!value) return null;
+        setJournalMacros((prevState) => {
             // this key does not exist so we're not going to add it
-            if(!prevState[key]) {
+            if (!prevState[key]) {
                 return prevState;
             }
 
             prevState[key] = value;
-            return Object.keys(prevState).sort().reduce((obj: JournalMacro, key: string) => {
-                obj[key] = prevState[key];
-                return obj;
-            }, {})
+            return Object.keys(prevState)
+                .sort()
+                .reduce((obj: JournalMacro, key: string) => {
+                    obj[key] = prevState[key];
+                    return obj;
+                }, {});
         });
     };
 
     const changeKey = (key: string, value: string | null) => {
-        if(!value) return null;
+        if (!value) return null;
         setJournalMacros((prevState) => {
-
-            // this key has not been changed so just update 
-            if(prevState[value]) {
+            // this key has not been changed so just update
+            if (prevState[value]) {
                 return prevState;
             }
 
             const newObject: JournalMacro = {};
 
-            delete Object.assign(newObject, prevState, {[value]: prevState[key] })[key];
-            return Object.keys(newObject).sort().reduce((obj: JournalMacro, key: string) => {
-                obj[key] = newObject[key];
-                return obj;
-            }, {})
+            delete Object.assign(newObject, prevState, {
+                [value]: prevState[key],
+            })[key];
+            return sortJournals(newObject);
         });
+    };
+
+    const validateNewEntry = () => {
+        if (!new_entry_key) return;
+        if (!new_entry_value) return;
+        if (new_entry_value !== "" && new_entry_key !== "") {
+            setJournalMacros((prevState) => {
+                let newState = { ...prevState };
+                newState[new_entry_key] = new_entry_value;
+                return sortJournals(newState);
+            });
+        }
+        setNewEntryValue(null);
+        setNewEntryKey(null);
     };
 
     return (
@@ -167,26 +194,60 @@ const Settings: React.FC<SettingsProps> = ({
             <div className="table">
                 {Object.keys(journal_macros).map((macro) => (
                     <div className="table-row" key={macro}>
-                        <div
+                        <span
                             className="table-entry quarter-width"
                             contentEditable="true"
+                            suppressContentEditableWarning={true}
                             onBlur={(e) =>
                                 changeKey(macro, e.target.textContent)
                             }
                         >
                             {macro}
-                        </div>
-                        <div
+                        </span>
+                        <span
                             className="table-entry"
                             contentEditable="true"
+                            suppressContentEditableWarning={true}
                             onBlur={(e) =>
                                 changeValue(macro, e.target.textContent)
                             }
                         >
                             {journal_macros[macro]}
-                        </div>
+                        </span>
                     </div>
                 ))}
+                {new_entry_key !== null && new_entry_value !== null && (
+                    <div className="table-row">
+                        <input
+                            type="text"
+                            className="table-entry quarter-width"
+                            onChange={(e) => setNewEntryKey(e.target.value)}
+                            onBlur={() => validateNewEntry()}
+                            value={new_entry_key}
+                            autoFocus
+                        />
+                        <input
+                            type="text"
+                            className="table-entry"
+                            onChange={(e) => setNewEntryValue(e.target.value)}
+                            onBlur={() => validateNewEntry()}
+                            onKeyDownCapture={(e) =>
+                                e.key === "Enter" && validateNewEntry()
+                            }
+                            value={new_entry_value}
+                        />
+                    </div>
+                )}
+                <div className="table-footer">
+                    <a
+                        onClick={() => {
+                            setNewEntryKey("");
+                            setNewEntryValue("");
+                        }}
+                    >
+                        <AddCircle />
+                    </a>
+                </div>
             </div>
         </PopupContainer>
     );

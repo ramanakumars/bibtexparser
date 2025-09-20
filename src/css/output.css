@@ -21,7 +21,7 @@ div.output-container {
 }
 
 
-.table-row {
+.table-row, .table-footer {
     @apply p-0 w-full flex flex-row flex-nowrap justify-center items-center;
 }
 
@@ -30,7 +30,7 @@ div.output-container {
 }
 
 .table-entry {
-    @apply px-2 w-full flex flex-wrap justify-start col-span-1;
+    @apply px-2 w-full flex flex-wrap justify-start h-full text-lg;
 }
 
 .half-width {
