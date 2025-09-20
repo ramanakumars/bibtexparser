@@ -1,4 +1,4 @@
-interface JournalMacro {
+export interface JournalMacro {
     [key: string]: string;
 }
 
@@ -35,7 +35,7 @@ export const journal_macros: JournalMacro = {
     "\\pasa": "Publications of the Astron. Soc. of Australia",
     "\\pasp": "Publications of the ASP",
     "\\pasj": "Publications of the ASJ",
-    "\rmxaa": "Revista Mexicana de Astronomia y Astrofisica",
+    "\\rmxaa": "Revista Mexicana de Astronomia y Astrofisica",
     "\\qjras": "Quarterly Journal of the RAS",
     "\\skytel": "Sky and Telescope",
     "\\solphys": "Solar Physics",
@@ -47,7 +47,7 @@ export const journal_macros: JournalMacro = {
     "\\aplett": "Astrophysics Letters",
     "\\apspr": "Astrophysics Space Physics Research",
     "\\bain": "Bulletin Astronomical Institute of the Netherlands",
-    "\fcp": "Fundamental Cosmic Physics",
+    "\\fcp": "Fundamental Cosmic Physics",
     "\\gca": "Geochimica Cosmochimica Acta",
     "\\grl": "Geophysics Research Letters",
     "\\jcp": "Journal of Chemical Physics",

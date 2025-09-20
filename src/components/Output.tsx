@@ -4,7 +4,12 @@ import { tempContext } from "../contexts/tempContext";
 import { template_to_text } from "../parser/template_to_text";
 import "../css/output";
 import WarningDisplay from "./Warning";
-import { CopyIcon } from "./Icons";
+import { CopyIcon, SettingsIcon } from "./Icons";
+import PopupContainer from "./PopupContainer";
+import {
+    journal_macros as base_journal_macros,
+    JournalMacro,
+} from "../parser/JournalMacros";
 
 interface ParsedPropList {
     text: string[];
@@ -15,6 +20,8 @@ const Output: React.FC = () => {
     const { entries } = useContext(bibContext);
     const { templates } = useContext(tempContext);
     const [isCopied, setCopied] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [journal_macros, setJournalMacros] = useState(base_journal_macros);
 
     const { warnings, text } = useMemo((): ParsedPropList => {
         let parsed_templates = [];
@@ -34,6 +41,7 @@ const Output: React.FC = () => {
                         return template_to_text(
                             templates[template_index],
                             entry,
+                            journal_macros
                         );
                     } catch (error: unknown) {
                         return { text: "", warnings: error as string };
@@ -55,7 +63,7 @@ const Output: React.FC = () => {
         }
 
         return { warnings: warnings, text: text };
-    }, [entries, templates]);
+    }, [entries, templates, journal_macros]);
 
     const copyOutput = () => {
         const _text = text.join("\n");
@@ -76,6 +84,9 @@ const Output: React.FC = () => {
                     <h1>Output: </h1>
                 </span>
                 <span>
+                    <a onClick={() => setShowSettings(true)}>
+                        <SettingsIcon />
+                    </a>
                     <span className="w-fit flex flex-row items-center">
                         {isCopied ? "Copied!" : ""}
                         <a onClick={copyOutput}>
@@ -92,7 +103,92 @@ const Output: React.FC = () => {
                     ))}
                 </div>
             )}
+            {showSettings && (
+                <Settings
+                    journal_macros={journal_macros}
+                    setJournalMacros={setJournalMacros}
+                    closeFn={() => setShowSettings(false)}
+                />
+            )}
         </section>
+    );
+};
+
+interface SettingsProps {
+    journal_macros: JournalMacro;
+    setJournalMacros: React.Dispatch<React.SetStateAction<JournalMacro>>;
+    closeFn: () => void;
+}
+
+const Settings: React.FC<SettingsProps> = ({
+    journal_macros,
+    setJournalMacros,
+    closeFn,
+}) => {
+    const changeValue = (key: string, value: string | null) => {
+        if(!value) return null;
+        setJournalMacros((prevState) => {
+
+            // this key does not exist so we're not going to add it
+            if(!prevState[key]) {
+                return prevState;
+            }
+
+            prevState[key] = value;
+            return Object.keys(prevState).sort().reduce((obj: JournalMacro, key: string) => {
+                obj[key] = prevState[key];
+                return obj;
+            }, {})
+        });
+    };
+
+    const changeKey = (key: string, value: string | null) => {
+        if(!value) return null;
+        setJournalMacros((prevState) => {
+
+            // this key has not been changed so just update 
+            if(prevState[value]) {
+                return prevState;
+            }
+
+            const newObject: JournalMacro = {};
+
+            delete Object.assign(newObject, prevState, {[value]: prevState[key] })[key];
+            return Object.keys(newObject).sort().reduce((obj: JournalMacro, key: string) => {
+                obj[key] = newObject[key];
+                return obj;
+            }, {})
+        });
+    };
+
+    return (
+        <PopupContainer onClick={() => closeFn()}>
+            <div>Journal Macros</div>
+            <div className="table">
+                {Object.keys(journal_macros).map((macro) => (
+                    <div className="table-row" key={macro}>
+                        <div
+                            className="table-entry quarter-width"
+                            contentEditable="true"
+                            onBlur={(e) =>
+                                changeKey(macro, e.target.textContent)
+                            }
+                        >
+                            {macro}
+                        </div>
+                        <div
+                            className="table-entry"
+                            contentEditable="true"
+                            onBlur={(e) =>
+                                changeValue(macro, e.target.textContent)
+                            }
+                        >
+                            {journal_macros[macro]}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </PopupContainer>
     );
 };
 

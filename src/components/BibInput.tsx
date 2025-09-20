@@ -264,7 +264,6 @@ const BibInput: React.FC = () => {
                         </a>
                     </span>
                 </span>
-                {/* <RecordList /> */}
                 <div className="record record-header">
                     <div className="record-contents">
                         <span className="checkbox half-width">

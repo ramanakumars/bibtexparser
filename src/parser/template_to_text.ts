@@ -1,6 +1,6 @@
 import { Block, Template, AuthorBlock, Group, Blocks } from "./template";
 import { Author, get_long_name, get_short_name } from "./Author";
-import { journal_macros } from "./JournalMacros";
+import { JournalMacro } from "./JournalMacros";
 import { Entry } from "./parser";
 
 export interface ParsedProps {
@@ -39,10 +39,11 @@ const authors_to_text = (entry: Entry, block: AuthorBlock): ParsedProps => {
 const block_to_text = (
     block: Block | Group | AuthorBlock,
     entry: Entry,
+    journal_macros: JournalMacro,
 ): ParsedProps => {
     if (block.type === "group") {
         const group: Group = block as Group;
-        return group_to_text(group.blocks, entry);
+        return group_to_text(group.blocks, entry, journal_macros);
     } else if (block.type === "author") {
         // author case
         return authors_to_text(entry, block as AuthorBlock);
@@ -78,9 +79,13 @@ const block_to_text = (
     }
 };
 
-export const group_to_text = (blocks: Blocks, entry: Entry): ParsedProps => {
+export const group_to_text = (
+    blocks: Blocks,
+    entry: Entry,
+    journal_macros: JournalMacro,
+): ParsedProps => {
     try {
-        const output = blocks.map((block) => block_to_text(block, entry));
+        const output = blocks.map((block) => block_to_text(block, entry, journal_macros));
         return {
             text: output.map((out) => out.text).join(""),
             warnings: output.map((out) => out.warnings).join(""),
@@ -90,8 +95,14 @@ export const group_to_text = (blocks: Blocks, entry: Entry): ParsedProps => {
     }
 };
 
-export const blocks_to_text = (blocks: Blocks, entry: Entry): ParsedProps => {
-    const output = blocks.map((block) => block_to_text(block, entry));
+export const blocks_to_text = (
+    blocks: Blocks,
+    entry: Entry,
+    journal_macros: JournalMacro,
+): ParsedProps => {
+    const output = blocks.map((block) =>
+        block_to_text(block, entry, journal_macros),
+    );
     return {
         text: output.map((out) => out.text).join(""),
         warnings: output.map((out) => out.warnings).join(""),
@@ -101,6 +112,7 @@ export const blocks_to_text = (blocks: Blocks, entry: Entry): ParsedProps => {
 export const template_to_text = (
     template: Template,
     entry: Entry,
+    journal_macros: JournalMacro,
 ): ParsedProps => {
-    return blocks_to_text(template.blocks, entry);
+    return blocks_to_text(template.blocks, entry, journal_macros);
 };

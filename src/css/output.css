@@ -5,7 +5,7 @@ div.output-container {
 }
 
 .output-container span {
-    @apply py-1 whitespace-break-spaces text-lg p-2 py-4 my-0;
+    @apply whitespace-break-spaces text-lg p-2 py-4 my-0;
 }
 
 .output-container span:nth-child(odd) {
@@ -14,4 +14,29 @@ div.output-container {
 
 .output-container span:nth-child(even) {
     @apply bg-gray-300;
+}
+
+.table {
+    @apply px-4 w-full flex flex-col flex-nowrap overflow-y-scroll;
+}
+
+
+.table-row {
+    @apply p-0 w-full flex flex-row flex-nowrap justify-center items-center;
+}
+
+.table-row:nth-child(odd) {
+    @apply bg-gray-300;
+}
+
+.table-entry {
+    @apply px-2 w-full flex flex-wrap justify-start col-span-1;
+}
+
+.half-width {
+    @apply w-1/2;
+}
+
+.quarter-width {
+    @apply w-1/4;
 }

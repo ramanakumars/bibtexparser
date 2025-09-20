@@ -5,7 +5,7 @@ div.upload-background {
 }
 
 div.upload-container {
-    @apply fixed flex flex-col w-1/2 left-0 top-1/4 right-0 m-auto justify-center items-center border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
+    @apply fixed max-h-4/5 h-fit flex flex-col w-1/2 left-0 top-1/8 right-0 m-auto justify-center items-center border-2 border-black rounded-2xl bg-white z-20 p-4 box-border;
 }
 
 div.upload-container textarea {
