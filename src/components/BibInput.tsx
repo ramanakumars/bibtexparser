@@ -97,6 +97,13 @@ const BibInput: React.FC = () => {
     };
 
     useEffect(() => {
+        const sessionBibItems = window.sessionStorage.getItem("bibItems");
+        if (sessionBibItems) {
+            if (sessionBibItems?.length > 0) {
+                setEntries(JSON.parse(sessionBibItems));
+                return;
+            }
+        }
         addText(test);
     }, []);
 
@@ -162,6 +169,12 @@ const BibInput: React.FC = () => {
         setEditable(false);
         setADSImport(false);
     };
+
+    useEffect(() => {
+        if (entries.length > 0) {
+            window.sessionStorage.setItem("bibItems", JSON.stringify(entries));
+        }
+    }, [entries]);
 
     useEffect(() => {
         let get_entry_id = (entry: Entry): string => "";

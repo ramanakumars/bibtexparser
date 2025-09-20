@@ -89,6 +89,22 @@ const TemplateInput: React.FC = () => {
     };
 
     useEffect(() => {
+        if (templates.length > 0) {
+            window.sessionStorage.setItem(
+                "tempateItems",
+                JSON.stringify(templates),
+            );
+        }
+    }, [templates]);
+
+    useEffect(() => {
+        const sessionTemplates = window.sessionStorage.getItem("tempateItems");
+        if (sessionTemplates) {
+            if (sessionTemplates?.length > 0) {
+                setTemplates(JSON.parse(sessionTemplates));
+                return;
+            }
+        }
         addText(template_test);
     }, []);
 
