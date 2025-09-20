@@ -29,18 +29,18 @@ $auths2 $title.{ $journal, $pages.}{ \\item\\{ $missing_key \\}} ($year)
 const checkUniqueTemplateTypes = (templates: Template[]): Template[] => {
     const template_types = templates.map((template) => template.entry_type);
     const duplicate_entries = template_types.filter(
-        (_type, i) => template_types.indexOf(_type) != i
+        (_type, i) => template_types.indexOf(_type) != i,
     );
 
     if (duplicate_entries.length > 0) {
         console.warn(
-            `Found ${duplicate_entries.length} duplicated entry types for ${duplicate_entries}`
+            `Found ${duplicate_entries.length} duplicated entry types for ${duplicate_entries}`,
         );
     }
 
     const _templates = templates.filter(
         (template, index) =>
-            template_types.indexOf(template.entry_type) == index
+            template_types.indexOf(template.entry_type) == index,
     );
 
     return _templates;
@@ -62,7 +62,7 @@ const TemplateInput: React.FC = () => {
                 }
             }
             setTemplates((old_templates) =>
-                checkUniqueTemplateTypes([...old_templates, ..._templates])
+                checkUniqueTemplateTypes([...old_templates, ..._templates]),
             );
             setEditable(false);
         } catch (e: unknown) {
@@ -72,7 +72,7 @@ const TemplateInput: React.FC = () => {
 
     const deleteTemplate = (index: number) => {
         setTemplates((_templates) =>
-            _templates.filter((_template, _ind) => _ind != index)
+            _templates.filter((_template, _ind) => _ind != index),
         );
     };
 
@@ -89,6 +89,22 @@ const TemplateInput: React.FC = () => {
     };
 
     useEffect(() => {
+        if (templates.length > 0) {
+            window.sessionStorage.setItem(
+                "tempateItems",
+                JSON.stringify(templates),
+            );
+        }
+    }, [templates]);
+
+    useEffect(() => {
+        const sessionTemplates = window.sessionStorage.getItem("tempateItems");
+        if (sessionTemplates) {
+            if (sessionTemplates?.length > 0) {
+                setTemplates(JSON.parse(sessionTemplates));
+                return;
+            }
+        }
         addText(template_test);
     }, []);
 

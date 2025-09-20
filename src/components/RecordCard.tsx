@@ -4,7 +4,6 @@ import {
     Author,
     parse_author,
     get_long_name,
-    get_short_name,
 } from "../parser/Author";
 import Editable from "./Editable";
 import "../css/records.css";
@@ -114,7 +113,7 @@ const AuthorEditor: React.FC<AuthorEditorProps> = ({
     updateAuthors,
 }) => {
     const [updated_authors, setUpdatedAuthors] = useState<string[]>(
-        authors.map((author) => author.author_text)
+        authors.map((author) => author.author_text),
     );
 
     return (
@@ -139,7 +138,7 @@ const AuthorEditor: React.FC<AuthorEditorProps> = ({
                                         } else {
                                             return authi;
                                         }
-                                    })
+                                    }),
                                 )
                             }
                             className="author-edit"
@@ -150,8 +149,8 @@ const AuthorEditor: React.FC<AuthorEditorProps> = ({
                     onClick={() => {
                         updateAuthors(
                             updated_authors.map((author) =>
-                                parse_author(author)
-                            )
+                                parse_author(author),
+                            ),
                         );
                         setShowAuthorEditor(false);
                     }}

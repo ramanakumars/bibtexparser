@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Editable from "./Editable";
 import "../css/edit.css";
+import PopupContainer from "./PopupContainer";
 
 interface EditFormProps {
     input_text: string;
@@ -21,20 +22,14 @@ const EditForm: React.FC<EditFormProps> = ({
 
     if (editable) {
         return (
-            <>
-                <div
-                    className="edit-form-background"
-                    onClick={() => setEditable(false)}
-                ></div>
-                <div className="edit-form">
-                    <Editable
-                        value={text}
-                        setValue={_setText}
-                        className={className}
-                    />
-                    <button onClick={() => setText(text)}>Update!</button>
-                </div>
-            </>
+            <PopupContainer onClick={() => setEditable(false)}>
+                <Editable
+                    value={text}
+                    setValue={_setText}
+                    className={className}
+                />
+                <button onClick={() => setText(text)}>Update!</button>
+            </PopupContainer>
         );
     } else {
         return null;

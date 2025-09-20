@@ -21,6 +21,7 @@ const test = `@book{texbook,
   author = {Donald E. Knuth},
   year = {1986},
   title = {The {\\TeX} Book},
+  journal = {\\testj},
   publisher = {Addison-Wesley Professional}
 }
 
@@ -83,7 +84,7 @@ const BibInput: React.FC = () => {
 
     const deleteSelected = () => {
         setEntries((_entries) =>
-            _entries.filter((_, ind) => selectedEntries.indexOf(ind) == -1)
+            _entries.filter((_, ind) => selectedEntries.indexOf(ind) == -1),
         );
     };
 
@@ -96,6 +97,13 @@ const BibInput: React.FC = () => {
     };
 
     useEffect(() => {
+        const sessionBibItems = window.sessionStorage.getItem("bibItems");
+        if (sessionBibItems) {
+            if (sessionBibItems?.length > 0) {
+                setEntries(JSON.parse(sessionBibItems));
+                return;
+            }
+        }
         addText(test);
     }, []);
 
@@ -105,11 +113,11 @@ const BibInput: React.FC = () => {
         const entries_name = entries.map((entry) => get_entry_id(entry));
 
         const _filtered_entries = entries.filter(
-            (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) == i,
         );
 
         const duplicate_entries = entries.filter(
-            (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i
+            (entry, i) => entries_name.indexOf(get_entry_id(entry)) != i,
         );
 
         console.log(duplicate_entries);
@@ -124,7 +132,7 @@ const BibInput: React.FC = () => {
 
     const bibdata = new Blob(
         [entries.map((entry) => entry.text).join("\n\n")],
-        { type: "text/plain" }
+        { type: "text/plain" },
     );
 
     const addText = (text: string) => {
@@ -163,6 +171,12 @@ const BibInput: React.FC = () => {
     };
 
     useEffect(() => {
+        if (entries.length > 0) {
+            window.sessionStorage.setItem("bibItems", JSON.stringify(entries));
+        }
+    }, [entries]);
+
+    useEffect(() => {
         let get_entry_id = (entry: Entry): string => "";
 
         if (!sortState) {
@@ -196,7 +210,7 @@ const BibInput: React.FC = () => {
             ..._entries.sort((a, b) =>
                 sortState.ascending
                     ? get_entry_id(a).localeCompare(get_entry_id(b))
-                    : get_entry_id(b).localeCompare(get_entry_id(a))
+                    : get_entry_id(b).localeCompare(get_entry_id(a)),
             ),
         ]);
     }, [sortState]);
@@ -263,7 +277,6 @@ const BibInput: React.FC = () => {
                         </a>
                     </span>
                 </span>
-                {/* <RecordList /> */}
                 <div className="record record-header">
                     <div className="record-contents">
                         <span className="checkbox half-width">
@@ -346,7 +359,7 @@ const BibInput: React.FC = () => {
                                         } else {
                                             return rec;
                                         }
-                                    })
+                                    }),
                                 )
                             }
                             key={"record_" + index}
@@ -359,7 +372,7 @@ const BibInput: React.FC = () => {
                             }
                             onDeselect={() =>
                                 setSelectedEntries((prev_state) =>
-                                    prev_state.filter((ind) => ind != index)
+                                    prev_state.filter((ind) => ind != index),
                                 )
                             }
                         />

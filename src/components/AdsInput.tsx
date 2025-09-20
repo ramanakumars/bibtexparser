@@ -49,8 +49,8 @@ const AdsInput: React.FC<ADSInputProps> = ({ onChange, isVisible }) => {
                                 bibcode: bibitem.bibcode,
                                 authors: bibitem.author,
                                 year: Number(bibitem.year),
-                            })
-                        )
+                            }),
+                        ),
                     );
                 } else if (data.error) {
                     throw { message: data.error.msg };
@@ -94,7 +94,13 @@ const AdsInput: React.FC<ADSInputProps> = ({ onChange, isVisible }) => {
                             onChange={(e) => setAccessToken(e.target.value)}
                             className={"ads-input"}
                         />
-                        <a href="https://github.com/adsabs/adsabs-dev-api/blob/master/README.md#access" target="_blank" rel="noreferrer"><HelpIcon /></a>
+                        <a
+                            href="https://github.com/adsabs/adsabs-dev-api/blob/master/README.md#access"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <HelpIcon />
+                        </a>
                     </div>
                     <div className="ads-query">
                         <label htmlFor="query">Query: </label>
