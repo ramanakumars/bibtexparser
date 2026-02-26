@@ -23,7 +23,7 @@ const AddCircle = () => {
 
 const template_test = `
 $auths2 $title.{ $journal, $pages.}{ \\item\\{ $missing_key \\}} ($year)
-@article $authsa $title. ($year)
+@article $authsa. $title. ($year) { $journal, $pages } $doi
 `;
 
 const checkUniqueTemplateTypes = (templates: Template[]): Template[] => {

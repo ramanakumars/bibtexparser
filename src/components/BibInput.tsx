@@ -10,6 +10,7 @@ import {
     ChevronDown,
     ChevronUp,
     DeleteIcon,
+    FileDownloadIcon,
     DownloadIcon,
     ImportIcon,
     SortIcon,
@@ -265,6 +266,20 @@ const BibInput: React.FC = () => {
                             className="icon-button"
                             rel="noreferrer"
                             href={URL.createObjectURL(bibdata)}
+                        >
+                            <FileDownloadIcon />
+                        </a>
+                        <a
+                            download="references.json"
+                            target="_blank"
+                            title="Download as .json"
+                            className="icon-button"
+                            rel="noreferrer"
+                            href={URL.createObjectURL(
+                                new Blob([JSON.stringify(entries, null, 2)], {
+                                    type: "text/json",
+                                }),
+                            )}
                         >
                             <DownloadIcon />
                         </a>
